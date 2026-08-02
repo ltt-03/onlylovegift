@@ -197,4 +197,17 @@ app.post('/api/orders/:code/mock-pay', async (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
+  
+  // Tự động Ping chính mình mỗi 5 phút (300000ms) để chống ngủ
+  setInterval(async () => {
+    const backendUrl = process.env.BACKEND_URL;
+    if (backendUrl && backendUrl.includes('onrender.com')) {
+      try {
+        await fetch(`${backendUrl}/ping`, { method: 'HEAD' });
+        console.log('Self-ping successful');
+      } catch (error) {
+        console.error('Self-ping failed:', error.message);
+      }
+    }
+  }, 5 * 60 * 1000);
 });
