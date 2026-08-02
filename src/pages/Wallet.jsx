@@ -84,14 +84,14 @@ const WalletPage = () => {
           <p style={{ marginBottom: '20px' }}>Hệ thống sẽ tự động cộng tiền vào ví của bạn sau 1-3 phút.</p>
           
           <img 
-            src={`https://img.vietqr.io/image/970422-0393278564-compact2.jpg?amount=0&addInfo=${depositCode}&accountName=LE%20THANH%20TUNG`} 
+            src={`https://img.vietqr.io/image/970448-SEPSEPLOVEGIFT-compact2.jpg?amount=0&addInfo=${depositCode}&accountName=LE%20THANH%20TUNG`} 
             alt="Mã VietQR" 
             style={{ width: '250px', borderRadius: '15px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
           />
           
           <div style={{ marginTop: '20px', background: 'rgba(255,255,255,0.8)', padding: '15px', borderRadius: '10px', display: 'inline-block', textAlign: 'left' }}>
-            <p><strong>Ngân hàng:</strong> MB Bank (NH Quân Đội)</p>
-            <p><strong>Số tài khoản:</strong> 0393278564</p>
+            <p><strong>Ngân hàng:</strong> OCB (Phương Đông)</p>
+            <p><strong>Số tài khoản:</strong> SEPSEPLOVEGIFT</p>
             <p><strong>Chủ tài khoản:</strong> LE THANH TUNG</p>
             <p style={{ fontSize: '1.2rem', marginTop: '10px' }}>
               <strong>Nội dung CK:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>{depositCode}</span>

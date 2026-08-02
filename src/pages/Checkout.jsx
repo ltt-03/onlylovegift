@@ -101,7 +101,7 @@ export default function Checkout() {
     return <div className="container" style={{ padding: '60px' }}><p>Đang tải thông tin đơn hàng...</p></div>;
   }
 
-  const qrUrl = `https://img.vietqr.io/image/970422-0329509223-compact2.png?amount=${orderDetails.amount}&addInfo=${orderDetails.orderCode}&accountName=LE THANH TUNG`;
+  const qrUrl = `https://img.vietqr.io/image/970448-SEPSEPLOVEGIFT-compact2.png?amount=${orderDetails.amount}&addInfo=${orderDetails.orderCode}&accountName=LE%20THANH%20TUNG`;
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '900px' }}>
@@ -166,7 +166,7 @@ export default function Checkout() {
           </p>
           
           <div style={{ background: '#fff', padding: '15px', borderRadius: '16px', border: '1px solid #eee', marginBottom: '20px' }}>
-            <img src={qrUrl} alt="Mã QR Thanh Toán MBBank" style={{ width: '250px', height: '250px' }} />
+            <img src={qrUrl} alt="Mã QR Thanh Toán OCB" style={{ width: '250px', height: '250px' }} />
           </div>
 
           {isPaid ? (
