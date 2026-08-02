@@ -62,6 +62,9 @@ app.use('/gift/lucky-chance', express.static(path.join(__dirname, 'public', 'tem
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+const walletRoutes = require('./routes/wallet');
+app.use('/api/wallet', walletRoutes);
+
 // Lightweight Ping Route for UptimeRobot (Giữ server luôn thức)
 app.get('/ping', (req, res) => {
   res.status(200).send('pong');
@@ -123,12 +126,38 @@ app.post('/api/webhooks/payment', async (req, res) => {
     const content = req.body.content || (req.body.data && req.body.data.content) || '';
     const transferAmount = req.body.transferAmount || (req.body.data && req.body.data.transferAmount) || 0;
 
+    // A. XỬ LÝ NẠP TIỀN VÀO VÍ (NAP-xxxx)
+    const napMatch = content.match(/(NAP-\d{4,5})/i);
+    if (napMatch) {
+      const txCode = napMatch[1].toUpperCase();
+      const transaction = await prisma.transaction.findUnique({ where: { txCode } });
+      
+      if (transaction && transaction.status === 'PENDING') {
+        // Cập nhật số dư ví
+        await prisma.user.update({
+          where: { id: transaction.userId },
+          data: { balance: { increment: Number(transferAmount) } }
+        });
+        
+        // Cập nhật trạng thái giao dịch
+        await prisma.transaction.update({
+          where: { txCode },
+          data: { 
+            status: 'SUCCESS',
+            amount: Number(transferAmount) // Cập nhật đúng số tiền khách nạp
+          }
+        });
+        return res.json({ success: true, message: 'Deposit successful' });
+      }
+    }
+
+    // B. XỬ LÝ THANH TOÁN TRỰC TIẾP ĐƠN HÀNG (GL-xxxx)
     // Dùng Regex tìm chữ GL-xxxx trong nội dung (ví dụ: NGUYEN VAN A CHUYEN TIEN GL-1234)
     const match = content.match(/(GL-\d{4})/i);
     
     if (!match) {
       // Nếu không tìm thấy mã đơn hàng, bỏ qua (tiền của người ngoài chuyển)
-      return res.json({ success: true, message: 'Ignored: No order code found in content' });
+      return res.json({ success: true, message: 'Ignored: No order/deposit code found in content' });
     }
 
     const orderCode = match[1].toUpperCase();
@@ -166,6 +195,70 @@ app.post('/api/webhooks/payment', async (req, res) => {
   } catch (error) {
     console.error('Webhook error:', error);
     res.status(500).json({ success: false, message: 'Webhook processing failed' });
+  }
+});
+
+// 3.5 Pay with Wallet
+const jwt = require('jsonwebtoken');
+const authMiddleware = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return res.status(401).json({ success: false });
+  try {
+    const decoded = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET || 'fallback-secret');
+    req.userId = decoded.id;
+    next();
+  } catch (err) { return res.status(401).json({ success: false }); }
+};
+
+app.post('/api/orders/:code/pay-with-wallet', authMiddleware, async (req, res) => {
+  try {
+    const { code } = req.params;
+    
+    // Tìm đơn hàng
+    const order = await prisma.order.findUnique({ where: { orderCode: code } });
+    if (!order || order.status !== 'PENDING') return res.status(400).json({ success: false, message: 'Đơn hàng không hợp lệ' });
+
+    // Kiểm tra số dư ví
+    const user = await prisma.user.findUnique({ where: { id: req.userId } });
+    if (user.balance < order.amount) return res.status(400).json({ success: false, message: 'Số dư không đủ' });
+
+    // Trừ tiền và tạo Transaction (chạy Transaction của Prisma để đảm bảo tính toàn vẹn)
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: req.userId },
+        data: { balance: { decrement: order.amount } }
+      }),
+      prisma.transaction.create({
+        data: {
+          userId: req.userId,
+          amount: order.amount,
+          type: 'PAYMENT',
+          status: 'SUCCESS',
+          txCode: `PAY-${code}-${Date.now()}`,
+          description: `Thanh toán đơn hàng ${code}`
+        }
+      }),
+      prisma.order.update({
+        where: { orderCode: code },
+        data: { status: 'PAID', userId: req.userId }
+      })
+    ]);
+
+    // Giả lập Deploy Web sau khi thanh toán
+    setTimeout(async () => {
+      await prisma.order.update({
+        where: { orderCode: code },
+        data: { 
+          status: 'SUCCESS',
+          deployUrl: `${process.env.BACKEND_URL || 'http://localhost:3001'}/gift/lucky-chance?code=${code}`
+        }
+      });
+    }, 4000);
+
+    res.json({ success: true, message: 'Thanh toán bằng ví thành công' });
+  } catch (error) {
+    console.error('Wallet pay error:', error);
+    res.status(500).json({ success: false, message: 'Lỗi thanh toán' });
   }
 });
 

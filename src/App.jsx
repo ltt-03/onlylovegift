@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useContext, useState } from 'react';
-import { Gift, LogOut, User, Sun, Moon, ChevronLeft, ChevronRight, Home as HomeIcon, LayoutTemplate, Sparkles, LogIn } from 'lucide-react';
+import { Gift, LogOut, User, Sun, Moon, ChevronLeft, ChevronRight, Home as HomeIcon, LayoutTemplate, Sparkles, LogIn, Wallet } from 'lucide-react';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
 import Home from './pages/Home';
@@ -12,6 +12,7 @@ import Legal from './pages/Legal';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import VerifyEmail from './pages/auth/VerifyEmail';
+import WalletPage from './pages/Wallet';
 import AIChat from './components/AIChat';
 
 
@@ -48,6 +49,11 @@ const Layout = ({ children }) => {
           <Link to="/create" className="sidebar-link" title="Tạo Quà">
             <Sparkles size={22} /> <span className="sidebar-text">Tạo Quà</span>
           </Link>
+          {user && (
+            <Link to="/wallet" className="sidebar-link" title="Ví Điện Tử">
+              <Wallet size={22} /> <span className="sidebar-text">Ví ({user.balance ? user.balance.toLocaleString('vi-VN') : 0}đ)</span>
+            </Link>
+          )}
         </nav>
 
         <div className="sidebar-footer">
@@ -144,6 +150,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/wallet" element={<WalletPage />} />
         </Routes>
       </Layout>
     </Router>
