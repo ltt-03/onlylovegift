@@ -62,6 +62,11 @@ app.use('/gift/lucky-chance', express.static(path.join(__dirname, 'public', 'tem
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+// Lightweight Ping Route for UptimeRobot (Giữ server luôn thức)
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
 // Helper to generate random order code
 const generateOrderCode = () => {
   return `GL-${Math.floor(1000 + Math.random() * 9000)}`;
