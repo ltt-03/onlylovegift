@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Lucky Chance</title>
+    <link rel="icon" href="asset/icons/iconIntro.png" type="image/png" />
+    <link rel="apple-touch-icon" href="asset/icons/iconIntro.png" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css" />
+
+
+  <script>
+    // Injected by gift.php
+    window.luckyChanceData = {"recipientName":"gửi emm","messages":["May mắn luôn mỉm cười với bạn","Chúc bạn ngày mới vui vẻ"],"images":[],"music":"../uploads/music/song_1783337224_677.mp3"};
+</script>
+</head>
+  <body class="relative w-screen h-screen m-0 p-0 text-white select-none">
+    <div
+      id="previewDemoWatermark"
+      class="preview-demo-watermark"
+      hidden
+      aria-hidden="true"
+    >
+      <div class="preview-demo-watermark__grid" aria-hidden="true"></div>
+      <p class="preview-demo-watermark__badge">Xem Demo</p>
+    </div>
+
+    <!-- Màn giới thiệu — chạm icon để vào -->
+    <div id="intro-screen" class="intro-screen">
+      <div class="intro-glow" aria-hidden="true"></div>
+      <div class="intro-sparkles" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span
+        ><span></span>
+      </div>
+
+      <div class="intro-content">
+        <p class="intro-eyebrow">Lucky Chance</p>
+        <h1 class="intro-title" id="intro-title">
+          <span class="intro-title-line">Gửi may mắn đến</span>
+          <span id="intro-recipient-name" class="intro-title-recipient"
+            >người thương</span
+          >
+        </h1>
+
+        <button
+          type="button"
+          id="intro-start-btn"
+          class="intro-start-btn"
+          aria-label="Bắt đầu"
+        >
+          <img
+            src="asset/icons/iconIntro.png"
+            alt=""
+            class="intro-icon"
+            width="200"
+            height="200"
+            decoding="async"
+          />
+        </button>
+
+        <p class="intro-hint">Chạm cỏ may mắn để bắt đầu</p>
+      </div>
+    </div>
+
+    <!-- Màn chính — ẩn cho đến khi qua intro -->
+    <div id="app-main" class="app-main app-main--hidden" hidden>
+      <div id="image-text-fly-screen" class="image-text-fly-screen">
+        <div id="wishes-layer" class="wishes-layer">
+          <div class="wishes-layer-space">
+            <div id="falling-container" class="falling-container"></div>
+          </div>
+        </div>
+        <div class="fly-gradient-overlay" aria-hidden="true"></div>
+      </div>
+
+      <div class="ui-deco-layer" aria-hidden="true">
+        <div class="top-deco-strip"></div>
+        <img
+          src="asset/icons/gocDuoi.png"
+          alt=""
+          class="corner-deco corner-deco--bottom-left"
+          width="220"
+          height="220"
+          decoding="async"
+        />
+        <img
+          src="asset/icons/luckyDuoi.png"
+          alt=""
+          class="corner-deco corner-deco--bottom-right"
+          width="220"
+          height="220"
+          decoding="async"
+        />
+        <div class="chuong-slot chuong-slot--left">
+          <img
+            src="asset/icons/chuongTren.png"
+            alt=""
+            class="chuong-icon"
+            decoding="async"
+          />
+        </div>
+        <div class="chuong-slot chuong-slot--right">
+          <img
+            src="asset/icons/chuongTren.png"
+            alt=""
+            class="chuong-icon chuong-icon--flip"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </div>
+    <!-- #app-main -->
+
+    <script src="js/preview-draft-storage.js"></script>
+    <script src="js/music.js" defer></script>
+    <script src="js/top-deco.js" defer></script>
+    <script src="js/fly-effects.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script type="module" src="js/luckyChanceBoot.js"></script>
+    <script>
+      (function () {
+        const intro = document.getElementById("intro-screen");
+        const startBtn = document.getElementById("intro-start-btn");
+        if (!intro || !startBtn) return;
+
+        let started = false;
+
+        function enterMainApp() {
+          if (started) return;
+          started = true;
+          startBtn.disabled = true;
+
+          intro.classList.add("intro-screen--tap-glow");
+
+          if (typeof window.LuckyChance?.startMusic === "function") {
+            window.LuckyChance.startMusic();
+          }
+
+          if (typeof window.startLuckyChanceApp === "function") {
+            window.startLuckyChanceApp();
+          }
+
+          intro.classList.add("intro-screen--leaving");
+          setTimeout(() => intro.remove(), 170);
+        }
+
+        startBtn.addEventListener("click", enterMainApp);
+        startBtn.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            enterMainApp();
+          }
+        });
+      })();
+    </script>
+  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a24495a5acb309d0',t:'MTc4NTU4NDU5OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"e7599a94b8904639b17e9ee02062cdfb","r":1}' crossorigin="anonymous"></script>
+</body>
+</html>
