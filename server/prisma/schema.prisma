@@ -36,6 +36,7 @@ model User {
   verificationToken String?
   resetToken        String?
   resetTokenExpiry  DateTime?
+  role              String   @default("USER") // USER, ADMIN
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   balance           Int      @default(0)
@@ -55,4 +56,15 @@ model Transaction {
   txCode      String   @unique // Mã để khách CK, VD: NAP-1234
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  userId    String?
+  name      String
+  rating    Int      @default(5)
+  message   String   @db.Text
+  avatar    String?
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
 }

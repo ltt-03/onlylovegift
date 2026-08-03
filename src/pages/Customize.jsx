@@ -44,20 +44,38 @@ export default function Customize() {
   };
 
   const handleImageChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      if (images.length >= 4) {
-        alert('Bạn chỉ được tải lên tối đa 4 ảnh.');
-        return;
-      }
-      const file = e.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setCurrentImageToCrop(imageUrl);
-      
-      // Reset input value so the same file can be selected again if cancelled
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    processFiles(files);
+  };
+
+  const processFiles = (files) => {
+    const allowed = 4 - images.length;
+    if (allowed <= 0) {
+      alert('Bạn chỉ được tải lên tối đa 4 ảnh.');
+      return;
     }
+    const toAdd = files.slice(0, allowed);
+    if (files.length > allowed) alert('Chỉ thêm được ' + allowed + ' ảnh nữa. Các ảnh thừa đã bị bỏ qua.');
+
+    if (toAdd.length === 1) {
+      const imageUrl = URL.createObjectURL(toAdd[0]);
+      setCurrentImageToCrop(imageUrl);
+    } else {
+      setImages(prev => [...prev, ...toAdd]);
+    }
+    
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const [isDragging, setIsDragging] = useState(false);
+  const handleDragOver = (e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); };
+  const handleDragLeave = (e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); };
+  const handleDrop = (e) => {
+    e.preventDefault(); e.stopPropagation(); setIsDragging(false);
+    if (!user) return alert('Vui lòng đăng nhập để tải ảnh lên');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    processFiles(files);
   };
 
   const handleCropComplete = (croppedFile) => {
@@ -123,6 +141,14 @@ export default function Customize() {
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '800px' }}>
       <div className="card" style={{ padding: '40px' }}>
+        {/* Back button */}
+        <button 
+          onClick={() => navigate('/templates')} 
+          style={{ background: 'none', border: 'none', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1rem', cursor: 'pointer', marginBottom: '20px', padding: 0 }}
+        >
+          <span style={{ fontSize: '1.2rem' }}>←</span> Quay lại
+        </button>
+        
         <h1 style={{ fontSize: '2rem', marginBottom: '10px' }}>Tùy Chỉnh Quà Tặng</h1>
         
         {isAutoFill ? (
@@ -237,7 +263,12 @@ export default function Customize() {
               {!user && <span style={{ fontSize: '12px', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--color-surface)', padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--color-border)' }}><AlertCircle size={14}/> Bạn cần đăng nhập để tải ảnh</span>}
             </label>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginTop: '10px' }}>
+            <div 
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginTop: '10px', padding: '15px', borderRadius: '12px', border: isDragging ? '2px dashed var(--color-primary)' : '2px dashed transparent', backgroundColor: isDragging ? 'rgba(255,107,157,0.05)' : 'transparent', transition: 'all 0.2s' }}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
               {images.map((image, index) => (
                 <div key={index} style={{ position: 'relative', width: '100%', aspectRatio: '1', borderRadius: '12px', overflow: 'hidden', border: '2px solid var(--color-primary)' }}>
                   <img src={URL.createObjectURL(image)} alt={`preview-${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -259,13 +290,14 @@ export default function Customize() {
                   onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.color = 'var(--color-text-light)' }}
                 >
                   <UploadCloud size={28} style={{ marginBottom: '8px' }} />
-                  <span style={{ fontSize: '13px', fontWeight: 'bold' }}>Tải ảnh {images.length + 1}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 'bold', textAlign: 'center' }}>Tải ảnh {images.length + 1}<br/>(hoặc Kéo thả)</span>
                 </div>
               )}
             </div>
             <input 
               type="file" 
               accept="image/*" 
+              multiple
               ref={fileInputRef} 
               style={{ display: 'none' }} 
               onChange={handleImageChange}

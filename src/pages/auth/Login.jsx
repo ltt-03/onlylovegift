@@ -25,7 +25,11 @@ const Login = () => {
       const res = await api.post('/auth/login', { email, password });
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        navigate(returnUrl || '/');
+        if (res.data.user.role === 'ADMIN') {
+          navigate('/admin');
+        } else {
+          navigate(returnUrl || '/');
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Có lỗi xảy ra khi đăng nhập');
@@ -41,7 +45,11 @@ const Login = () => {
       });
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        navigate(returnUrl || '/');
+        if (res.data.user.role === 'ADMIN') {
+          navigate('/admin');
+        } else {
+          navigate(returnUrl || '/');
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Đăng nhập Google thất bại');

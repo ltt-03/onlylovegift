@@ -105,7 +105,7 @@ router.post('/login', async (req, res) => {
     res.json({
       success: true,
       token,
-      user: { id: user.id, name: user.name, email: user.email, balance: user.balance }
+      user: { id: user.id, name: user.name, email: user.email, balance: user.balance, role: user.role }
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -186,7 +186,7 @@ router.post('/google', async (req, res) => {
     res.json({
       success: true,
       token,
-      user: { id: user.id, name: user.name, email: user.email, balance: user.balance }
+      user: { id: user.id, name: user.name, email: user.email, balance: user.balance, role: user.role }
     });
   } catch (error) {
     console.error('Google login error:', error);
@@ -207,7 +207,7 @@ router.get('/me', async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
-      select: { id: true, name: true, email: true, isEmailVerified: true, balance: true }
+      select: { id: true, name: true, email: true, isEmailVerified: true, balance: true, role: true }
     });
 
     if (!user) {

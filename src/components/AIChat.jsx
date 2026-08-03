@@ -8,7 +8,7 @@ export default function AIChat() {
     {
       id: 1,
       sender: 'ai',
-      text: 'Chào bạn! 👋 Mình là AI trợ lý của GiftLove IT. Bạn muốn tự điền thông tin hay gửi yêu cầu để mình tạo tự động giúp bạn?'
+      text: 'Chào bạn! 👋 Mình là AI trợ lý của Only Love Gift. Bạn muốn tự điền thông tin hay gửi yêu cầu để mình tạo tự động giúp bạn?'
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -78,13 +78,17 @@ export default function AIChat() {
       const { templateId, senderName, receiverName, message } = action.data;
       // Navigate to customize page with query params
       const params = new URLSearchParams({
-        template: templateId,
         senderName,
         receiverName,
         message,
         autoFill: 'true'
       });
-      navigate(`/create?${params.toString()}`);
+      if (templateId === 'x-mas-tree') {
+        navigate(`/create/x-mas-tree?${params.toString()}`);
+      } else {
+        params.append('template', templateId);
+        navigate(`/create?${params.toString()}`);
+      }
       setIsOpen(false);
     }
   };
@@ -137,7 +141,7 @@ export default function AIChat() {
         <div style={{ padding: '16px', backgroundColor: 'var(--color-primary)', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Bot size={24} />
-            <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'white' }}>GiftLove AI</h3>
+            <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'white' }}>Only Love Gift AI</h3>
           </div>
           <button onClick={() => setIsOpen(false)} style={{ background: 'transparent', color: 'white', border: 'none', cursor: 'pointer', padding: '4px' }}>
             <X size={20} />

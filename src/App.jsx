@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useContext, useState } from 'react';
-import { Gift, LogOut, User, Sun, Moon, ChevronLeft, ChevronRight, Home as HomeIcon, LayoutTemplate, Sparkles, LogIn, Wallet, Trophy } from 'lucide-react';
+import { Gift, LogOut, User, Sun, Moon, ChevronLeft, ChevronRight, Home as HomeIcon, LayoutTemplate, Sparkles, LogIn, Wallet, Trophy, MessageSquareHeart } from 'lucide-react';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
 import Home from './pages/Home';
@@ -15,6 +15,9 @@ import WalletPage from './pages/Wallet';
 import Dashboard from './pages/Dashboard';
 import AIChat from './components/AIChat';
 import GiftView from './pages/GiftView';
+import Feedback from './pages/Feedback';
+import Admin from './pages/Admin';
+import CreateXMasTree from './pages/CreateXMasTree';
 
 
 // Layout Component
@@ -22,6 +25,11 @@ const Layout = ({ children }) => {
   const { user, logout } = useContext(AuthContext);
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
+  const [isHomeMenuOpen, setIsHomeMenuOpen] = useState(false);
+
+  if (location.pathname.startsWith('/gift/view')) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="layout-container">
@@ -34,22 +42,63 @@ const Layout = ({ children }) => {
           </Link>
           
           <nav className="desktop-nav">
-            <Link to="/" className={`desktop-nav-link ${location.pathname === '/' ? 'active' : ''}`}>Trang chủ</Link>
-            <Link to="/templates" className={`desktop-nav-link ${location.pathname === '/templates' ? 'active' : ''}`}>Mẫu Giao Diện</Link>
-            <a 
-              href="/#vip-leaderboard" 
-              className="desktop-nav-link"
-              onClick={(e) => {
-                if (location.pathname === '/') {
-                  e.preventDefault();
-                  document.getElementById('vip-leaderboard')?.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-            >
-              Top VIP
-            </a>
+            <div className="nav-dropdown-container">
+              <div 
+                className={`desktop-nav-link ${location.pathname === '/' ? 'active' : ''}`} 
+                style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
+                onClick={() => {
+                  if (location.pathname !== '/') {
+                    window.location.href = '/';
+                  } else {
+                    setIsHomeMenuOpen(!isHomeMenuOpen);
+                  }
+                }}
+              >
+                Trang chủ <span style={{ fontSize: '0.8em' }}>▼</span>
+              </div>
+              
+              {isHomeMenuOpen && (
+                <div className="nav-dropdown-menu">
+                  <a 
+                    href="/#featured-templates" 
+                    className="nav-dropdown-item"
+                    onClick={(e) => {
+                      setIsHomeMenuOpen(false);
+                      if (location.pathname === '/') {
+                        e.preventDefault();
+                        document.getElementById('featured-templates')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    Sản phẩm nổi bật
+                  </a>
+                  <a 
+                    href="/#vip-leaderboard" 
+                    className="nav-dropdown-item"
+                    onClick={(e) => {
+                      setIsHomeMenuOpen(false);
+                      if (location.pathname === '/') {
+                        e.preventDefault();
+                        document.getElementById('vip-leaderboard')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    Top VIP
+                  </a>
+                  <Link to="/feedback" className="nav-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
+                    Khách Hàng
+                  </Link>
+                </div>
+              )}
+            </div>
+            
+            <Link to="/templates" className={`desktop-nav-link ${location.pathname === '/templates' ? 'active' : ''}`}>Mẫu Quà Tặng</Link>
+            
             {user && (
               <Link to="/dashboard" className={`desktop-nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>Quản Lý</Link>
+            )}
+            {user && user.role === 'ADMIN' && (
+              <Link to="/admin" className={`desktop-nav-link ${location.pathname === '/admin' ? 'active' : ''}`} style={{ color: '#ff8a65' }}>Admin</Link>
             )}
           </nav>
 
@@ -58,12 +107,14 @@ const Layout = ({ children }) => {
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             {user ? (
-              <button onClick={logout} className="theme-toggle-btn" style={{ color: 'var(--color-primary)' }} title="Đăng xuất">
-                <LogOut size={20} />
+              <button onClick={logout} className="theme-toggle-btn" style={{ color: 'var(--color-primary)', borderRadius: '20px', padding: '6px 14px', gap: '6px' }} title="Đăng xuất">
+                <LogOut size={18} />
+                <span style={{ fontSize: '14px', fontWeight: '600' }} className="hide-on-mobile">Đăng xuất</span>
               </button>
             ) : (
-              <Link to="/login" className="theme-toggle-btn" style={{ color: 'var(--color-primary)' }} title="Đăng Nhập">
-                <LogIn size={20} />
+              <Link to="/login" className="theme-toggle-btn" style={{ color: 'var(--color-primary)', borderRadius: '20px', padding: '6px 14px', gap: '6px', textDecoration: 'none', background: 'var(--color-surface)' }} title="Đăng Nhập">
+                <LogIn size={18} />
+                <span style={{ fontSize: '14px', fontWeight: '600' }}>Đăng Nhập</span>
               </Link>
             )}
           </div>
@@ -112,27 +163,62 @@ const Layout = ({ children }) => {
 
         {/* Bottom Navigation */}
         <nav className="bottom-nav">
-          <Link to="/" className={`bottom-nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-            <HomeIcon size={22} />
-            Trang chủ
-          </Link>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <div 
+              className={`bottom-nav-link ${location.pathname === '/' ? 'active' : ''}`}
+              onClick={(e) => {
+                if (location.pathname !== '/') {
+                  window.location.href = '/';
+                } else {
+                  setIsHomeMenuOpen(!isHomeMenuOpen);
+                }
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <HomeIcon size={22} />
+              Trang chủ
+            </div>
+            
+            {isHomeMenuOpen && (
+              <div className="mobile-dropdown-menu">
+                <a 
+                  href="/#featured-templates" 
+                  className="mobile-dropdown-item"
+                  onClick={(e) => {
+                    setIsHomeMenuOpen(false);
+                    if (location.pathname === '/') {
+                      e.preventDefault();
+                      document.getElementById('featured-templates')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
+                  Sản phẩm nổi bật
+                </a>
+                <a 
+                  href="/#vip-leaderboard" 
+                  className="mobile-dropdown-item"
+                  onClick={(e) => {
+                    setIsHomeMenuOpen(false);
+                    if (location.pathname === '/') {
+                      e.preventDefault();
+                      document.getElementById('vip-leaderboard')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
+                  Top VIP
+                </a>
+                <Link to="/feedback" className="mobile-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
+                  Khách Hàng
+                </Link>
+              </div>
+            )}
+          </div>
+          
           <Link to="/templates" className={`bottom-nav-link ${location.pathname === '/templates' ? 'active' : ''}`}>
             <LayoutTemplate size={22} />
             Mẫu
           </Link>
-          <a 
-            href="/#vip-leaderboard" 
-            className="bottom-nav-link"
-            onClick={(e) => {
-              if (location.pathname === '/') {
-                e.preventDefault();
-                document.getElementById('vip-leaderboard')?.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
-          >
-            <Trophy size={22} />
-            Top VIP
-          </a>
+          
           {user && (
             <Link to="/dashboard" className={`bottom-nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
               <User size={22} />
@@ -155,8 +241,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/create" element={<Customize />} />
+          <Route path="/create/x-mas-tree" element={<CreateXMasTree />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/gift/view/:orderCode" element={<GiftView />} />
           <Route path="/legal/:pageId" element={<Legal />} />
           <Route path="/login" element={<AuthContainer />} />

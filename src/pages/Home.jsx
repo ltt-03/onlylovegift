@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Wand2, CreditCard, Rocket, CheckCircle, PlayCircle, Star, Trophy, Gift } from 'lucide-react';
+import { Heart, Wand2, CreditCard, Rocket, CheckCircle, PlayCircle, Star, Trophy, Gift, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { dummyTemplates } from './Templates';
 
 const FallingHearts = () => {
@@ -51,25 +51,53 @@ export default function Home() {
   const navigate = useNavigate();
   const [activeVideo, setActiveVideo] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [stats, setStats] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const feedbacksPerPage = 4;
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
+    const fetchData = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-        const res = await fetch(`${apiUrl}/api/leaderboard`);
-        const data = await res.json();
-        if (data.success) {
-          setLeaderboard(data.leaderboard);
-        }
+        
+        // Fetch leaderboard
+        const resLead = await fetch(`${apiUrl}/api/leaderboard`);
+        const dataLead = await resLead.json();
+        if (dataLead.success) setLeaderboard(dataLead.leaderboard);
+
+        // Fetch feedbacks
+        const resFb = await fetch(`${apiUrl}/api/feedbacks`);
+        const dataFb = await resFb.json();
+        if (dataFb.success) setFeedbacks(dataFb.feedbacks);
+
+        // Fetch template stats
+        const resStats = await fetch(`${apiUrl}/api/templates/stats`);
+        const dataStats = await resStats.json();
+        if (dataStats.success) setStats(dataStats.stats);
       } catch (err) {
-        console.error('Failed to fetch leaderboard:', err);
+        console.error('Failed to fetch data:', err);
       }
     };
-    fetchLeaderboard();
+    fetchData();
   }, []);
 
+  const getTemplateStats = (template) => {
+    const realCount = stats[template.id] || 0;
+    return (template.baseCount || 0) + realCount;
+  };
+
+  const handlePreview = (templateId) => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    window.open(`${apiUrl}/demo/${templateId}`, '_blank');
+  };
+
   const handleSelect = (templateId) => {
-    navigate(`/create?template=${templateId}`);
+    if (templateId === 'x-mas-tree') {
+      navigate(`/create/x-mas-tree`);
+    } else {
+      navigate(`/create?template=${templateId}`);
+    }
   };
 
   return (
@@ -84,7 +112,7 @@ export default function Home() {
         <div className="container hero-cute">
           <div className="hero-cute-content" style={{ animation: 'slideInLeft 1s ease forwards' }}>
             {/* Top Badge */}
-            <div className="cute-badge" style={{ backgroundColor: '#fff', border: '1px solid #eee', color: '#ff4d4f' }}>
+            <div className="cute-badge" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', color: '#ff4d4f' }}>
               🌟 Nền Tảng Tạo Website Quà Tặng Số 1 Việt Nam
             </div>
           <h1 className="hero-title-cute" style={{ fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', lineHeight: 1.2 }}>
@@ -93,8 +121,8 @@ export default function Home() {
           </h1>
           
           {/* Subtitle */}
-          <p className="hero-subtitle-cute" style={{ color: '#4b5563', fontSize: '1.1rem', maxWidth: '500px' }}>
-            Hàng ngàn người đã dùng GiftLove để tạo ra những trang web tình yêu độc quyền làm quà tặng sinh nhật, kỷ niệm đầy ý nghĩa.
+          <p className="hero-subtitle-cute" style={{ color: 'var(--color-text-light)', fontSize: '1.1rem', maxWidth: '500px' }}>
+            Hàng ngàn người đã dùng Only Love Gift để tạo ra những trang web tình yêu độc quyền làm quà tặng sinh nhật, kỷ niệm đầy ý nghĩa.
           </p>
           
           {/* CTA */}
@@ -108,15 +136,15 @@ export default function Home() {
           
           {/* Realistic Features Highlight */}
           <div className="social-proof-cute" style={{ background: 'transparent', padding: '0', backdropFilter: 'none', border: 'none', boxShadow: 'none', marginTop: '30px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#374151' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text)' }}>
               <CheckCircle size={20} color="#10b981" />
               <span style={{ fontSize: '15px', fontWeight: '600' }}>Hơn 10,000+ món quà đã tạo</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#374151' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text)' }}>
               <CheckCircle size={20} color="#10b981" />
               <span style={{ fontSize: '15px', fontWeight: '600' }}>Tự động lên mạng tức thì</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#374151' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text)' }}>
               <CheckCircle size={20} color="#10b981" />
               <span style={{ fontSize: '15px', fontWeight: '600' }}>Thanh toán bảo mật 100%</span>
             </div>
@@ -160,7 +188,7 @@ export default function Home() {
       </section>
 
       {/* Featured Templates */}
-      <section id="featured-templates" style={{ padding: '80px 0', backgroundColor: '#fffafb' }}>
+      <section id="featured-templates" style={{ padding: '80px 0', backgroundColor: 'transparent' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '50px' }}>
             <h2 style={{ fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 850, color: 'var(--color-text)', marginBottom: '12px' }}>🔥 Sản Phẩm Nổi Bật</h2>
@@ -230,14 +258,29 @@ export default function Home() {
                       )}
                     </div>
                   </div>
-                  <p className="text-light" style={{ marginBottom: '24px', flex: 1, fontSize: '0.95rem', lineHeight: 1.5 }}>{template.description}</p>
-                  <button 
-                    onClick={() => handleSelect(template.id)}
-                    className="btn btn-primary" 
-                    style={{ width: '100%', fontSize: '1.05rem', padding: '12px', boxShadow: '0 4px 15px rgba(255, 107, 158, 0.4)' }}
-                  >
-                    Tạo Ngay Mẫu Này
-                  </button>
+                  <p className="text-light" style={{ marginBottom: '15px', flex: 1, fontSize: '0.95rem', lineHeight: 1.5 }}>{template.description}</p>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--color-text-light)', marginBottom: '20px', padding: '10px', background: 'var(--color-surface-hover)', borderRadius: '8px' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>🔄 {template.lastUpdated}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold', color: '#f59e0b' }}>🔥 {getTemplateStats(template)} lượt tạo</span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button 
+                      onClick={() => handlePreview(template.id)}
+                      className="btn btn-outline" 
+                      style={{ flex: 1, padding: '12px 0', fontSize: '1rem', fontWeight: 'bold', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}
+                    >
+                      Xem Demo
+                    </button>
+                    <button 
+                      onClick={() => handleSelect(template.id)}
+                      className="btn btn-primary" 
+                      style={{ flex: 1, padding: '12px 0', fontSize: '1rem', fontWeight: 'bold', boxShadow: '0 4px 15px rgba(255, 107, 158, 0.4)' }}
+                    >
+                      Tạo Quà
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -251,8 +294,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* VIP Leaderboard */}
-      <section id="vip-leaderboard" style={{ padding: '80px 0', backgroundColor: '#fff' }}>
+      {/* VIP Leaderboard Section */}
+      <section id="vip-leaderboard" style={{ padding: '80px 0', backgroundColor: 'transparent' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #ffd700, #ffa500)', color: 'white', marginBottom: '16px', boxShadow: '0 10px 25px rgba(255, 165, 0, 0.4)' }}>
@@ -262,7 +305,7 @@ export default function Home() {
             <p style={{ fontSize: '15px', color: 'var(--color-text-light)', maxWidth: '600px', margin: '0 auto' }}>Vinh danh những khách hàng thân thiết đã tạo ra nhiều món quà ý nghĩa nhất.</p>
           </div>
 
-          <div style={{ maxWidth: '600px', margin: '0 auto 24px auto', padding: '16px 20px', background: 'linear-gradient(to right, #fff5f5, #fff)', borderRadius: '12px', borderLeft: '4px solid var(--color-primary)', boxShadow: '0 2px 10px rgba(0,0,0,0.03)', border: '1px solid #fce4ec' }}>
+          <div style={{ maxWidth: '600px', margin: '0 auto 24px auto', padding: '16px 20px', background: 'var(--color-surface)', borderRadius: '12px', borderLeft: '4px solid var(--color-primary)', boxShadow: '0 2px 10px rgba(0,0,0,0.03)', border: '1px solid var(--color-border)' }}>
             <h4 style={{ margin: '0 0 10px 0', fontSize: '1.05rem', color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Gift size={20} color="var(--color-primary)" />
               Cơ cấu phần thưởng Tri ân Top 3 tháng này
@@ -272,18 +315,18 @@ export default function Home() {
               <li><strong>Top 2:</strong> Tặng Voucher giảm <strong>30%</strong> (Áp dụng cho mọi mẫu trong 1 tháng)</li>
               <li><strong>Top 3:</strong> Tặng Voucher giảm <strong>20%</strong> (Áp dụng cho mọi mẫu trong 1 tháng)</li>
             </ul>
-            <p style={{ margin: '10px 0 0 0', fontSize: '0.85rem', color: '#6b7280', fontStyle: 'italic' }}>* Hướng dẫn: Bảng xếp hạng sẽ chốt sổ vào ngày cuối cùng của tháng. Hệ thống tự động gửi mã Voucher qua email cho Top 3. Hãy nạp thêm để leo top nhé!</p>
+            <p style={{ margin: '10px 0 0 0', fontSize: '0.85rem', color: 'var(--color-text-light)', fontStyle: 'italic' }}>* Hướng dẫn: Bảng xếp hạng sẽ chốt sổ vào ngày cuối cùng của tháng. Hệ thống tự động gửi mã Voucher qua email cho Top 3. Hãy nạp thêm để leo top nhé!</p>
           </div>
 
-          <div style={{ maxWidth: '600px', margin: '0 auto', background: '#fff', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', overflow: 'hidden', border: '1px solid #f3f4f6' }}>
+          <div style={{ maxWidth: '600px', margin: '0 auto', background: 'var(--color-surface)', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
             {leaderboard.length > 0 ? (
               leaderboard.map((user, index) => (
                 <div key={index} style={{ 
                   display: 'flex', 
                   alignItems: 'center', 
-                  padding: '20px 24px', 
-                  borderBottom: index < leaderboard.length - 1 ? '1px solid #f3f4f6' : 'none',
-                  backgroundColor: index === 0 ? '#fffdf0' : (index === 1 ? '#f8f9fa' : '#fff'),
+                  padding: '16px 20px', 
+                  borderBottom: index < leaderboard.length - 1 ? '1px solid var(--color-border)' : 'none',
+                  backgroundColor: index === 0 ? 'rgba(255, 215, 0, 0.1)' : (index === 1 ? 'rgba(192, 192, 192, 0.1)' : 'transparent'),
                   transition: 'background-color 0.2s'
                 }}>
                   <div style={{ width: '40px', fontWeight: 'bold', fontSize: '1.2rem', color: index === 0 ? '#fbbf24' : (index === 1 ? '#9ca3af' : (index === 2 ? '#b45309' : '#d1d5db')) }}>
@@ -323,8 +366,8 @@ export default function Home() {
                   )}
                   
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#1f2937', fontWeight: 600 }}>{user.name}</h4>
-                    <span style={{ fontSize: '0.85rem', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <h4 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--color-text)', fontWeight: 600 }}>{user.name}</h4>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <CheckCircle size={12} color="#10b981" />
                       Đã xác minh
                     </span>
@@ -334,7 +377,7 @@ export default function Home() {
                     <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-primary)' }}>
                       {user.totalDeposited.toLocaleString()}đ
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: index <= 2 ? '4px' : '0' }}>Tổng nạp</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-light)', marginBottom: index <= 2 ? '4px' : '0' }}>Tổng nạp</div>
                     {index <= 2 && (
                       <div>
                         <span style={{ 
@@ -355,7 +398,7 @@ export default function Home() {
                 </div>
               ))
             ) : (
-              <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>Đang tải bảng xếp hạng...</div>
+              <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-text-light)' }}>Đang tải bảng xếp hạng...</div>
             )}
           </div>
         </div>
@@ -408,6 +451,79 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Customer Feedbacks Section */}
+      <section style={{ padding: '80px 0', backgroundColor: 'transparent' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #ff6b9e, #ffb3c6)', color: 'white', marginBottom: '16px', boxShadow: '0 10px 25px rgba(255, 107, 158, 0.4)' }}>
+              <MessageCircle size={28} />
+            </div>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 850, color: 'var(--color-text)', marginBottom: '12px' }}>Khách Hàng Nói Gì</h2>
+            <p style={{ fontSize: '15px', color: 'var(--color-text-light)', maxWidth: '600px', margin: '0 auto' }}>Những phản hồi chân thực từ người dùng đã trải nghiệm Only Love Gift.</p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
+            {feedbacks.slice((currentPage - 1) * feedbacksPerPage, currentPage * feedbacksPerPage).map((fb, index) => (
+              <div key={fb.id || index} className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '15px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  {fb.avatar ? (
+                    <img src={fb.avatar} alt={fb.name} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fce4ec' }} />
+                  ) : (
+                    <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(135deg, #ff6b9e, #ffb3c6)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
+                      {fb.name ? fb.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  )}
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>{fb.name}</h4>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                      <div style={{ display: 'flex', gap: '2px' }}>
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={14} fill={i < fb.rating ? '#fbbf24' : 'transparent'} color={i < fb.rating ? '#fbbf24' : '#d1d5db'} />
+                        ))}
+                      </div>
+                      <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>
+                        {new Date(fb.createdAt).toLocaleDateString('vi-VN')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <p style={{ margin: 0, fontStyle: 'italic', color: 'var(--color-text)', lineHeight: 1.6 }}>"{fb.message}"</p>
+              </div>
+            ))}
+          </div>
+
+          {feedbacks.length > feedbacksPerPage && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '40px' }}>
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: currentPage === 1 ? 'rgba(0,0,0,0.05)' : 'var(--color-surface)', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+              >
+                <ChevronLeft size={20} color={currentPage === 1 ? '#9ca3af' : 'var(--color-text)'} />
+              </button>
+              
+              <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                Trang {currentPage} / {Math.ceil(feedbacks.length / feedbacksPerPage)}
+              </span>
+
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(feedbacks.length / feedbacksPerPage)))}
+                disabled={currentPage === Math.ceil(feedbacks.length / feedbacksPerPage)}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: currentPage === Math.ceil(feedbacks.length / feedbacksPerPage) ? 'rgba(0,0,0,0.05)' : 'var(--color-surface)', cursor: currentPage === Math.ceil(feedbacks.length / feedbacksPerPage) ? 'not-allowed' : 'pointer' }}
+              >
+                <ChevronRight size={20} color={currentPage === Math.ceil(feedbacks.length / feedbacksPerPage) ? '#9ca3af' : 'var(--color-text)'} />
+              </button>
+            </div>
+          )}
+
+          <div style={{ textAlign: 'center', marginTop: '30px' }}>
+            <Link to="/feedback" className="btn btn-outline" style={{ display: 'inline-flex', padding: '12px 30px', fontWeight: 'bold', fontSize: '1.05rem' }}>
+              Viết Đánh Giá Của Bạn 👉
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* How it works */}
       <section className="steps-section">

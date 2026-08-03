@@ -38,6 +38,38 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(express.json());
 
+// ============================================================
+// SOURCE CODE PROTECTION
+// ============================================================
+const PROTECTION_SCRIPT = [
+  '<script>',
+  '(function(){',
+  "  'use strict';",
+  "  document.addEventListener('contextmenu',function(e){e.preventDefault();return false;},true);",
+  "  document.addEventListener('keydown',function(e){",
+  "    if(e.key==='F12'||(e.ctrlKey&&['u','s','p'].includes(e.key.toLowerCase()))||(e.ctrlKey&&e.shiftKey&&['i','j','c','k'].includes(e.key.toLowerCase()))){",
+  "      e.preventDefault();e.stopPropagation();return false;",
+  "    }",
+  "  },true);",
+  "  document.addEventListener('selectstart',function(e){e.preventDefault();},true);",
+  "  document.addEventListener('dragstart',function(e){e.preventDefault();},true);",
+  "  var _dt=false,_th=160;",
+  "  function _chk(){var w=window.outerWidth-window.innerWidth,h=window.outerHeight-window.innerHeight;if(w>_th||h>_th){if(!_dt){_dt=true;document.body.style.filter='blur(8px)';}}else{if(_dt){_dt=false;document.body.style.filter='';}}}",
+  "  setInterval(_chk,1000);",
+  "  if(window.top!==window.self){window.top.location=window.self.location;}",
+  "  console.log('%c\uD83D\uDD12 Only Love Gift','color:#ff6b9d;font-size:22px;font-weight:bold;');",
+  "  console.log('%cNoi dung nay duoc bao ve boi Only Love Gift.','color:#aaa;font-size:12px;');",
+  '})();',
+  '</script>',
+].join('\n');
+
+function injectProtection(html) {
+  if (html.includes('</head>')) {
+    return html.replace('</head>', PROTECTION_SCRIPT + '\n</head>');
+  }
+  return PROTECTION_SCRIPT + html;
+}
+
 // Routes
 // ----------------------------------------------------
 // DYNAMIC GIFT TEMPLATES (must be before static files)
@@ -64,9 +96,10 @@ app.get('/gift/render/:code', async (req, res) => {
     // Create the dynamic data
     const dynamicData = {
       recipientName: order.receiverName,
+      senderName: order.senderName || "Người Giấu Tên",
       birthday: order.birthday,
-      messages: order.message.split('\n').filter(msg => msg.trim() !== ''),
-      images: order.images || [],
+      messages: order.message ? order.message.split('\n').filter(msg => msg.trim() !== '') : [],
+      images: order.images ? JSON.parse(order.images) : [],
       music: order.musicUrl || ""
     };
 
@@ -80,6 +113,7 @@ app.get('/gift/render/:code', async (req, res) => {
     html = html.replace(/src="\.\//g, `src="/templates/${templateId}/`);
     html = html.replace(/href="\.\//g, `href="/templates/${templateId}/`);
 
+    html = injectProtection(html);
     res.send(html);
   } catch (err) {
     console.error('Error generating gift:', err);
@@ -154,6 +188,7 @@ app.get('/gift/view/:code', async (req, res) => {
       }
     }
 
+    html = injectProtection(html);
     res.send(html);
   } catch (err) {
     console.error('Error generating gift:', err);
@@ -241,9 +276,65 @@ app.get('/api/leaderboard', async (req, res) => {
 const walletRoutes = require('./routes/wallet');
 app.use('/api/wallet', walletRoutes);
 
+// Template stats API (Public)
+app.get('/api/templates/stats', async (req, res) => {
+  try {
+    const stats = await prisma.order.groupBy({
+      by: ['templateId'],
+      _count: {
+        templateId: true
+      },
+      where: {
+        status: 'SUCCESS'
+      }
+    });
+    
+    // Convert to simple object { "love-box-01": 5 }
+    const formattedStats = {};
+    stats.forEach(s => {
+      formattedStats[s.templateId] = s._count.templateId;
+    });
+    
+    res.json({ success: true, stats: formattedStats });
+  } catch (error) {
+    console.error('Template stats error:', error);
+    res.json({ success: true, stats: {} });
+  }
+});
+
 // Lightweight Ping Route for UptimeRobot (Giữ server luôn thức)
 app.get('/ping', (req, res) => {
   res.status(200).send('pong');
+});
+
+// Demo Route (Public)
+app.get('/demo/:templateId', (req, res) => {
+  const templateId = req.params.templateId;
+  const htmlPath = path.join(__dirname, 'templates', templateId, 'index.html');
+  if (fs.existsSync(htmlPath)) {
+    let html = fs.readFileSync(htmlPath, 'utf8');
+    
+    // Inject dynamic data for demo
+    const dynamicData = {
+      recipientName: "Linh Ơi",
+      senderName: "Người Giấu Tên",
+      birthday: "01/01/2000",
+      messages: ["Merry Christmas Linh ❄️"],
+      images: [],
+      music: ""
+    };
+    const dataScript = `<script>window.DYNAMIC_DATA = ${JSON.stringify(dynamicData)};</script>`;
+    html = html.replace('</head>', `\n${dataScript}\n</head>`);
+    
+    // Phục vụ assets relative path
+    html = html.replace(/src="\.\//g, `src="/templates/${templateId}/`);
+    html = html.replace(/href="\.\//g, `href="/templates/${templateId}/`);
+    
+    html = injectProtection(html);
+    res.send(html);
+  } else {
+    res.status(404).send('Demo không tồn tại');
+  }
 });
 
 // Helper to generate random order code
@@ -265,6 +356,20 @@ function authenticate(req, res, next) {
     next();
   } catch (error) {
     return res.status(401).json({ success: false, message: 'Phiên đăng nhập đã hết hạn' });
+  }
+};
+
+// Middleware to verify Admin role
+async function requireAdmin(req, res, next) {
+  try {
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    if (!user || user.role !== 'ADMIN') {
+      return res.status(403).json({ success: false, message: 'Quyền truy cập bị từ chối. Chỉ Admin mới được phép.' });
+    }
+    req.adminUser = user;
+    next();
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server khi kiểm tra quyền' });
   }
 };
 
@@ -549,6 +654,177 @@ app.post('/api/orders/:code/mock-pay', async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
+// 5. Feedback endpoints
+app.get('/api/feedbacks', async (req, res) => {
+  try {
+    const feedbacks = await prisma.feedback.findMany({
+      where: { status: 'APPROVED' },
+      orderBy: { createdAt: 'desc' },
+      take: 20
+    });
+    res.json({ success: true, feedbacks });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+});
+
+app.post('/api/feedbacks', authenticate, async (req, res) => {
+  try {
+    const { rating, message } = req.body;
+    
+    if (!message || !rating) {
+      return res.status(400).json({ success: false, message: 'Thiếu thông tin bắt buộc' });
+    }
+
+    const feedback = await prisma.feedback.create({
+      data: {
+        userId: req.user.id,
+        name: req.user.name || 'Người Dùng',
+        rating: Number(rating),
+        message: message,
+        status: 'PENDING'
+      }
+    });
+
+    res.json({ success: true, feedback });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi khi gửi phản hồi' });
+  }
+});
+
+// 6. Admin Endpoints
+app.get('/api/admin/stats', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const usersCount = await prisma.user.count();
+    const ordersCount = await prisma.order.count({ where: { status: 'SUCCESS' } });
+    
+    const revenueObj = await prisma.order.aggregate({
+      where: { status: 'SUCCESS' },
+      _sum: { amount: true }
+    });
+    const revenue = revenueObj._sum.amount || 0;
+
+    res.json({ success: true, stats: { usersCount, ordersCount, revenue } });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.get('/api/admin/users', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: { id: true, name: true, email: true, balance: true, role: true, createdAt: true },
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json({ success: true, users });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.post('/api/admin/users/:id/balance', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const { amount } = req.body; // Can be positive (add) or negative (subtract)
+    const userId = req.params.id;
+    
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { balance: { increment: Number(amount) } }
+    });
+    
+    // Khuyến khích: Lưu vào bảng Transaction để có lịch sử
+    await prisma.transaction.create({
+      data: {
+        userId,
+        amount: Number(amount),
+        type: 'DEPOSIT',
+        status: 'SUCCESS',
+        description: 'Admin điều chỉnh số dư',
+        txCode: `ADMIN-${Date.now()}`
+      }
+    });
+
+    res.json({ success: true, balance: updatedUser.balance });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.get('/api/admin/orders', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { name: true, email: true } } }
+    });
+    res.json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.get('/api/admin/transactions', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const transactions = await prisma.transaction.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { name: true, email: true } } }
+    });
+    res.json({ success: true, transactions });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.post('/api/admin/transactions/:id/status', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body; // 'SUCCESS' or 'FAILED'
+    const tx = await prisma.transaction.findUnique({ where: { id: req.params.id } });
+    
+    if (tx.status !== 'PENDING') return res.status(400).json({ success: false, message: 'Đã xử lý' });
+
+    if (status === 'SUCCESS') {
+      await prisma.$transaction([
+        prisma.transaction.update({ where: { id: tx.id }, data: { status: 'SUCCESS' } }),
+        prisma.user.update({ where: { id: tx.userId }, data: { balance: { increment: tx.amount } } })
+      ]);
+    } else {
+      await prisma.transaction.update({ where: { id: tx.id }, data: { status: 'FAILED' } });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.get('/api/admin/feedbacks', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const feedbacks = await prisma.feedback.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json({ success: true, feedbacks });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+app.post('/api/admin/feedbacks/:id/status', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body; // 'APPROVED', 'REJECTED' or 'DELETED'
+    
+    if (status === 'DELETED') {
+      await prisma.feedback.delete({ where: { id: req.params.id } });
+    } else {
+      await prisma.feedback.update({
+        where: { id: req.params.id },
+        data: { status }
+      });
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

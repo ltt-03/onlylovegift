@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Christmas Tree</title>
+    <link rel="stylesheet" href="./style/style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "/templates/x-mas-tree/vendor/three/build/three.module.js",
+                "three/addons/": "/templates/x-mas-tree/vendor/three/examples/jsm/",
+                "@mediapipe/tasks-vision": "/templates/x-mas-tree/vendor/mediapipe/tasks-vision.esm.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="loader">
+        <img src="./style/external/loader.gif" style="width: 100px;" alt="">
+        <div class="loader-text">Only Love Gift Đang tải...</div>
+    </div>
+
+    <button id="fullscreen-btn" title="Toàn màn hình">
+        ⛶
+    </button>
+
+    <div id="canvas-container"></div>
+
+    <div id="ui-layer">
+        <h1 id="main-title">Merry Christmas</h1>
+        <script>
+            if (window.DYNAMIC_DATA && window.DYNAMIC_DATA.messages && window.DYNAMIC_DATA.messages.length > 0) {
+                document.getElementById('main-title').innerText = window.DYNAMIC_DATA.messages[0];
+            } else if (window.DYNAMIC_DATA && window.DYNAMIC_DATA.recipientName) {
+                document.getElementById('main-title').innerText = "Merry Christmas, " + window.DYNAMIC_DATA.recipientName;
+            }
+        </script>
+        
+        <div class="controls-wrapper">
+            <div class="hint-text">
+                ✊Nắm tay lại để tạo hình<br>
+                🤚Mở tay ta để phân tán <br>
+                👌OK để phóng to ảnh
+            </div>
+        </div>
+    </div>
+
+    <div id="webcam-wrapper">
+        <video id="webcam" autoplay playsinline></video>
+        <div id="debug-info">Đang nhận diện...</div>
+        <canvas id="webcam-preview" style="display:none;"></canvas>
+    </div>
+
+    <script type="module" src="./style/script.js"></script>
+</body>
+</html>

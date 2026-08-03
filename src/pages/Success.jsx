@@ -44,7 +44,7 @@ export default function Success() {
         <CheckCircle size={64} color="#2ecc71" style={{ margin: '0 auto 20px' }} />
         <h1 style={{ fontSize: '2rem', marginBottom: '15px' }}>Thanh Toán Thành Công!</h1>
         <p className="text-light" style={{ marginBottom: '40px' }}>
-          Cảm ơn bạn đã tin tưởng GiftLove IT. Hệ thống đang tiến hành tạo website quà tặng của bạn.
+          Cảm ơn bạn đã tin tưởng Only Love Gift. Hệ thống đang tiến hành tạo website quà tặng của bạn.
         </p>
 
         <div style={{ background: 'var(--color-surface-hover)', borderRadius: '12px', padding: '24px', marginBottom: '30px' }}>

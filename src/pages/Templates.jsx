@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlayCircle, X } from 'lucide-react';
 
@@ -12,16 +12,63 @@ export const dummyTemplates = [
     discountPercent: '-41%',
     discountLabel: 'Chỉ áp dụng cho lần đầu!',
     image: '/images/love-box-01.jpeg',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' // Vẫn giữ tạm video demo nếu chưa có video thật
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    baseCount: 34,
+    lastUpdated: '12/12/2025 14:30'
+  },
+  {
+    id: 'x-mas-tree',
+    name: 'Cây Thông Noel 3D Tương Tác',
+    description: 'Cây thông Noel 3D lung linh với ảnh của bạn trên từng quả cầu trang trí. Nhận diện cử chỉ tay để tương tác, kèm nhạc Giáng Sinh lãng mạn.',
+    price: '69,000đ',
+    discountPrice: '39,000đ',
+    discountPercent: '-43%',
+    discountLabel: 'Ưu đãi mùa lễ hội!',
+    image: '/images/x-mas-tree.jpg',
+    videoUrl: null,
+    baseCount: 12,
+    lastUpdated: '24/12/2025 22:00'
   }
 ];
+
 
 export default function Templates() {
   const navigate = useNavigate();
   const [activeVideo, setActiveVideo] = useState(null);
+  const [stats, setStats] = useState({});
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const res = await fetch(`${apiUrl}/api/templates/stats`);
+        const data = await res.json();
+        if (data.success) {
+          setStats(data.stats);
+        }
+      } catch (e) {
+        console.error('Failed to fetch template stats', e);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const getTemplateStats = (template) => {
+    const realCount = stats[template.id] || 0;
+    return (template.baseCount || 0) + realCount;
+  };
+
+  const handlePreview = (templateId) => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    window.open(`${apiUrl}/demo/${templateId}`, '_blank');
+  };
 
   const handleSelect = (templateId) => {
-    navigate(`/create?template=${templateId}`);
+    if (templateId === 'x-mas-tree') {
+      navigate(`/create/x-mas-tree`);
+    } else {
+      navigate(`/create?template=${templateId}`);
+    }
   };
 
   return (
@@ -89,14 +136,29 @@ export default function Templates() {
                   )}
                 </div>
               </div>
-              <p className="text-light" style={{ marginBottom: '24px', flex: 1 }}>{template.description}</p>
-              <button 
-                onClick={() => handleSelect(template.id)}
-                className="btn btn-primary" 
-                style={{ width: '100%' }}
-              >
-                Tạo Với Mẫu Này
-              </button>
+              <p className="text-light" style={{ marginBottom: '15px', flex: 1 }}>{template.description}</p>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#6b7280', marginBottom: '20px', padding: '10px', background: '#f9fafb', borderRadius: '8px' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>🔄 {template.lastUpdated}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold', color: '#f59e0b' }}>🔥 {getTemplateStats(template)} lượt tạo</span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button 
+                  onClick={() => handlePreview(template.id)}
+                  className="btn btn-outline" 
+                  style={{ flex: 1, padding: '10px 0', fontSize: '0.95rem' }}
+                >
+                  Xem Demo
+                </button>
+                <button 
+                  onClick={() => handleSelect(template.id)}
+                  className="btn btn-primary" 
+                  style={{ flex: 1, padding: '10px 0', fontSize: '0.95rem' }}
+                >
+                  Tạo Quà
+                </button>
+              </div>
             </div>
           </div>
         ))}
