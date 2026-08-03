@@ -626,19 +626,23 @@ var S = {
 
     // INJECT_SETTINGS_START
     var settings = {
-      image: [
+      image: (window.DYNAMIC_DATA && window.DYNAMIC_DATA.images && window.DYNAMIC_DATA.images.length > 0) ? window.DYNAMIC_DATA.images : [
         "/templates/love-box-01/test.jpeg", 
         "/templates/love-box-01/test2.jpeg", 
         "/templates/love-box-01/test3.jpeg", 
         "/templates/love-box-01/test4.jpeg"
       ],
       arrayText: window.DYNAMIC_DATA ? ["CHÚC MỪNG", "SINH NHẬT", window.DYNAMIC_DATA.recipientName, window.DYNAMIC_DATA.birthday || "", "🎂"] : ["CHÚC MỪNG", "SINH NHẬT", "{{RECEIVER_NAME}}", "{{BIRTHDAY}}", "🎂"],
-      listText: [
+      listText: window.DYNAMIC_DATA ? [
+        "Gửi " + window.DYNAMIC_DATA.recipientName + ",", 
+        ...(window.DYNAMIC_DATA.messages && window.DYNAMIC_DATA.messages.length > 0 ? window.DYNAMIC_DATA.messages : ["Chúc mừng sinh nhật, tuổi mới luôn ngập tràn niềm vui và hạnh phúc nhé! 🎂❤"]), 
+        "Từ " + window.DYNAMIC_DATA.senderName + " với rất nhiều tình yêu ❤"
+      ] : [
         "Gửi {{RECEIVER_NAME}},", 
         "{{MESSAGE}}", 
         "Từ {{SENDER_NAME}} với rất nhiều tình yêu ❤"
       ],
-      message: "{{MESSAGE}}",
+      message: (window.DYNAMIC_DATA && window.DYNAMIC_DATA.messages) ? window.DYNAMIC_DATA.messages.join('<br>') : "{{MESSAGE}}",
       listGifImage: "/templates/love-box-01/anhgif/gif1.gif",
       music: (window.DYNAMIC_DATA && window.DYNAMIC_DATA.music) ? window.DYNAMIC_DATA.music : "https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tiktok-music-1774689772225-eucjr.mp3?v=1774689775"
     };
