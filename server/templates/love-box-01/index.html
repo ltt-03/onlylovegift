@@ -632,7 +632,7 @@ var S = {
         "/templates/love-box-01/test3.jpeg", 
         "/templates/love-box-01/test4.jpeg"
       ],
-      arrayText: ["CHÚC MỪNG", "SINH NHẬT", "{{RECEIVER_NAME}}", "{{BIRTHDAY}}", "🎂"],
+      arrayText: window.DYNAMIC_DATA ? ["CHÚC MỪNG", "SINH NHẬT", window.DYNAMIC_DATA.recipientName, window.DYNAMIC_DATA.birthday || "", "🎂"] : ["CHÚC MỪNG", "SINH NHẬT", "{{RECEIVER_NAME}}", "{{BIRTHDAY}}", "🎂"],
       listText: [
         "Gửi {{RECEIVER_NAME}},", 
         "{{MESSAGE}}", 
@@ -640,7 +640,7 @@ var S = {
       ],
       message: "{{MESSAGE}}",
       listGifImage: "/templates/love-box-01/anhgif/gif1.gif",
-      music: "https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tiktok-music-1774689772225-eucjr.mp3?v=1774689775"
+      music: (window.DYNAMIC_DATA && window.DYNAMIC_DATA.music) ? window.DYNAMIC_DATA.music : "https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tiktok-music-1774689772225-eucjr.mp3?v=1774689775"
     };
     // INJECT_SETTINGS_END
 
@@ -859,7 +859,8 @@ S.UI = (function () {
         case 'image':
           currentText = '';
           S.Shape.switchShape(S.ShapeBuilder.letter(''));
-          var imgList = (S.apiImages && S.apiImages.length > 0) ? S.apiImages : ['test.jpeg', 'test2.jpeg', 'test3.jpeg', 'test4.jpeg'];
+          var defaultImages = ['/templates/love-box-01/test.jpeg', '/templates/love-box-01/test2.jpeg', '/templates/love-box-01/test3.jpeg', '/templates/love-box-01/test4.jpeg'];
+        var imgList = (window.DYNAMIC_DATA && window.DYNAMIC_DATA.images && window.DYNAMIC_DATA.images.length > 0) ? window.DYNAMIC_DATA.images : ((S.apiImages && S.apiImages.length > 0) ? S.apiImages : defaultImages);
           var giftSrc = (S.apiGift) ? S.apiGift : 'anhgif/gif1.gif';
           // Show gift GIF first
           var giftOverlay = document.getElementById('giftOverlay');
@@ -2126,7 +2127,7 @@ S.init();
     bdayPhoto.src = imgList[0];
 
     // Get message and type it out
-    var msg = S.apiMessage || 'Chúc mừng sinh nhật em yêu! Cảm ơn em vì đã đến bên anh, làm cuộc sống của anh trở nên đặc biệt và ý nghĩa hơn bao giờ hết. Mỗi ngày được ở bên em là một ngày tuyệt vời, mỗi nụ cười của em là động lực lớn nhất của anh. Chúc em tuổi mới luôn vui vẻ, hạnh phúc, mãi xinh đẹp và toả sáng nhé! Anh sẽ luôn ở đây, yêu thương và đồng hành cùng em!';
+    var msg = (window.DYNAMIC_DATA && window.DYNAMIC_DATA.messages && window.DYNAMIC_DATA.messages.length > 0) ? window.DYNAMIC_DATA.messages.join(' ') : (S.apiMessage || 'Chúc mừng sinh nhật em yêu! Cảm ơn em vì đã đến bên anh, làm cuộc sống của anh trở nên đặc biệt và ý nghĩa hơn bao giờ hết. Mỗi ngày được ở bên em là một ngày tuyệt vời, mỗi nụ cười của em là động lực lớn nhất của anh. Chúc em tuổi mới luôn vui vẻ, hạnh phúc, mãi xinh đẹp và toả sáng nhé! Anh sẽ luôn ở đây, yêu thương và đồng hành cùng em!');
 
     bdayPopup.classList.add('active');
     setTimeout(function () { typeMessage(msg); }, 500);

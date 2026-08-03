@@ -14,6 +14,7 @@ import VerifyEmail from './pages/auth/VerifyEmail';
 import WalletPage from './pages/Wallet';
 import Dashboard from './pages/Dashboard';
 import AIChat from './components/AIChat';
+import GiftView from './pages/GiftView';
 
 
 // Layout Component
@@ -156,6 +157,7 @@ function App() {
           <Route path="/create" element={<Customize />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/gift/view/:orderCode" element={<GiftView />} />
           <Route path="/legal/:pageId" element={<Legal />} />
           <Route path="/login" element={<AuthContainer />} />
           <Route path="/register" element={<AuthContainer />} />

@@ -42,9 +42,9 @@ app.use(express.json());
 // ----------------------------------------------------
 // DYNAMIC GIFT TEMPLATES (must be before static files)
 // ----------------------------------------------------
-app.get('/gift/lucky-chance', async (req, res) => {
+app.get('/gift/render/:code', async (req, res) => {
   try {
-    const code = req.query.code;
+    const code = req.params.code || req.query.code;
     if (!code) return res.status(400).send('Thiếu mã đơn hàng');
     
     const order = await prisma.order.findUnique({ where: { orderCode: code } });
@@ -52,24 +52,33 @@ app.get('/gift/lucky-chance', async (req, res) => {
       return res.status(404).send('Không tìm thấy món quà hoặc đơn hàng chưa thanh toán hoàn tất.');
     }
 
-    const htmlPath = path.join(__dirname, 'public', 'templates', 'lucky-chance', 'index.html');
+    const templateId = order.templateId;
+    const htmlPath = path.join(__dirname, 'templates', templateId, 'index.html');
+    
+    if (!fs.existsSync(htmlPath)) {
+      return res.status(404).send('Giao diện quà tặng không tồn tại.');
+    }
+
     let html = fs.readFileSync(htmlPath, 'utf8');
 
     // Create the dynamic data
     const dynamicData = {
       recipientName: order.receiverName,
+      birthday: order.birthday,
       messages: order.message.split('\n').filter(msg => msg.trim() !== ''),
-      images: [],
-      music: order.musicUrl || "../uploads/music/song_1783337224_677.mp3"
+      images: order.images || [],
+      music: order.musicUrl || ""
     };
 
-    const dataScript = `window.luckyChanceData = ${JSON.stringify(dynamicData)};`;
+    const dataScript = `<script>window.DYNAMIC_DATA = ${JSON.stringify(dynamicData)};</script>`;
     
-    // Replace the default data in the HTML with the real order data
-    html = html.replace(
-      /window\.luckyChanceData\s*=\s*\{.*?\};/s, 
-      dataScript
-    );
+    // Inject dynamic data into the head
+    html = html.replace('</head>', `\n${dataScript}\n</head>`);
+
+    // Phục vụ assets relative path
+    // Template needs to load assets from /templates/template-name/
+    html = html.replace(/src="\.\//g, `src="/templates/${templateId}/`);
+    html = html.replace(/href="\.\//g, `href="/templates/${templateId}/`);
 
     res.send(html);
   } catch (err) {
