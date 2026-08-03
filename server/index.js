@@ -9,10 +9,16 @@ const multer = require('multer');
 const axios = require('axios');
 const FormData = require('form-data');
 
+// Ensure upload directories exist
+const uploadImagesDir = path.join(__dirname, 'public', 'uploads', 'images');
+if (!fs.existsSync(uploadImagesDir)) {
+  fs.mkdirSync(uploadImagesDir, { recursive: true });
+}
+
 // Configure multer for image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'public', 'uploads', 'images'));
+    cb(null, uploadImagesDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

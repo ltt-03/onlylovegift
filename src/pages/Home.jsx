@@ -55,7 +55,8 @@ export default function Home() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/leaderboard`);
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const res = await fetch(`${apiUrl}/api/leaderboard`);
         const data = await res.json();
         if (data.success) {
           setLeaderboard(data.leaderboard);
