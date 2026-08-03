@@ -2,7 +2,7 @@
  * Nhạc nền — phát sau thao tác người dùng (chạm cỏ intro).
  * Server: music | musicUrl | audio | audioUrl | bgMusic | backgroundMusic
  */
-const DEFAULT_MUSIC_URL = 'asset/musics/thieu_nien.mp3';
+const DEFAULT_MUSIC_URL = (window.ASSET_BASE_PATH || '') + 'asset/musics/thieu_nien.mp3';
 
 let musicUrl = DEFAULT_MUSIC_URL;
 let audioEl = null;

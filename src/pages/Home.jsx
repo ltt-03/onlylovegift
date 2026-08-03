@@ -95,6 +95,12 @@ export default function Home() {
   const handleSelect = (templateId) => {
     if (templateId === 'x-mas-tree') {
       navigate(`/create/x-mas-tree`);
+    } else if (templateId === 'gift-surprise-v2') {
+      navigate(`/create/gift-surprise-v2`);
+    } else if (templateId === 'love-gift-3d') {
+      navigate(`/create/love-gift-3d`);
+    } else if (templateId === 'lucky-chance') {
+      navigate(`/create/lucky-chance`);
     } else {
       navigate(`/create?template=${templateId}`);
     }

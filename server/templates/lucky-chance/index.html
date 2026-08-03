@@ -7,17 +7,14 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Lucky Chance</title>
-    <link rel="icon" href="asset/icons/iconIntro.png" type="image/png" />
-    <link rel="apple-touch-icon" href="asset/icons/iconIntro.png" />
+    <link rel="icon" href="./asset/icons/iconIntro.png" type="image/png" />
+    <link rel="apple-touch-icon" href="./asset/icons/iconIntro.png" />
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
 
 
-  <script>
-    // Injected by gift.php
-    window.luckyChanceData = {"recipientName":"gửi emm","messages":["May mắn luôn mỉm cười với bạn","Chúc bạn ngày mới vui vẻ"],"images":[],"music":"../uploads/music/song_1783337224_677.mp3"};
-</script>
+  <script>window.luckyChanceData = window.DYNAMIC_DATA || null;</script>
 </head>
   <body class="relative w-screen h-screen m-0 p-0 text-white select-none">
     <div
@@ -54,7 +51,7 @@
           aria-label="Bắt đầu"
         >
           <img
-            src="asset/icons/iconIntro.png"
+            src="./asset/icons/iconIntro.png"
             alt=""
             class="intro-icon"
             width="200"
@@ -81,7 +78,7 @@
       <div class="ui-deco-layer" aria-hidden="true">
         <div class="top-deco-strip"></div>
         <img
-          src="asset/icons/gocDuoi.png"
+          src="./asset/icons/gocDuoi.png"
           alt=""
           class="corner-deco corner-deco--bottom-left"
           width="220"
@@ -89,7 +86,7 @@
           decoding="async"
         />
         <img
-          src="asset/icons/luckyDuoi.png"
+          src="./asset/icons/luckyDuoi.png"
           alt=""
           class="corner-deco corner-deco--bottom-right"
           width="220"
@@ -98,7 +95,7 @@
         />
         <div class="chuong-slot chuong-slot--left">
           <img
-            src="asset/icons/chuongTren.png"
+            src="./asset/icons/chuongTren.png"
             alt=""
             class="chuong-icon"
             decoding="async"
@@ -106,7 +103,7 @@
         </div>
         <div class="chuong-slot chuong-slot--right">
           <img
-            src="asset/icons/chuongTren.png"
+            src="./asset/icons/chuongTren.png"
             alt=""
             class="chuong-icon chuong-icon--flip"
             decoding="async"
@@ -116,12 +113,12 @@
     </div>
     <!-- #app-main -->
 
-    <script src="js/preview-draft-storage.js"></script>
-    <script src="js/music.js" defer></script>
-    <script src="js/top-deco.js" defer></script>
-    <script src="js/fly-effects.js" defer></script>
-    <script src="js/main.js" defer></script>
-    <script type="module" src="js/luckyChanceBoot.js"></script>
+    <script src="./js/preview-draft-storage.js"></script>
+    <script src="./js/music.js" defer></script>
+    <script src="./js/top-deco.js" defer></script>
+    <script src="./js/fly-effects.js" defer></script>
+    <script src="./js/main.js" defer></script>
+    <script type="module" src="./js/luckyChanceBoot.js"></script>
     <script>
       (function () {
         const intro = document.getElementById("intro-screen");

@@ -24,12 +24,12 @@ const DEFAULT_MESSAGES = [
 ];
 
 const DEFAULT_IMAGES = [
-    'asset/images/anh_1.jpg',
-    'asset/images/anh_2.jpg',
-    'asset/images/anh_3.jpg',
-    'asset/images/anh_4.jpg',
-    'asset/images/anh_5.jpg',
-    'asset/images/anh_6.jpg'
+    (window.ASSET_BASE_PATH || '') + 'asset/images/anh_1.jpg',
+    (window.ASSET_BASE_PATH || '') + 'asset/images/anh_2.jpg',
+    (window.ASSET_BASE_PATH || '') + 'asset/images/anh_3.jpg',
+    (window.ASSET_BASE_PATH || '') + 'asset/images/anh_4.jpg',
+    (window.ASSET_BASE_PATH || '') + 'asset/images/anh_5.jpg',
+    (window.ASSET_BASE_PATH || '') + 'asset/images/anh_6.jpg'
 ];
 
 let messages = [];
@@ -456,8 +456,8 @@ function initSampleModeFromUrl() {
 
 initSampleModeFromUrl();
 
-if (window.luckyChanceData) {
-    applyServerData(window.luckyChanceData);
+if ((window.DYNAMIC_DATA || window.luckyChanceData)) {
+    applyServerData((window.DYNAMIC_DATA || window.luckyChanceData));
 }
 
 updateIntroRecipient(recipientName);

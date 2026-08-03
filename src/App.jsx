@@ -18,6 +18,9 @@ import GiftView from './pages/GiftView';
 import Feedback from './pages/Feedback';
 import Admin from './pages/Admin';
 import CreateXMasTree from './pages/CreateXMasTree';
+import CreateGiftSurprise from './pages/CreateGiftSurprise';
+import CreateLoveGift3D from './pages/CreateLoveGift3D';
+import CreateLuckyChance from './pages/CreateLuckyChance';
 
 
 // Layout Component
@@ -242,6 +245,9 @@ function App() {
           <Route path="/templates" element={<Templates />} />
           <Route path="/create" element={<Customize />} />
           <Route path="/create/x-mas-tree" element={<CreateXMasTree />} />
+          <Route path="/create/gift-surprise-v2" element={<CreateGiftSurprise />} />
+          <Route path="/create/love-gift-3d" element={<CreateLoveGift3D />} />
+          <Route path="/create/lucky-chance" element={<CreateLuckyChance />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<Success />} />
           <Route path="/feedback" element={<Feedback />} />

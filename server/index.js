@@ -93,17 +93,31 @@ app.get('/gift/render/:code', async (req, res) => {
 
     let html = fs.readFileSync(htmlPath, 'utf8');
 
+    let messageData = order.message;
+    let passcode = null;
+    let extraData = {};
+    try {
+      if (order.message && order.message.trim().startsWith('{')) {
+        const parsed = JSON.parse(order.message);
+        if (parsed.text !== undefined) messageData = parsed.text;
+        passcode = parsed.passcode;
+        extraData = parsed;
+      }
+    } catch(e) {}
+
     // Create the dynamic data
     const dynamicData = {
       recipientName: order.receiverName,
       senderName: order.senderName || "Người Giấu Tên",
       birthday: order.birthday,
-      messages: order.message ? order.message.split('\n').filter(msg => msg.trim() !== '') : [],
+      messages: messageData ? messageData.split('\n').filter(msg => msg.trim() !== '') : [],
+      passcode: passcode,
       images: order.images ? JSON.parse(order.images) : [],
-      music: order.musicUrl || ""
+      music: order.musicUrl || "",
+      ...extraData
     };
 
-    const dataScript = `<script>window.DYNAMIC_DATA = ${JSON.stringify(dynamicData)};</script>`;
+    const dataScript = `<script>window.DYNAMIC_DATA = ${JSON.stringify(dynamicData)}; window.ASSET_BASE_PATH = "/templates/${templateId}/";</script>`;
     
     // Inject dynamic data into the head
     html = html.replace('</head>', `\n${dataScript}\n</head>`);
@@ -319,11 +333,11 @@ app.get('/demo/:templateId', (req, res) => {
       recipientName: "Linh Ơi",
       senderName: "Người Giấu Tên",
       birthday: "01/01/2000",
-      messages: ["Merry Christmas Linh ❄️"],
+      messages: [],
       images: [],
       music: ""
     };
-    const dataScript = `<script>window.DYNAMIC_DATA = ${JSON.stringify(dynamicData)};</script>`;
+    const dataScript = `<script>window.DYNAMIC_DATA = ${JSON.stringify(dynamicData)}; window.ASSET_BASE_PATH = "/templates/${templateId}/";</script>`;
     html = html.replace('</head>', `\n${dataScript}\n</head>`);
     
     // Phục vụ assets relative path
@@ -374,41 +388,43 @@ async function requireAdmin(req, res, next) {
 };
 
 // 1. Create a new order (Requires Login & handles images via ImgBB)
-app.post('/api/orders', authenticate, upload.array('images', 4), async (req, res) => {
+app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
   try {
-    const { templateId, senderName, receiverName, birthday, message, musicUrl } = req.body;
+    const { templateId, senderName, receiverName, birthday, message, musicUrl, passcode } = req.body;
     
     let uploadedImages = [];
+    let passImageUrl = null;
+    let customMusicUrl = musicUrl || null;
+
     if (req.files && req.files.length > 0) {
-      if (process.env.IMGBB_API_KEY) {
-        // Upload to ImgBB
-        for (const file of req.files) {
-          try {
-            const formData = new FormData();
-            const fileStream = fs.createReadStream(file.path);
-            formData.append('image', fileStream);
-            const imgbbRes = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`, formData, {
-              headers: formData.getHeaders()
-            });
-            if (imgbbRes.data && imgbbRes.data.success) {
-              uploadedImages.push(imgbbRes.data.data.url);
-            }
-          } catch (uploadErr) {
-            console.error('ImgBB Upload Error:', uploadErr.response ? uploadErr.response.data : uploadErr.message);
-            // Fallback to local if ImgBB fails
-            uploadedImages.push(`/uploads/images/${file.filename}`);
-          } finally {
-            // Delete the local file after uploading to ImgBB
+      for (const file of req.files) {
+        if (file.fieldname === 'images' || file.fieldname === 'passImage') {
+          let url = `/uploads/images/${file.filename}`;
+          if (process.env.IMGBB_API_KEY) {
             try {
-              if (process.env.IMGBB_API_KEY) {
-                fs.unlinkSync(file.path);
+              const formData = new FormData();
+              const fileStream = fs.createReadStream(file.path);
+              formData.append('image', fileStream);
+              const imgbbRes = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`, formData, {
+                headers: formData.getHeaders()
+              });
+              if (imgbbRes.data && imgbbRes.data.success) {
+                url = imgbbRes.data.data.url;
               }
-            } catch (e) {}
+            } catch (uploadErr) {
+              console.error('ImgBB Upload Error:', uploadErr.response ? uploadErr.response.data : uploadErr.message);
+            } finally {
+              try { fs.unlinkSync(file.path); } catch (e) {}
+            }
           }
+          if (file.fieldname === 'passImage') {
+            passImageUrl = url;
+          } else {
+            uploadedImages.push(url);
+          }
+        } else if (file.fieldname === 'musicFile') {
+          customMusicUrl = `/uploads/images/${file.filename}`;
         }
-      } else {
-        // Fallback to local storage if no ImgBB key is provided
-        uploadedImages = req.files.map(file => `/uploads/images/${file.filename}`);
       }
     }
 
@@ -422,6 +438,13 @@ app.post('/api/orders', authenticate, upload.array('images', 4), async (req, res
 
     const finalAmount = successfulOrderCount === 0 ? 29000 : 49000;
 
+    let finalMessage = message;
+    if (passcode) {
+      finalMessage = JSON.stringify({ text: message, passcode });
+    }
+
+    const imagesData = passImageUrl ? { gallery: uploadedImages, passImage: passImageUrl } : uploadedImages;
+
     const order = await prisma.order.create({
       data: {
         orderCode: generateOrderCode(),
@@ -429,12 +452,12 @@ app.post('/api/orders', authenticate, upload.array('images', 4), async (req, res
         senderName,
         receiverName,
         birthday,
-        message,
-        musicUrl,
+        message: finalMessage || '',
+        musicUrl: customMusicUrl,
         amount: finalAmount,
         status: 'PENDING',
         userId: req.user.id,
-        images: uploadedImages.length > 0 ? JSON.stringify(uploadedImages) : null
+        images: (Array.isArray(imagesData) && imagesData.length > 0) || (!Array.isArray(imagesData)) ? JSON.stringify(imagesData) : null
       }
     });
 

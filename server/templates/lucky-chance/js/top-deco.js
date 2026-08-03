@@ -1,7 +1,7 @@
 /**
  * Dây cỏ leoTren — xếp chồng ngang, lật xen kẽ, phủ kín mép trên.
  */
-const TOP_DECO_SRC = 'asset/icons/leoTren.png';
+const TOP_DECO_SRC = (window.ASSET_BASE_PATH || '') + 'asset/icons/leoTren.png';
 
 function initTopDecoStrip() {
     const strip = document.querySelector('.top-deco-strip');

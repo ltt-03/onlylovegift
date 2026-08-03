@@ -27,7 +27,44 @@ export const dummyTemplates = [
     image: '/images/x-mas-tree.jpg',
     videoUrl: null,
     baseCount: 12,
-    lastUpdated: '24/12/2025 22:00'
+  },
+  {
+    id: 'gift-surprise-v2',
+    name: 'Bông Hoa 8/3 Bất Ngờ',
+    description: 'Món quà 8/3 với hiệu ứng bông hoa nở, màn hình khóa bằng mật khẩu đặc biệt và thư tình lãng mạn. Tùy chỉnh ảnh, nhạc và lời chúc.',
+    price: '79,000đ',
+    discountPrice: '49,000đ',
+    discountPercent: '-38%',
+    discountLabel: 'Dành cho phái đẹp!',
+    image: '/images/love-box-01.jpeg',
+    videoUrl: null,
+    baseCount: 8,
+  },
+  {
+    id: 'love-gift-3d',
+    name: 'Trái Tim 3D Tình Yêu',
+    description: 'Trái tim 3D lãng mạn bay bổng, hiển thị ảnh kỉ niệm và lời chúc. Tùy chỉnh ảnh, nhạc và thông điệp dài.',
+    price: '99,000đ',
+    discountPrice: '59,000đ',
+    discountPercent: '-40%',
+    discountLabel: 'Mới nhất!',
+    image: '/images/love-box-01.jpeg',
+    videoUrl: null,
+    baseCount: 5,
+    lastUpdated: '03/08/2026 12:00'
+  },
+  {
+    id: 'lucky-chance',
+    name: 'Cỏ 4 Lá May Mắn',
+    description: 'Trang trí cỏ 4 lá may mắn với lời chúc động viên bay lượn và nhạc nền nhẹ nhàng.',
+    price: '59,000đ',
+    discountPrice: '39,000đ',
+    discountPercent: '-33%',
+    discountLabel: 'Gửi may mắn!',
+    image: '/images/love-box-01.jpeg',
+    videoUrl: null,
+    baseCount: 7,
+    lastUpdated: '03/08/2026 20:00'
   }
 ];
 
@@ -66,6 +103,12 @@ export default function Templates() {
   const handleSelect = (templateId) => {
     if (templateId === 'x-mas-tree') {
       navigate(`/create/x-mas-tree`);
+    } else if (templateId === 'gift-surprise-v2') {
+      navigate(`/create/gift-surprise-v2`);
+    } else if (templateId === 'love-gift-3d') {
+      navigate(`/create/love-gift-3d`);
+    } else if (templateId === 'lucky-chance') {
+      navigate(`/create/lucky-chance`);
     } else {
       navigate(`/create?template=${templateId}`);
     }
@@ -149,7 +192,8 @@ export default function Templates() {
                   className="btn btn-outline" 
                   style={{ flex: 1, padding: '10px 0', fontSize: '0.95rem' }}
                 >
-                  Xem Demo
+                  <div>Xem Demo</div>
+                  {template.id === 'gift-surprise-v2' && <div style={{fontSize: '0.75rem', marginTop: '2px', opacity: 0.8}}>(mã khoá 0803)</div>}
                 </button>
                 <button 
                   onClick={() => handleSelect(template.id)}

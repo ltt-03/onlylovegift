@@ -34,9 +34,8 @@ async function applyRecordWhenReady(data) {
 }
 
 async function bootFromServerId() {
-  const data = window.DYNAMIC_DATA || window.luckyChanceData;
-  if (data) {
-    await applyRecordWhenReady(data);
+  if ((window.DYNAMIC_DATA || window.luckyChanceData)) {
+    await applyRecordWhenReady((window.DYNAMIC_DATA || window.luckyChanceData));
     return;
   }
 
