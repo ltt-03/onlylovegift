@@ -352,12 +352,13 @@ app.get('/api/orders/:code', async (req, res) => {
 
 // 3. Webhook endpoint (Casso / Sepay will call this)
 app.post('/api/webhooks/payment', async (req, res) => {
-  // BẢO MẬT: Kiểm tra API Key từ SePay
-  const apiKey = req.headers['authorization'] || req.headers['apikey'] || req.headers['x-api-key'];
+  let apiKey = req.headers['authorization'] || req.headers['apikey'] || req.headers['x-api-key'] || '';
+  // Loại bỏ các tiền tố như "Bearer " hoặc "Apikey " để lấy đúng mã khóa
+  apiKey = apiKey.replace(/^(Bearer|Apikey)\s+/i, '').trim();
+
   // Nếu có cài đặt SEPAY_API_KEY trong môi trường thì bắt buộc phải khớp
   if (process.env.SEPAY_API_KEY) {
-    const expectedKey = `Bearer ${process.env.SEPAY_API_KEY}`;
-    if (apiKey !== expectedKey && apiKey !== process.env.SEPAY_API_KEY) {
+    if (apiKey !== process.env.SEPAY_API_KEY) {
       console.warn('Cảnh báo: Có kẻ đang cố gửi Webhook giả mạo!');
       return res.status(401).json({ success: false, message: 'Sai API Key' });
     }
