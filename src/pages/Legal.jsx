@@ -5,93 +5,114 @@ const legalContent = {
     title: 'Điều khoản dịch vụ',
     content: `
       <h2>1. Giới thiệu chung</h2>
-      <p>Chào mừng bạn đến với <strong>Only Love Gift</strong> (sau đây gọi tắt là "Chúng tôi"). Bằng việc truy cập, đăng ký tài khoản hoặc sử dụng dịch vụ trên trang web của chúng tôi, bạn đồng ý tuân thủ toàn bộ các Điều khoản Dịch vụ này. Vui lòng đọc kỹ trước khi sử dụng dịch vụ.</p>
+      <p>Chào mừng bạn đến với <strong>Only Love Gift</strong> (Đại diện quản lý: <strong>Lê Thanh Tùng</strong>). Bằng việc truy cập, đăng ký tài khoản hoặc sử dụng dịch vụ trên trang web của chúng tôi, bạn đồng ý tuân thủ toàn bộ các Điều khoản Dịch vụ này. Vui lòng đọc kỹ trước khi sử dụng dịch vụ.</p>
       
       <h2>2. Dịch vụ cung cấp</h2>
-      <p>Only Love Gift cung cấp các sản phẩm kỹ thuật số, bao gồm mã nguồn (source code) website, các mẫu giao diện (template) quà tặng lãng mạn, và dịch vụ hỗ trợ triển khai (deploy) website tự động lên nền tảng đám mây.</p>
+      <p>Only Love Gift cung cấp các sản phẩm kỹ thuật số, bao gồm mã nguồn (source code) website, các mẫu giao diện (template) quà tặng lãng mạn trực tuyến, và dịch vụ tự động tạo liên kết (link) website để người dùng gửi tặng.</p>
       
       <h2>3. Quyền sở hữu trí tuệ</h2>
-      <p>Tất cả nội dung, giao diện thiết kế, mã nguồn, đồ họa và logo trên website này đều thuộc bản quyền hợp pháp của Only Love Gift. Việc bạn mua sản phẩm đồng nghĩa với việc bạn được cấp <strong>Quyền sử dụng cá nhân (Personal License)</strong>. Bạn nghiêm cấm thực hiện các hành vi sau:</p>
-      <ul>
-        <li>Sao chép, phân phối, bán lại, hoặc cho thuê mã nguồn dưới bất kỳ hình thức nào.</li>
-        <li>Tuyên bố quyền sở hữu đối với các thiết kế thuộc Only Love Gift.</li>
-      </ul>
+      <p>Tất cả nội dung, giao diện thiết kế, mã nguồn thuộc Only Love Gift đều được bảo hộ. Việc bạn mua sản phẩm đồng nghĩa với việc bạn được cấp <strong>Quyền sử dụng cá nhân</strong>. Nghiêm cấm sao chép, phân phối, bán lại mã nguồn của chúng tôi nhằm mục đích thương mại.</p>
       
       <h2>4. Trách nhiệm của người dùng</h2>
-      <p>Khi sử dụng dịch vụ, bạn cam kết cung cấp thông tin chính xác. Bạn chịu hoàn toàn trách nhiệm đối với các nội dung, hình ảnh, thông điệp cá nhân hóa mà bạn tải lên hoặc khởi tạo qua hệ thống của chúng tôi. Chúng tôi nghiêm cấm việc sử dụng dịch vụ để truyền tải nội dung vi phạm pháp luật, đồi trụy hoặc vi phạm quyền riêng tư của người khác.</p>
-      
-      <h2>5. Miễn trừ trách nhiệm</h2>
-      <p>Dịch vụ được cung cấp "nguyên trạng" (AS IS). Mặc dù chúng tôi cam kết hệ thống hoạt động ổn định, chúng tôi không chịu trách nhiệm cho các gián đoạn dịch vụ do các bên thứ ba (như nhà cung cấp máy chủ, đối tác thanh toán) gây ra.</p>
+      <p>Bạn chịu hoàn toàn trách nhiệm đối với các nội dung, hình ảnh, thông điệp cá nhân hóa mà bạn tải lên. Nghiêm cấm việc sử dụng dịch vụ để truyền tải nội dung vi phạm pháp luật, đồi trụy hoặc vi phạm quyền riêng tư.</p>
 
-      <h2>6. Thông tin liên hệ</h2>
-      <p>Nếu bạn có bất kỳ câu hỏi nào về Điều khoản này, vui lòng liên hệ với chúng tôi qua email hỗ trợ của hệ thống.</p>
+      <h2>5. Thông tin liên hệ giải quyết tranh chấp</h2>
+      <p>Mọi thắc mắc hoặc tranh chấp liên quan đến điều khoản, xin vui lòng liên hệ trực tiếp với cá nhân chịu trách nhiệm vận hành: <strong>Lê Thanh Tùng</strong>.</p>
+      <ul>
+        <li><strong>Điện thoại/Zalo:</strong> 0848290617</li>
+        <li><strong>Email:</strong> tunglecode@gmail.com</li>
+      </ul>
     `
   },
   privacy: {
     title: 'Chính sách bảo mật',
     content: `
-      <h2>1. Mục đích thu thập dữ liệu</h2>
-      <p>Chúng tôi chỉ thu thập các thông tin cá nhân cơ bản (Bao gồm: Tên hiển thị, Địa chỉ Email, Ảnh đại diện Google) khi bạn đăng nhập thông qua Google OAuth. Ngoài ra, chúng tôi thu thập các dữ liệu do bạn chủ động cung cấp (hình ảnh, lời chúc, tên người nhận) để khởi tạo trang web quà tặng theo yêu cầu của bạn.</p>
+      <h2>1. Mục đích và phạm vi thu thập dữ liệu</h2>
+      <p>Chúng tôi chỉ thu thập các thông tin cá nhân cơ bản (Tên, Địa chỉ Email) để quản lý tài khoản và hỗ trợ tạo trang web quà tặng. Các nội dung bạn tải lên (hình ảnh, lời chúc) chỉ được dùng duy nhất cho mục đích khởi tạo website của bạn.</p>
       
-      <h2>2. Phạm vi sử dụng thông tin</h2>
-      <p>Thông tin của bạn được chúng tôi sử dụng với các mục đích:
+      <h2>2. Cam kết bảo vệ thông tin</h2>
+      <p>Chúng tôi (Đại diện: Lê Thanh Tùng) cam kết <strong>KHÔNG BÁN, KHÔNG CHO THUÊ</strong> dữ liệu cá nhân của khách hàng cho bên thứ ba. Dữ liệu của bạn được lưu trữ an toàn và chỉ chia sẻ cho các đối tác hạ tầng công nghệ (ví dụ: máy chủ lưu trữ) để duy trì hoạt động.</p>
+      
+      <h2>3. Quyền lợi của khách hàng</h2>
+      <p>Khách hàng có quyền yêu cầu trích xuất, chỉnh sửa hoặc xóa vĩnh viễn dữ liệu cá nhân cũng như các hình ảnh, website đã tạo khỏi hệ thống của chúng tôi bất cứ lúc nào.</p>
+      
+      <h2>4. Đơn vị thu thập và quản lý thông tin</h2>
+      <p>Website được điều hành và quản lý bởi cá nhân: <strong>Lê Thanh Tùng</strong></p>
       <ul>
-        <li>Cá nhân hóa trải nghiệm người dùng và khởi tạo nội dung website quà tặng.</li>
-        <li>Xác thực tài khoản và gửi email thông báo (như hóa đơn, link tải mã nguồn).</li>
-        <li>Hỗ trợ khách hàng, giải đáp thắc mắc và xử lý khiếu nại.</li>
-      </ul></p>
-      
-      <h2>3. Cam kết chia sẻ thông tin</h2>
-      <p>Chúng tôi cam kết <strong>KHÔNG BÁN, KHÔNG CHO THUÊ</strong> dữ liệu cá nhân của bạn cho bất kỳ bên thứ ba nào. Dữ liệu của bạn chỉ được chia sẻ một cách hạn chế và mã hóa cho các đối tác hạ tầng công nghệ thiết yếu (Vercel, dịch vụ Email) để thực hiện tính năng cốt lõi của dịch vụ.</p>
-      
-      <h2>4. Bảo mật dữ liệu & Quyền của người dùng</h2>
-      <p>Chúng tôi áp dụng các công nghệ bảo mật chuẩn SSL để mã hóa thông tin truyền tải. Bạn có toàn quyền yêu cầu chúng tôi xóa hoàn toàn tài khoản và dữ liệu cá nhân của bạn khỏi hệ thống bất cứ lúc nào bằng cách gửi yêu cầu qua email hỗ trợ.</p>
-      
-      <h2>5. Chính sách Cookie</h2>
-      <p>Website sử dụng Cookie để lưu trữ phiên đăng nhập và ghi nhớ tùy chọn giao diện (Sáng/Tối) của bạn. Bạn có thể vô hiệu hóa Cookie trên trình duyệt, tuy nhiên điều này có thể ảnh hưởng đến khả năng sử dụng các tính năng của website.</p>
+        <li><strong>Hotline CSKH:</strong> 0848290617</li>
+        <li><strong>Email hỗ trợ:</strong> tunglecode@gmail.com</li>
+      </ul>
     `
   },
   shipping: {
-    title: 'Chính sách giao nhận',
+    title: 'Chính sách vận chuyển & Giao nhận',
     content: `
       <h2>1. Hình thức giao hàng</h2>
-      <p>Vì các sản phẩm của Only Love Gift là <strong>Sản phẩm Kỹ thuật số (Digital Products)</strong> bao gồm mã nguồn (Source Code) và Tên miền phụ (Subdomain URL), chúng tôi <strong>KHÔNG</strong> thực hiện giao hàng vật lý qua các đơn vị vận chuyển truyền thống.</p>
+      <p>Only Love Gift là nền tảng cung cấp <strong>sản phẩm/dịch vụ kỹ thuật số (Digital Products) trực tuyến</strong> (cụ thể là website quà tặng và liên kết URL). Do đó, chúng tôi <strong>KHÔNG</strong> áp dụng hình thức vận chuyển, giao nhận hàng hóa vật lý qua các đơn vị chuyển phát nhanh.</p>
       
-      <h2>2. Quy trình và Thời gian giao nhận</h2>
-      <p>Ngay sau khi hệ thống xác nhận thanh toán thành công, sản phẩm sẽ được "giao" đến bạn ngay lập tức (Thời gian thực - Real-time) thông qua các hình thức sau:</p>
+      <h2>2. Quy trình và Thời gian giao nhận sản phẩm online</h2>
+      <p>Sản phẩm sẽ được "giao" đến bạn ngay lập tức (Thời gian thực - Real-time) sau khi hệ thống ghi nhận thanh toán thành công thông qua 2 hình thức:</p>
       <ul>
-        <li>Hiển thị Link Website thành phẩm trực tiếp trên màn hình kết quả thanh toán.</li>
-        <li>Gửi Tệp tin nén (ZIP) chứa mã nguồn và Hóa đơn điện tử tự động qua địa chỉ Email mà bạn đã cung cấp khi thanh toán.</li>
+        <li><strong>Hiển thị trực tiếp:</strong> Cung cấp liên kết (Link URL) của trang web quà tặng trực tiếp trên màn hình kết quả thanh toán thành công để bạn có thể sao chép và gửi ngay cho người nhận.</li>
+        <li><strong>Gửi qua Email:</strong> Gửi thông tin truy cập, link website và Hóa đơn điện tử tự động qua địa chỉ Email mà bạn đã cung cấp khi thanh toán.</li>
       </ul>
       
-      <h2>3. Trách nhiệm của Khách hàng</h2>
-      <p>Khách hàng có trách nhiệm cung cấp chính xác địa chỉ Email để nhận sản phẩm. Trong trường hợp không nhận được email do hệ thống chặn thư rác (Spam) hoặc nhập sai email, quý khách vui lòng liên hệ đội ngũ Hỗ trợ để được cấp phát lại liên kết tải xuống.</p>
-      
-      <h2>4. Chi phí giao hàng</h2>
-      <p>Toàn bộ quá trình giao nhận sản phẩm số qua hệ thống mạng internet là <strong>Miễn phí 100%</strong>.</p>
+      <h2>3. Xử lý sự cố giao nhận kỹ thuật số</h2>
+      <p>Trong trường hợp bạn đã thanh toán nhưng không nhận được liên kết website trên màn hình hoặc qua email (có thể do nhập sai email hoặc email vào mục Spam), xin vui lòng liên hệ ngay với chúng tôi để được cấp phát lại sản phẩm:</p>
+      <ul>
+        <li><strong>Quản lý kỹ thuật (Lê Thanh Tùng):</strong> 0848290617</li>
+        <li><strong>Email:</strong> tunglecode@gmail.com</li>
+      </ul>
     `
   },
   refund: {
     title: 'Chính sách đổi trả & Hoàn tiền',
     content: `
       <h2>1. Đặc thù Sản phẩm Kỹ thuật số</h2>
-      <p>Do bản chất của các sản phẩm kỹ thuật số (mã nguồn có thể sao chép ngay khi tải về) và tính năng triển khai tức thì (deploy automated), các đơn hàng tại Only Love Gift mặc định là <strong>Không thể hoàn trả (Non-refundable)</strong> sau khi mã nguồn đã được gửi đến bạn.</p>
+      <p>Do bản chất của các sản phẩm kỹ thuật số trực tuyến (liên kết website có thể được sử dụng và chia sẻ ngay lập tức sau khi tạo thành công), các đơn hàng tại Only Love Gift mặc định là <strong>Không áp dụng chính sách đổi trả (Non-returnable)</strong>.</p>
       
-      <h2>2. Các trường hợp được xét duyệt Hoàn tiền</h2>
-      <p>Chúng tôi đặt trải nghiệm khách hàng lên hàng đầu. Bạn sẽ được <strong>Hoàn tiền 100%</strong> trong các trường hợp ngoại lệ sau:</p>
+      <h2>2. Chính sách Hoàn tiền 100%</h2>
+      <p>Nhằm đảm bảo quyền lợi tuyệt đối cho khách hàng, chúng tôi sẽ hoàn trả 100% số tiền giao dịch trong các trường hợp ngoại lệ sau đây:</p>
       <ul>
-        <li>Hệ thống kỹ thuật của chúng tôi bị lỗi, khiến website quà tặng của bạn không thể hiển thị sau khi thanh toán và chúng tôi không thể khắc phục sự cố trong vòng 48 giờ.</li>
-        <li>Bạn bị trừ tiền nhiều lần cho cùng một đơn hàng do lỗi hệ thống thanh toán trung gian.</li>
-        <li>Sản phẩm mã nguồn bàn giao bị thiếu hoặc khác biệt hoàn toàn so với mẫu thiết kế đã xem trước mà không có sự thông báo.</li>
+        <li><strong>Lỗi hệ thống:</strong> Đã trừ tiền trong tài khoản ngân hàng của bạn nhưng hệ thống của chúng tôi không tạo được liên kết website quà tặng và không thể khắc phục sự cố trong vòng 24 giờ.</li>
+        <li><strong>Thanh toán trùng lặp:</strong> Bạn bị trừ tiền nhiều lần cho cùng một giao dịch mua hàng.</li>
+        <li><strong>Sản phẩm lỗi:</strong> Website được tạo ra không hoạt động, bị lỗi hiển thị hình ảnh/nội dung hoàn toàn khác biệt so với cam kết và không thể sửa chữa.</li>
       </ul>
       
       <h2>3. Quy trình yêu cầu Hoàn tiền</h2>
-      <p>Nếu bạn đáp ứng điều kiện trên, vui lòng làm theo hướng dẫn sau:</p>
+      <p>Nếu bạn gặp phải một trong các trường hợp trên, vui lòng thực hiện các bước sau để được hoàn tiền:</p>
       <ol>
-        <li>Gửi email yêu cầu hoàn tiền đến bộ phận Chăm sóc khách hàng trong vòng <strong>7 ngày</strong> kể từ ngày phát sinh giao dịch.</li>
-        <li>Cung cấp Mã đơn hàng (Order ID), Email đăng ký và bằng chứng (Ảnh chụp màn hình lỗi).</li>
-        <li>Chúng tôi sẽ xem xét và phản hồi trong vòng 1-3 ngày làm việc. Khi được chấp thuận, số tiền sẽ được hoàn trả về tài khoản gốc của bạn từ 5-7 ngày làm việc tùy thuộc vào ngân hàng.</li>
+        <li>Liên hệ trực tiếp qua số <strong>Hotline/Zalo: 0848290617 (Gặp Tùng)</strong> hoặc gửi email tới <strong>tunglecode@gmail.com</strong> trong vòng <strong>7 ngày</strong> kể từ ngày thanh toán.</li>
+        <li>Cung cấp hình ảnh biên lai thanh toán và ảnh chụp màn hình báo lỗi hệ thống.</li>
+        <li>Chúng tôi sẽ đối soát và thực hiện lệnh hoàn tiền về đúng tài khoản ngân hàng/ví điện tử gốc của bạn trong thời gian tối đa từ 2 - 5 ngày làm việc.</li>
       </ol>
+    `
+  },
+  payment: {
+    title: 'Hướng dẫn thanh toán',
+    content: `
+      <h2>1. Các phương thức thanh toán chấp nhận</h2>
+      <p>Nhằm mang lại sự tiện lợi và tự động hóa cao nhất, Only Love Gift hỗ trợ các hình thức thanh toán sau:</p>
+      <ul>
+        <li><strong>Chuyển khoản Ngân hàng (Quét mã VietQR):</strong> Hỗ trợ tất cả các ngân hàng nội địa tại Việt Nam. </li>
+        <li><strong>Ví điện tử:</strong> Hỗ trợ thanh toán nhanh qua Momo hoặc VNPay.</li>
+      </ul>
+      
+      <h2>2. Quy trình thanh toán tự động</h2>
+      <p>Quy trình thanh toán được thiết kế để diễn ra tự động 100%:</p>
+      <ol>
+        <li>Sau khi bạn chọn mẫu quà tặng và tùy chỉnh nội dung, hệ thống sẽ đưa bạn đến trang Thanh toán.</li>
+        <li>Màn hình sẽ hiển thị <strong>Mã QR thanh toán</strong> cùng số tiền chính xác và nội dung chuyển khoản đặc biệt (Mã đơn hàng).</li>
+        <li>Bạn mở ứng dụng Ngân hàng hoặc Ví điện tử, quét mã QR (số tiền và nội dung sẽ tự động được điền). Vui lòng <strong>KHÔNG</strong> thay đổi nội dung chuyển khoản để hệ thống nhận diện tự động.</li>
+        <li>Ngay khi giao dịch chuyển khoản thành công, hệ thống của chúng tôi sẽ tự động xác nhận trong vòng 1-3 phút và ngay lập tức trả kết quả website quà tặng cho bạn.</li>
+      </ol>
+      
+      <h2>3. Hỗ trợ sự cố thanh toán</h2>
+      <p>Trong trường hợp bạn đã chuyển tiền thành công nhưng hệ thống chưa tự động cập nhật hoặc bị treo do lỗi mạng, xin đừng lo lắng. Vui lòng chụp lại biên lai chuyển khoản và liên hệ ngay với chúng tôi để được kích hoạt đơn hàng thủ công nhanh chóng:</p>
+      <ul>
+        <li><strong>Hotline CSKH (Lê Thanh Tùng):</strong> 0848290617</li>
+        <li><strong>Email:</strong> tunglecode@gmail.com</li>
+      </ul>
     `
   }
 };

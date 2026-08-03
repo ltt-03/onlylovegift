@@ -25,48 +25,47 @@ const authMiddleware = async (req, res, next) => {
 // 1. Lấy thông tin ví và lịch sử giao dịch
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { id: req.userId },
-      select: { balance: true }
+      select: { balance: true, depositCode: true }
     });
 
+    // Nếu user chưa có depositCode, tạo mới và lưu lại (đảm bảo tính duy nhất)
+    if (!user.depositCode) {
+      let newCode;
+      let isUnique = false;
+      while (!isUnique) {
+        newCode = `NAP-${Math.floor(10000 + Math.random() * 90000)}`;
+        const existing = await prisma.user.findUnique({ where: { depositCode: newCode } });
+        if (!existing) {
+          isUnique = true;
+        }
+      }
+
+      await prisma.user.update({
+        where: { id: req.userId },
+        data: { depositCode: newCode }
+      });
+      user.depositCode = newCode;
+    }
+
+    // Lấy danh sách giao dịch (chỉ lấy SUCCESS hoặc FAILED, không cần PENDING nữa vì đã bỏ luồng tạo tay)
     const transactions = await prisma.transaction.findMany({
-      where: { userId: req.userId },
+      where: { 
+        userId: req.userId,
+        status: { not: 'PENDING' }
+      },
       orderBy: { createdAt: 'desc' },
       take: 20
     });
 
-    res.json({ success: true, balance: user.balance, transactions });
+    res.json({ success: true, balance: user.balance, depositCode: user.depositCode, transactions });
   } catch (error) {
     console.error('Lỗi lấy thông tin ví:', error);
     res.status(500).json({ success: false, message: 'Lỗi server' });
   }
 });
 
-// 2. Tạo yêu cầu nạp tiền
-router.post('/deposit', authMiddleware, async (req, res) => {
-  try {
-    const { amount } = req.body;
-    
-    // Sinh mã giao dịch duy nhất
-    const txCode = `NAP-${Math.floor(10000 + Math.random() * 90000)}`;
-
-    const transaction = await prisma.transaction.create({
-      data: {
-        userId: req.userId,
-        amount: amount || 0, // Nếu amount = 0 nghĩa là nạp bao nhiêu cộng bấy nhiêu
-        type: 'DEPOSIT',
-        status: 'PENDING',
-        txCode,
-        description: 'Nạp tiền vào ví'
-      }
-    });
-
-    res.json({ success: true, transaction });
-  } catch (error) {
-    console.error('Lỗi tạo giao dịch nạp tiền:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server' });
-  }
-});
+// Đã xóa POST /deposit vì sử dụng mã nạp tiền cố định
 
 module.exports = router;

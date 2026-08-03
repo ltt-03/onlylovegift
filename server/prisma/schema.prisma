@@ -13,11 +13,13 @@ model Order {
   templateId   String
   senderName   String
   receiverName String
+  birthday     String?
   message      String   @db.Text
   musicUrl     String?
   amount       Int      @default(99000)
   status       String   @default("PENDING") // PENDING, PAID, DEPLOYING, SUCCESS
   deployUrl    String?
+  images       String?  @db.Text
   userId       String?
   user         User?    @relation(fields: [userId], references: [id])
   createdAt    DateTime @default(now())
@@ -37,6 +39,7 @@ model User {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   balance           Int      @default(0)
+  depositCode       String?  @unique
   orders            Order[]
   transactions      Transaction[]
 }

@@ -105,7 +105,7 @@ router.post('/login', async (req, res) => {
     res.json({
       success: true,
       token,
-      user: { id: user.id, name: user.name, email: user.email }
+      user: { id: user.id, name: user.name, email: user.email, balance: user.balance }
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -186,7 +186,7 @@ router.post('/google', async (req, res) => {
     res.json({
       success: true,
       token,
-      user: { id: user.id, name: user.name, email: user.email }
+      user: { id: user.id, name: user.name, email: user.email, balance: user.balance }
     });
   } catch (error) {
     console.error('Google login error:', error);

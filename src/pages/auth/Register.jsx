@@ -1,13 +1,16 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { AuthContext } from '../../context/AuthContext';
-import { Gift, Mail, Lock, User } from 'lucide-react';
+import { Gift, Mail, Lock, User, Heart } from 'lucide-react';
 
 const Register = () => {
   const { api, login } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnUrl = searchParams.get('returnUrl');
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,7 +28,7 @@ const Register = () => {
       const res = await api.post('/auth/register', { name, email, password });
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        navigate('/');
+        navigate(returnUrl || '/');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Có lỗi xảy ra khi đăng ký');
@@ -41,7 +44,7 @@ const Register = () => {
       });
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        navigate('/');
+        navigate(returnUrl || '/');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Đăng nhập Google thất bại');
@@ -49,67 +52,82 @@ const Register = () => {
   };
 
   return (
-    <div className="container" style={{ display: 'flex', justifyContent: 'center', padding: '4rem 1rem', minHeight: '80vh', alignItems: 'center' }}>
-      <div className="card" style={{ maxWidth: '450px', width: '100%', padding: '40px 30px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ display: 'inline-flex', padding: '15px', borderRadius: '24px', background: 'rgba(255, 42, 115, 0.1)', marginBottom: '1.5rem' }}>
-            <Gift size={36} color="var(--color-primary)" />
-          </div>
-          <h2 style={{ color: 'var(--color-text)', fontSize: '28px', fontWeight: 800, marginBottom: '8px' }}>Tạo Tài Khoản</h2>
-          <p style={{ color: 'var(--color-text-light)' }}>Bắt đầu tạo món quà bất ngờ</p>
+    <>
+      <div className="notebook-card">
+        <div className="notebook-holes">
+          <div className="notebook-hole"></div>
+          <div className="notebook-hole"></div>
+          <div className="notebook-hole"></div>
+          <div className="notebook-hole"></div>
+          <div className="notebook-hole"></div>
+          <div className="notebook-hole"></div>
+          <div className="notebook-hole"></div>
+          <div className="notebook-hole"></div>
         </div>
 
-        {error && <div className="alert" style={{ backgroundColor: 'rgba(254, 226, 226, 0.8)', color: '#991b1b', padding: '1rem', borderRadius: '15px', marginBottom: '1.5rem', textAlign: 'center', fontWeight: 'bold' }}>{error}</div>}
-        {success && <div className="alert" style={{ backgroundColor: 'rgba(220, 252, 227, 0.8)', color: '#166534', padding: '1rem', borderRadius: '15px', marginBottom: '1.5rem', textAlign: 'center', fontWeight: 'bold' }}>{success}</div>}
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem', position: 'relative', zIndex: 2 }}>
+          <div className="love-letter-icon-wrapper">
+            <Mail size={36} color="var(--color-primary)" strokeWidth={1.5} />
+            <Heart size={16} className="heart-badge" fill="var(--color-primary)" />
+          </div>
+          <h2 style={{ color: 'var(--color-text)', fontSize: '28px', fontWeight: 800, marginBottom: '8px', fontFamily: "'Quicksand', sans-serif" }}>Tạo Tài Khoản</h2>
+          <p style={{ color: 'var(--color-text-light)', fontFamily: "'Quicksand', sans-serif", fontStyle: 'italic' }}>Bắt đầu tạo món quà bất ngờ</p>
+        </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+        {error && <div className="alert" style={{ position: 'relative', zIndex: 2, backgroundColor: 'rgba(254, 226, 226, 0.8)', color: '#991b1b', padding: '1rem', borderRadius: '15px', marginBottom: '1.5rem', textAlign: 'center', fontWeight: 'bold' }}>{error}</div>}
+        {success && <div className="alert" style={{ position: 'relative', zIndex: 2, backgroundColor: 'rgba(220, 252, 227, 0.8)', color: '#166534', padding: '1rem', borderRadius: '15px', marginBottom: '1.5rem', textAlign: 'center', fontWeight: 'bold' }}>{success}</div>}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 2 }}>
           <div>
-            <label className="auth-label"><User size={18} /> Họ và tên</label>
+            <label className="notebook-label"><User size={16} /> Họ và tên</label>
             <input 
               type="text" 
               required 
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Nguyễn Văn A" 
-              className="auth-input"
+              className="notebook-input"
+              style={{ width: '100%' }}
             />
           </div>
           <div>
-            <label className="auth-label"><Mail size={18} /> Email</label>
+            <label className="notebook-label"><Mail size={16} /> Email</label>
             <input 
               type="email" 
               required 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="nhap@email.com" 
-              className="auth-input"
+              className="notebook-input"
+              style={{ width: '100%' }}
             />
           </div>
           <div>
-            <label className="auth-label"><Lock size={18} /> Mật khẩu</label>
+            <label className="notebook-label"><Lock size={16} /> Mật khẩu</label>
             <input 
               type="password" 
               required 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••" 
-              className="auth-input"
+              className="notebook-input"
+              style={{ width: '100%' }}
               minLength={6}
             />
           </div>
           
-          <button type="submit" className="btn-cute-candy" style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }} disabled={loading || success}>
+          <button type="submit" className="notebook-btn" style={{ marginTop: '20px' }} disabled={loading || success}>
             {loading ? 'Đang xử lý...' : 'Tạo Tài Khoản Ngay'}
           </button>
         </form>
 
-        <div style={{ display: 'flex', alignItems: 'center', margin: '2.5rem 0', color: 'var(--color-text-light)' }}>
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', margin: '2.5rem 0', color: 'var(--color-text-light)' }}>
           <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--color-border)' }}></div>
-          <span style={{ padding: '0 1rem', fontSize: '13px', fontWeight: 600 }}>hoặc đăng ký bằng</span>
+          <span style={{ padding: '0 1rem', fontSize: '13px', fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>hoặc đăng ký bằng</span>
           <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--color-border)' }}></div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={() => setError('Google Login Failed')}
@@ -119,11 +137,11 @@ const Register = () => {
           />
         </div>
 
-        <p style={{ textAlign: 'center', color: 'var(--color-text-light)' }}>
+        <p style={{ position: 'relative', zIndex: 2, textAlign: 'center', color: 'var(--color-text-light)', fontFamily: "'Quicksand', sans-serif" }}>
           Đã có tài khoản? <Link to="/login" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>Đăng nhập</Link>
         </p>
       </div>
-    </div>
+    </>
   );
 };
 

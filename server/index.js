@@ -4,6 +4,25 @@ const { PrismaClient } = require('@prisma/client');
 const dotenv = require('dotenv');
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const axios = require('axios');
+const FormData = require('form-data');
+
+// Configure multer for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, 'public', 'uploads', 'images'));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 dotenv.config();
 
@@ -56,11 +75,153 @@ app.get('/gift/lucky-chance', async (req, res) => {
 // Serve the assets of the template
 app.use('/gift/lucky-chance', express.static(path.join(__dirname, 'public', 'templates', 'lucky-chance')));
 
+// Serve deployed static sites (Old deploy method, keeping for safety if any exist)
+app.use('/deploy', express.static(path.join(__dirname, 'public', 'deploy')));
+
+// Serve raw template assets for dynamic rendering
+app.use('/templates', express.static(path.join(__dirname, 'templates')));
+
+// ----------------------------------------------------
+// DYNAMIC RENDER ROUTE (On-The-Fly Generation)
+// ----------------------------------------------------
+app.get('/gift/view/:code', async (req, res) => {
+  try {
+    const { code } = req.params;
+    if (!code) return res.status(400).send('Thiếu mã đơn hàng');
+    
+    const order = await prisma.order.findUnique({ where: { orderCode: code } });
+    if (!order || order.status !== 'SUCCESS') {
+      return res.status(404).send('Không tìm thấy món quà hoặc đơn hàng chưa thanh toán hoàn tất.');
+    }
+
+    const templateId = order.templateId;
+    const htmlPath = path.join(__dirname, 'templates', templateId, 'index.html');
+    
+    if (!fs.existsSync(htmlPath)) {
+      return res.status(404).send('Giao diện quà tặng đang được bảo trì.');
+    }
+
+    let html = fs.readFileSync(htmlPath, 'utf8');
+
+    // Replace placeholders with real order data
+    html = html.replace(/\{\{RECEIVER_NAME\}\}/g, order.receiverName || 'Người Thương');
+    html = html.replace(/\{\{SENDER_NAME\}\}/g, order.senderName || 'Người Ẩn Danh');
+    html = html.replace(/\{\{MESSAGE\}\}/g, (order.message || 'Chúc mừng sinh nhật, tuổi mới luôn ngập tràn niềm vui và hạnh phúc nhé! 🎂❤').replace(/\n/g, '<br>'));
+    
+    // Inject Birthday into the 3D text array
+    if (order.birthday && order.birthday.trim() !== '') {
+      html = html.replace(/\{\{BIRTHDAY\}\}/g, order.birthday.trim());
+    } else {
+      // Remove the {{BIRTHDAY}} array element entirely if not provided
+      html = html.replace(/,\s*"\{\{BIRTHDAY\}\}"/g, '');
+    }
+    
+    // Inject musicUrl if provided
+    if (order.musicUrl && order.musicUrl.trim() !== '') {
+      html = html.replace(
+        /music:\s*["'].*?["']/,
+        `music: "${order.musicUrl.trim()}"`
+      );
+    }
+
+    if (order.images) {
+      try {
+        const imagesArr = JSON.parse(order.images);
+        if (imagesArr && imagesArr.length > 0) {
+          // Replace the image array inside the template settings
+          html = html.replace(
+            /image:\s*\[[\s\S]*?\],/,
+            `image: ${JSON.stringify(imagesArr)},`
+          );
+        }
+      } catch (e) {
+        console.error("Error parsing order images", e);
+      }
+    }
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error generating gift:', err);
+    res.status(500).send('Lỗi máy chủ khi tạo quà tặng');
+  }
+});
+
 // ----------------------------------------------------
 // API ROUTES
 // ----------------------------------------------------
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
+
+// Dashboard History API
+app.get('/api/user/dashboard', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const orders = await prisma.order.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' }
+    });
+    
+    const transactions = await prisma.transaction.findMany({
+      where: { 
+        userId,
+        status: { not: 'PENDING' }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json({ success: true, orders, transactions });
+  } catch (error) {
+    console.error('Dashboard Error:', error);
+    res.status(500).json({ success: false, message: 'Lỗi lấy dữ liệu' });
+  }
+});
+
+// Leaderboard VIP API (Public)
+app.get('/api/leaderboard', async (req, res) => {
+  const fakeLeaderboard = [
+    { name: 'leminhtri3654', totalDeposited: 350000 },
+    { name: 'Emi Sadgirl', totalDeposited: 274000, avatar: '/images/avt1.jpg' },
+    { name: 'mewmew', totalDeposited: 166666, avatar: '/images/avt2.jpg' },
+    { name: 'Nam Nguyen Anh', totalDeposited: 100000 },
+    { name: 'Ngọc Trân', totalDeposited: 60000, avatar: '/images/avt3.jpg' },
+  ];
+
+  try {
+    const realDeposits = await prisma.transaction.groupBy({
+      by: ['userId'],
+      where: { type: 'DEPOSIT', status: 'SUCCESS' },
+      _sum: { amount: true },
+    });
+
+    const userIds = realDeposits.map(d => d.userId);
+    const users = await prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, name: true }
+    });
+
+    const realLeaderboard = realDeposits.map(d => {
+      const user = users.find(u => u.id === d.userId);
+      return {
+        name: user ? user.name : 'Ẩn danh',
+        totalDeposited: d._sum.amount || 0
+      };
+    });
+
+    const combined = [...realLeaderboard, ...fakeLeaderboard];
+    // Sort descending
+    combined.sort((a, b) => b.totalDeposited - a.totalDeposited);
+
+    // Get top 5 unique by name (in case a fake name matches a real name, but it's fine)
+    const top5 = combined.slice(0, 5);
+
+    res.json({ success: true, leaderboard: top5 });
+  } catch (error) {
+    console.error('Leaderboard error:', error.message || error);
+    // Graceful fallback: If DB is unreachable (e.g. TiDB sleeps), return the fake leaderboard anyway
+    fakeLeaderboard.sort((a, b) => b.totalDeposited - a.totalDeposited);
+    res.json({ success: true, leaderboard: fakeLeaderboard });
+  }
+});
 
 const walletRoutes = require('./routes/wallet');
 app.use('/api/wallet', walletRoutes);
@@ -75,21 +236,85 @@ const generateOrderCode = () => {
   return `GL-${Math.floor(1000 + Math.random() * 9000)}`;
 };
 
-// 1. Create a new order
-app.post('/api/orders', async (req, res) => {
+// Middleware to verify JWT token
+function authenticate(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Vui lòng đăng nhập để tiếp tục' });
+  }
+
+  const token = authHeader.split(' ')[1];
   try {
-    const { templateId, senderName, receiverName, message, musicUrl } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ success: false, message: 'Phiên đăng nhập đã hết hạn' });
+  }
+};
+
+// 1. Create a new order (Requires Login & handles images via ImgBB)
+app.post('/api/orders', authenticate, upload.array('images', 4), async (req, res) => {
+  try {
+    const { templateId, senderName, receiverName, birthday, message, musicUrl } = req.body;
     
+    let uploadedImages = [];
+    if (req.files && req.files.length > 0) {
+      if (process.env.IMGBB_API_KEY) {
+        // Upload to ImgBB
+        for (const file of req.files) {
+          try {
+            const formData = new FormData();
+            const fileStream = fs.createReadStream(file.path);
+            formData.append('image', fileStream);
+            const imgbbRes = await axios.post(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`, formData, {
+              headers: formData.getHeaders()
+            });
+            if (imgbbRes.data && imgbbRes.data.success) {
+              uploadedImages.push(imgbbRes.data.data.url);
+            }
+          } catch (uploadErr) {
+            console.error('ImgBB Upload Error:', uploadErr.response ? uploadErr.response.data : uploadErr.message);
+            // Fallback to local if ImgBB fails
+            uploadedImages.push(`/uploads/images/${file.filename}`);
+          } finally {
+            // Delete the local file after uploading to ImgBB
+            try {
+              if (process.env.IMGBB_API_KEY) {
+                fs.unlinkSync(file.path);
+              }
+            } catch (e) {}
+          }
+        }
+      } else {
+        // Fallback to local storage if no ImgBB key is provided
+        uploadedImages = req.files.map(file => `/uploads/images/${file.filename}`);
+      }
+    }
+
+    // Giảm giá lần đầu: Kiểm tra xem user đã có đơn hàng nào thanh toán thành công chưa
+    const successfulOrderCount = await prisma.order.count({
+      where: { 
+        userId: req.user.id,
+        status: { in: ['PAID', 'DEPLOYING', 'SUCCESS'] }
+      }
+    });
+
+    const finalAmount = successfulOrderCount === 0 ? 29000 : 49000;
+
     const order = await prisma.order.create({
       data: {
         orderCode: generateOrderCode(),
         templateId,
         senderName,
         receiverName,
+        birthday,
         message,
         musicUrl,
-        amount: 99000,
-        status: 'PENDING'
+        amount: finalAmount,
+        status: 'PENDING',
+        userId: req.user.id,
+        images: uploadedImages.length > 0 ? JSON.stringify(uploadedImages) : null
       }
     });
 
@@ -140,25 +365,49 @@ app.post('/api/webhooks/payment', async (req, res) => {
     // A. XỬ LÝ NẠP TIỀN VÀO VÍ (NAP-xxxx)
     const napMatch = content.match(/(NAP-\d{4,5})/i);
     if (napMatch) {
-      const txCode = napMatch[1].toUpperCase();
-      const transaction = await prisma.transaction.findUnique({ where: { txCode } });
+      const parsedCode = napMatch[1].toUpperCase();
+      
+      // Ưu tiên 1: Kiểm tra xem mã này có phải là mã nạp tiền cố định của User nào không
+      const userWithCode = await prisma.user.findUnique({ where: { depositCode: parsedCode } });
+      
+      if (userWithCode) {
+        // Cập nhật số dư ví
+        await prisma.user.update({
+          where: { id: userWithCode.id },
+          data: { balance: { increment: Number(transferAmount) } }
+        });
+        
+        // Tự động tạo lịch sử giao dịch SUCCESS
+        await prisma.transaction.create({
+          data: { 
+            userId: userWithCode.id,
+            amount: Number(transferAmount),
+            type: 'DEPOSIT',
+            status: 'SUCCESS',
+            txCode: `DEP-${Date.now()}`, // Mã giao dịch hệ thống
+            description: 'Nạp tiền tự động'
+          }
+        });
+        return res.json({ success: true, message: 'Deposit successful (Fixed Code)' });
+      }
+
+      // Ưu tiên 2 (Tương thích ngược): Tìm giao dịch PENDING cũ nếu có
+      const transaction = await prisma.transaction.findUnique({ where: { txCode: parsedCode } });
       
       if (transaction && transaction.status === 'PENDING') {
-        // Cập nhật số dư ví
         await prisma.user.update({
           where: { id: transaction.userId },
           data: { balance: { increment: Number(transferAmount) } }
         });
         
-        // Cập nhật trạng thái giao dịch
         await prisma.transaction.update({
-          where: { txCode },
+          where: { txCode: parsedCode },
           data: { 
             status: 'SUCCESS',
-            amount: Number(transferAmount) // Cập nhật đúng số tiền khách nạp
+            amount: Number(transferAmount)
           }
         });
-        return res.json({ success: true, message: 'Deposit successful' });
+        return res.json({ success: true, message: 'Deposit successful (Legacy)' });
       }
     }
 
@@ -179,22 +428,14 @@ app.post('/api/webhooks/payment', async (req, res) => {
     if (order && order.status === 'PENDING') {
       // Kiểm tra xem khách có chuyển đủ tiền không
       if (Number(transferAmount) >= Number(order.amount)) {
-        // Cập nhật trạng thái thành PAID
+        // Cập nhật trạng thái thành SUCCESS và tạo link truy cập động
         await prisma.order.update({
           where: { orderCode },
-          data: { status: 'PAID' }
+          data: { 
+            status: 'SUCCESS',
+            deployUrl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/gift/view/${orderCode}`
+          }
         });
-
-        // Giả lập Deploy Web (Thực tế sẽ gọi Vercel API ở đây)
-        setTimeout(async () => {
-          await prisma.order.update({
-            where: { orderCode },
-            data: { 
-              status: 'SUCCESS',
-              deployUrl: `${process.env.BACKEND_URL || 'http://localhost:3001'}/gift/lucky-chance?code=${order.orderCode}`
-            }
-          });
-        }, 5000);
 
         return res.json({ success: true, message: 'Order marked as PAID' });
       } else {
@@ -210,7 +451,6 @@ app.post('/api/webhooks/payment', async (req, res) => {
 });
 
 // 3.5 Pay with Wallet
-const jwt = require('jsonwebtoken');
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) return res.status(401).json({ success: false });
@@ -255,16 +495,14 @@ app.post('/api/orders/:code/pay-with-wallet', authMiddleware, async (req, res) =
       })
     ]);
 
-    // Giả lập Deploy Web sau khi thanh toán
-    setTimeout(async () => {
-      await prisma.order.update({
-        where: { orderCode: code },
-        data: { 
-          status: 'SUCCESS',
-          deployUrl: `${process.env.BACKEND_URL || 'http://localhost:3001'}/gift/lucky-chance?code=${code}`
-        }
-      });
-    }, 4000);
+    // Cập nhật SUCCESS và tạo link
+    await prisma.order.update({
+      where: { orderCode: code },
+      data: { 
+        status: 'SUCCESS',
+        deployUrl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/gift/view/${code}`
+      }
+    });
 
     res.json({ success: true, message: 'Thanh toán bằng ví thành công' });
   } catch (error) {
@@ -277,20 +515,18 @@ app.post('/api/orders/:code/pay-with-wallet', authMiddleware, async (req, res) =
 app.post('/api/orders/:code/mock-pay', async (req, res) => {
   try {
     const { code } = req.params;
+    const order = await prisma.order.findUnique({ where: { orderCode: code } });
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Đơn hàng không tồn tại' });
+    }
+
     await prisma.order.update({
       where: { orderCode: code },
-      data: { status: 'PAID' }
+      data: { 
+        status: 'SUCCESS',
+        deployUrl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/gift/view/${code}`
+      }
     });
-
-    setTimeout(async () => {
-      await prisma.order.update({
-        where: { orderCode: code },
-        data: { 
-          status: 'SUCCESS',
-          deployUrl: `${process.env.BACKEND_URL || 'http://localhost:3001'}/gift/lucky-chance?code=${code}`
-        }
-      });
-    }, 4000);
 
     res.json({ success: true, message: 'Mock payment initiated' });
   } catch (error) {

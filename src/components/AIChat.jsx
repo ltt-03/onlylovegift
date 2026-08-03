@@ -55,8 +55,8 @@ export default function AIChat() {
 
         setMessages(prev => [...prev, {
           id: Date.now() + 1,
-          sender: 'ai',
-          text: 'Mình đã phân tích yêu cầu của bạn. Mình sẽ điền mẫu "Harumi Love Box" với người gửi là Tuấn, người nhận là Mai. Bạn có muốn mình điền giúp luôn không?',
+          type: 'bot',
+          text: 'Mình đã phân tích yêu cầu của bạn. Mình sẽ điền mẫu "Hộp Quà Sinh Nhật 3D" với người gửi là Tuấn, người nhận là Mai. Bạn có muốn mình điền giúp luôn không?',
           action: {
             type: 'fill_form',
             data: extractedData,

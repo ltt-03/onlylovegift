@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Món quà đặc biệt 💝</title>
+  <meta name="description"
+        content="🎁 Bạn vừa nhận được một món quà đặc biệt từ người yêu thương! Mở ra và tận hưởng khoảnh khắc ngọt ngào này nhé 💕✨">
+  <meta name="keywords" content="quà tặng, yêu thương, love gift, tình yêu, surprise, món quà">
+  <link rel="canonical" href="https://onlylovegift.com/">
+  <meta property="og:title" content="🎁 Ai đó gửi bạn một món quà đặc biệt 💝">
+  <meta property="og:description"
+        content="🎁 Bạn vừa nhận được một món quà đặc biệt từ người yêu thương! Mở ra và tận hưởng khoảnh khắc ngọt ngào này nhé 💕✨">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://onlylovegift.com/">
+  <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148">
+  <meta property="og:image:height" content="575">
+  <meta property="og:image:width" content="288">
+  <meta property="og:image:alt" content="Món quà yêu thương dành cho bạn">
+  <meta property="og:site_name" content="Only Love Gift">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="🎁 Ai đó gửi bạn một món quà yêu thương 💝">
+  <meta name="twitter:description"
+        content="🎁 Bạn vừa nhận được một món quà đặc biệt từ người yêu thương! Mở ra và tận hưởng khoảnh khắc ngọt ngào này nhé 💕✨">
+  <meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148">
+  <meta name="twitter:image:alt" content="Món quà yêu thương dành cho bạn">
+  <meta name="twitter:site" content="@onlylovegift">
+  <meta name="twitter:creator" content="@onlylovegift">
+  <meta name="author" content="Only Love Gift">
+  <meta name="copyright" content="© 2026 Only Love Gift">
+  <link rel="icon" href="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tim.png?v=1767367148">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #matrixCanvas {
+      z-index: 0;
+    }
+    #shapeCanvas {
+      z-index: 2;
+    }
+    #imageCanvas {
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* --- Rotate overlay for portrait mobile --- */
+    #rotateOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.95);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+    }
+    #rotateOverlay .rotate-icon {
+      width: 80px;
+      height: 80px;
+      animation: rotatePhone 2s ease-in-out infinite;
+    }
+    #rotateOverlay .rotate-text {
+      color: #ffffff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 18px;
+      text-align: center;
+      padding: 0 30px;
+      line-height: 1.6;
+    }
+    @keyframes rotatePhone {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(90deg); }
+    }
+
+    @media screen and (orientation: portrait) and (max-width: 900px) {
+      #rotateOverlay {
+        display: flex !important;
+      }
+    }
+    @media screen and (orientation: landscape) {
+      #rotateOverlay {
+        display: none !important;
+      }
+    }
+
+    /* --- Music Toggle --- */
+    #musicToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 20px;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(185, 28, 28, 0.3));
+      border: 2px solid rgba(220, 38, 38, 0.6);
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4), 0 0 20px rgba(220, 38, 38, 0.2);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #fff;
+      backdrop-filter: blur(10px);
+    }
+    #musicToggle:hover {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(220, 38, 38, 0.5));
+      border-color: rgba(239, 68, 68, 0.9);
+      box-shadow: 0 6px 25px rgba(239, 68, 68, 0.6), 0 0 30px rgba(239, 68, 68, 0.4);
+      transform: scale(1.1);
+    }
+    #musicToggle:active {
+      transform: scale(0.95);
+    }
+    @keyframes pulse-heart {
+      0%, 100% { box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4), 0 0 20px rgba(220, 38, 38, 0.2); }
+      50% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.6), 0 0 30px rgba(239, 68, 68, 0.4); }
+    }
+    #musicToggle.playing {
+      animation: pulse-heart 2s ease-in-out infinite;
+    }
+
+    /* --- Book Flip (style 012) --- */
+    #bookContainer {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column-reverse;
+      pointer-events: auto;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      perspective: 1000px;
+      -webkit-perspective: 1000px;
+    }
+    #bookContainer.active {
+      display: flex;
+    }
+    .book {
+      width: 480px;
+      height: 340px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      background: transparent;
+      position: relative;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+    }
+    .book-page-box {
+      position: absolute;
+      top: 0; left: 50%;
+      width: 50%; height: 100%;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+      transform: translateZ(-3px);
+    }
+    .book-page {
+      position: absolute;
+      top: 0; left: 0;
+      width: 240px;
+      height: 340px;
+      border: 2px solid #fff;
+      box-sizing: border-box;
+      text-align: center;
+      background: #fff url(bia.jpeg) no-repeat center;
+      background-size: cover;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform: translateZ(1px);
+    }
+    .book-page p {
+      font-size: 38px;
+      color: #fff;
+      margin-top: 100px;
+      background-color: rgba(0,0,0,0.7);
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+    .book-page-back {
+      position: absolute;
+      top: 0; left: 0;
+      width: 240px;
+      height: 340px;
+      border: 2px solid #fff;
+      box-sizing: border-box;
+      background-color: #fff;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform: rotateY(180deg) translateZ(1px);
+    }
+    .first-page {
+      background: #fff url(bia.jpeg) no-repeat center;
+      background-size: cover;
+    }
+    .first-page-back {
+      position: absolute;
+      top: 0; left: 0;
+      width: 240px;
+      height: 340px;
+      border: 2px solid #fff;
+      box-sizing: border-box;
+      background: #fff url(bia.jpeg) no-repeat center;
+      background-size: cover;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform: rotateY(180deg) translateZ(1px);
+    }
+    .first-page p {
+      font-size: 30px;
+      color: #fff;
+      margin-top: 100px;
+      background: none;
+    }
+    .book .point {
+      position: absolute;
+      top: 0; left: 50%;
+      width: 240px; height: 340px;
+      transform-origin: 0% 50%;
+      -webkit-transform-origin: 0% 50%;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .point { transition: transform 2s ease-in-out; }
+    .flip-animation-1 { transform: translateZ(3px) rotateY(0deg); }
+    .flip-animation-2 { transform: translateZ(2px) rotateY(0deg); }
+    .flip-animation-3 { transform: translateZ(1px) rotateY(0deg); }
+    .flip-animation-1.flipped { transform: translateZ(1px) rotateY(-180deg); }
+    .flip-animation-2.flipped { transform: translateZ(2px) rotateY(-180deg); }
+    .flip-animation-3.flipped { transform: translateZ(3px) rotateY(-180deg); }
+    .book-tap-hint {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.7);
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 14px;
+      white-space: nowrap;
+      animation: tapPulse 2s ease-in-out infinite;
+    }
+    @keyframes tapPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    #bookTypewriter {
+      margin-bottom: 20px;
+      color: #fff;
+      font-size: 22px;
+      font-family: 'Be Vietnam Pro', 'Segoe UI', Arial, sans-serif;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(254,168,168,0.8);
+      text-align: center;
+      min-height: 40px;
+    }
+
+    /* --- Gift GIF overlay --- */
+    #giftOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 9;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+    }
+    #giftOverlay.active {
+      display: flex;
+    }
+    #giftOverlay img {
+      max-width: 80%;
+      max-height: 70%;
+      object-fit: contain;
+      animation: giftFadeIn 0.8s ease-out;
+    }
+    @keyframes giftFadeIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* --- Heart overlay (from love4.html) --- */
+    #heartOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 20;
+      pointer-events: none;
+    }
+    #heartOverlay.active {
+      display: block;
+    }
+    #heartOverlay canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    #heartText {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 21;
+      font-family: 'Dancing Script', 'STKaiti', cursive;
+      font-size: 40px;
+      color: #ff6b6b;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 2s ease;
+      pointer-events: none;
+    }
+    #heartText.active {
+      opacity: 1;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    #heartText .tap-hint {
+      display: block;
+      font-size: 14px;
+      color: rgba(255,107,107,0.6);
+      margin-top: 10px;
+      animation: tapPulse 2s ease-in-out infinite;
+    }
+
+    /* --- Explode Canvas --- */
+    #explodeCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 22;
+      pointer-events: none;
+      display: none;
+    }
+
+    /* --- Thiệp (Letter Card) Overlay --- */
+    #thiepOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 30;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.85);
+    }
+    #thiepOverlay.active {
+      display: flex;
+      animation: thiepFadeIn 1s ease;
+    }
+    #thiepOverlay img {
+      max-width: min(360px, 70vw);
+      max-height: 60vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 0 40px rgba(255,107,107,0.4), 0 0 80px rgba(254,168,168,0.2);
+      animation: thiepZoomIn 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes thiepFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes thiepZoomIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @media (max-width: 768px) {
+      #thiepOverlay img {
+        max-width: 75vw;
+        max-height: 55vh;
+      }
+    }
+
+    /* --- Birthday Popup Card --- */
+    #bdayPopup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 35;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #bdayPopup.active {
+      display: flex;
+      animation: thiepFadeIn 0.6s ease;
+    }
+    .bday-card {
+      position: relative;
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 480px;
+      width: 90vw;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      animation: thiepZoomIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .bday-card-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .bday-card-close:hover {
+      color: #333;
+    }
+    .bday-card-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 28px;
+      color: #e91e63;
+      margin: 0 0 16px 0;
+    }
+    .bday-card-photo {
+      width: 140px;
+      min-width: 140px;
+      height: 180px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 3px solid #fce4ec;
+      flex-shrink: 0;
+    }
+    .bday-card-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .bday-card-msg {
+      font-family: 'Dancing Script', cursive;
+      font-size: 18px;
+      color: #555;
+      line-height: 1.8;
+      background: #fef7f7;
+      border-radius: 10px;
+      padding: 14px 16px;
+      position: relative;
+      min-height: 60px;
+      max-height: 40vh;
+      overflow-y: auto;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .bday-card-msg::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 20px;
+      width: 0; height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 8px solid #fef7f7;
+    }
+
+    @media (max-width: 768px) {
+      .bday-card {
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 20px;
+        max-width: 340px;
+      }
+      .bday-card-photo {
+        width: 120px;
+        min-width: 120px;
+        height: 150px;
+      }
+      .bday-card-title {
+        font-size: 24px;
+        text-align: center;
+      }
+      .bday-card-msg::before {
+        display: none;
+      }
+      .bday-card-msg {
+        font-size: 15px;
+        max-height: 30vh;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #bookContainer {
+        flex-direction: column-reverse;
+      }
+      #bookTypewriter {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      .book { width: 360px; height: 280px; }
+      .book-page { width: 180px; height: 280px; background-size: cover; }
+      .first-page-back { width: 180px; height: 280px; }
+      .book-page-back { width: 180px; height: 280px; }
+      .book .point { width: 180px; height: 280px; }
+      .book-page p { font-size: 20px; margin-top: 80px; }
+      .first-page p { font-size: 18px; margin-top: 80px; }
+      .book-tap-hint { bottom: auto; top: -30px; }
+      #heartText { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Rotate overlay for mobile portrait -->
+<div id="rotateOverlay">
+  <svg class="rotate-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="25" y="10" width="50" height="80" rx="8" stroke="#ffffff" stroke-width="3" fill="none"/>
+    <circle cx="50" cy="80" r="4" fill="#ffffff"/>
+    <path d="M75 50 L85 50 L80 42Z" fill="#ffffff"/>
+    <path d="M78 50 C78 30, 68 22, 50 22" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <div class="rotate-text">
+    Vui lòng xoay ngang thiết bị<br>để có trải nghiệm tốt nhất ✨
+    <br><br>
+    <span style="font-size: 14px; color: #aaa; line-height: 1.8;">
+      Nếu mở bằng Zalo và không xoay được màn hình,<br>
+      hãy ấn dấu <b style="color: #fff;">⋯</b> ở góc phải trên và chọn <b style="color: #fff;">Mở bằng trình duyệt khác</b>.<br><br>
+      Mẹo: Quét QR bằng Camera hoặc tiện ích Quét mã QR của iPhone<br>
+      để trải nghiệm đẹp và tiện hơn!
+    </span>
+  </div>
+</div>
+
+<audio id="bgMusic" loop preload="auto"
+  src="https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tiktok-music-1774689772225-eucjr.mp3?v=1774689775"></audio>
+
+<button id="musicToggle"><i class="fas fa-volume-xmark"></i></button>
+
+<canvas id="matrixCanvas"></canvas>
+<canvas id="shapeCanvas"></canvas>
+<canvas id="imageCanvas"></canvas>
+
+<div id="giftOverlay">
+  <img id="giftImage" src="/templates/love-box-01/anhgif/gif1.gif" alt="Gift">
+</div>
+
+<div id="bookContainer">
+  <div class="book" id="bookClickArea">
+    <div class="book-page-box">
+      <div class="book-page" id="bookPage4"></div>
+    </div>
+    <div class="flip-animation-3 point" id="flipPage3" style="transform-style:preserve-3d;-webkit-transform-style:preserve-3d;">
+      <div class="book-page" id="bookPage3"></div>
+      <div class="book-page-back" id="bookPage3Back"></div>
+    </div>
+    <div class="flip-animation-2 point" id="flipPage2" style="transform-style:preserve-3d;-webkit-transform-style:preserve-3d;">
+      <div class="book-page" id="bookPage2"></div>
+      <div class="book-page-back" id="bookPage2Back"></div>
+    </div>
+    <div class="flip-animation-1 point" id="flipPage1" style="transform-style:preserve-3d;-webkit-transform-style:preserve-3d;">
+      <div class="book-page first-page" id="bookPage1">
+      </div>
+      <div class="first-page-back" id="firstPageBack"></div>
+    </div>
+    <div class="book-tap-hint" id="bookTapHint">Chạm để lật trang</div>
+  </div>
+  <div id="bookTypewriter"></div>
+</div>
+
+<!-- Heart overlay (from love4.html) -->
+<div id="heartOverlay">
+  <canvas id="heartCanvas"></canvas>
+  <canvas id="explodeCanvas"></canvas>
+</div>
+<div id="heartText">I Love You<span class="tap-hint">Chạm vào đây 💝</span></div>
+
+<div id="thiepOverlay">
+  <img id="thiepImage" src="/templates/love-box-01/thiep.png" alt="Thiệp chúc mừng">
+</div>
+
+<div id="bdayPopup">
+  <div class="bday-card">
+    <button class="bday-card-close" id="bdayClose">&times;</button>
+    <img class="bday-card-photo" id="bdayPhoto" src="" alt="Photo">
+    <div class="bday-card-right">
+      <h2 class="bday-card-title">Happy birthday</h2>
+      <div class="bday-card-msg" id="bdayMsg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== SHAPE SHIFTER ====================
+var S = {
+  apiImages: null,
+  apiMessage: null,
+  init: function () {
+    var action = window.location.href,
+        i = action.indexOf('?a=');
+
+    S.Drawing.init('#shapeCanvas');
+    document.body.classList.add('body--ready');
+
+    // INJECT_SETTINGS_START
+    var settings = {
+      image: [
+        "/templates/love-box-01/test.jpeg", 
+        "/templates/love-box-01/test2.jpeg", 
+        "/templates/love-box-01/test3.jpeg", 
+        "/templates/love-box-01/test4.jpeg"
+      ],
+      arrayText: ["CHÚC MỪNG", "SINH NHẬT", "{{RECEIVER_NAME}}", "{{BIRTHDAY}}", "🎂"],
+      listText: [
+        "Gửi {{RECEIVER_NAME}},", 
+        "{{MESSAGE}}", 
+        "Từ {{SENDER_NAME}} với rất nhiều tình yêu ❤"
+      ],
+      message: "{{MESSAGE}}",
+      listGifImage: "/templates/love-box-01/anhgif/gif1.gif",
+      music: "https://cdn.shopify.com/s/files/1/0757/9700/4572/files/tiktok-music-1774689772225-eucjr.mp3?v=1774689775"
+    };
+    // INJECT_SETTINGS_END
+
+    // Set images from image array
+    if (settings.image && settings.image.length > 0) {
+      S.apiImages = settings.image;
+    }
+
+    // Build sequence from arrayText
+    if (settings.arrayText && settings.arrayText.length > 0) {
+      var seq = '#countdown 3|' + settings.arrayText.join('|') + '|#image';
+      S.UI.simulate(seq);
+    } else {
+      S.UI.simulate('#countdown 3|HAPPY|BIRTHDAY|TO YOU|❤|#image');
+    }
+
+    // Set typewriter messages from listText
+    if (settings.listText) {
+      var lines = Array.isArray(settings.listText)
+        ? settings.listText
+        : settings.listText.split('\n').filter(function (l) { return l.trim() !== ''; });
+      if (lines.length > 0) {
+        S.BookFlip.setMessages(lines);
+      }
+    }
+
+    // Set message for popup
+    if (settings.message) {
+      S.apiMessage = settings.message;
+    }
+
+    // Set gift GIF
+    if (settings.listGifImage) {
+      S.apiGift = settings.listGifImage;
+    }
+
+    // Set music
+    if (settings.music) {
+      document.getElementById('bgMusic').src = settings.music;
+    }
+
+    S.Drawing.loop(function () {
+      S.Shape.render();
+    });
+  }
+};
+
+S.Drawing = (function () {
+  var canvas,
+      context,
+      renderFn,
+      requestFrame = window.requestAnimationFrame       ||
+                     window.webkitRequestAnimationFrame ||
+                     window.mozRequestAnimationFrame    ||
+                     window.oRequestAnimationFrame      ||
+                     window.msRequestAnimationFrame     ||
+                     function(callback) {
+                       window.setTimeout(callback, 1000 / 60);
+                     };
+
+  return {
+    init: function (el) {
+      canvas = document.querySelector(el);
+      context = canvas.getContext('2d');
+      this.adjustCanvas();
+
+      window.addEventListener('resize', function () {
+        S.Drawing.adjustCanvas();
+      });
+      window.addEventListener('orientationchange', function () {
+        setTimeout(function () { S.Drawing.adjustCanvas(); }, 300);
+      });
+    },
+
+    loop: function (fn) {
+      renderFn = !renderFn ? fn : renderFn;
+      this.clearFrame();
+      renderFn();
+      requestFrame.call(window, this.loop.bind(this));
+    },
+
+    adjustCanvas: function () {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    },
+
+    clearFrame: function () {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    },
+
+    getArea: function () {
+      return { w: canvas.width, h: canvas.height };
+    },
+
+    drawCircle: function (p, c) {
+      context.fillStyle = c.render();
+      context.beginPath();
+      context.arc(p.x, p.y, p.z, 0, 2 * Math.PI, true);
+      context.closePath();
+      context.fill();
+    }
+  };
+}());
+
+S.UI = (function () {
+  var interval,
+      currentAction,
+      time,
+      maxShapeSize = 30,
+      firstAction = true,
+      sequence = [],
+      cmd = '#',
+      currentText = '';
+
+  function formatTime(date) {
+    var h = date.getHours(),
+        m = date.getMinutes();
+    m = m < 10 ? '0' + m : m;
+    return h + ':' + m;
+  }
+
+  function getValue(value) {
+    return value && value.split(' ')[1];
+  }
+
+  function getAction(value) {
+    value = value && value.split(' ')[0];
+    return value && value[0] === cmd && value.substring(1);
+  }
+
+  function timedAction(fn, delay, max, reverse) {
+    clearInterval(interval);
+    interval = null;
+    currentAction = reverse ? max : 1;
+    fn(currentAction);
+
+    // Only set interval if fn() didn't start its own timedAction (e.g. countdown)
+    if (interval === null && (!max || (!reverse && currentAction < max) || (reverse && currentAction > 0))) {
+      interval = setInterval(function () {
+        currentAction = reverse ? currentAction - 1 : currentAction + 1;
+        fn(currentAction);
+
+        if ((!reverse && max && currentAction === max) || (reverse && currentAction === 0)) {
+          clearInterval(interval);
+        }
+      }, delay);
+    }
+  }
+
+  function reset(destroy) {
+    clearInterval(interval);
+    sequence = [];
+    time = null;
+    destroy && S.Shape.switchShape(S.ShapeBuilder.letter(''));
+  }
+
+  function performAction(value) {
+    var action, current;
+
+    sequence = typeof(value) === 'object' ? value : sequence.concat(value.split('|'));
+    sequence = sequence.filter(function (s) { return s !== ''; });
+
+    timedAction(function (index) {
+      current = sequence.shift();
+      action = getAction(current);
+      value = getValue(current);
+
+      switch (action) {
+        case 'countdown':
+          value = parseInt(value) || 10;
+          value = value > 0 ? value : 10;
+
+          timedAction(function (index) {
+            if (index === 0) {
+              if (sequence.length === 0) {
+                currentText = '';
+                S.Shape.switchShape(S.ShapeBuilder.letter(''));
+              } else {
+                performAction(sequence);
+              }
+            } else {
+              currentText = String(index);
+              S.Shape.switchShape(S.ShapeBuilder.letter(index), true);
+            }
+          }, 1800, value, true);
+          break;
+
+        case 'rectangle':
+          value = value && value.split('x');
+          value = (value && value.length === 2) ? value : [maxShapeSize, maxShapeSize / 2];
+          S.Shape.switchShape(S.ShapeBuilder.rectangle(Math.min(maxShapeSize, parseInt(value[0])), Math.min(maxShapeSize, parseInt(value[1]))));
+          break;
+
+        case 'circle':
+          value = parseInt(value) || maxShapeSize;
+          value = Math.min(value, maxShapeSize);
+          S.Shape.switchShape(S.ShapeBuilder.circle(value));
+          break;
+
+        case 'time':
+          var t = formatTime(new Date());
+
+          if (sequence.length > 0) {
+            S.Shape.switchShape(S.ShapeBuilder.letter(t));
+          } else {
+            timedAction(function () {
+              t = formatTime(new Date());
+              if (t !== time) {
+                time = t;
+                S.Shape.switchShape(S.ShapeBuilder.letter(time));
+              }
+            }, 1000);
+          }
+          break;
+
+        case 'image':
+          currentText = '';
+          S.Shape.switchShape(S.ShapeBuilder.letter(''));
+          var imgList = (S.apiImages && S.apiImages.length > 0) ? S.apiImages : ['test.jpeg', 'test2.jpeg', 'test3.jpeg', 'test4.jpeg'];
+          var giftSrc = (S.apiGift) ? S.apiGift : 'anhgif/gif1.gif';
+          // Show gift GIF first
+          var giftOverlay = document.getElementById('giftOverlay');
+          var giftImage = document.getElementById('giftImage');
+          giftImage.src = giftSrc;
+          giftOverlay.classList.add('active');
+          // After 4s, fade out GIF and start Book Flip
+          setTimeout(function () {
+            giftOverlay.style.transition = 'opacity 1s ease';
+            giftOverlay.style.opacity = '0';
+            setTimeout(function () {
+              giftOverlay.classList.remove('active');
+              giftOverlay.style.opacity = '';
+              S.BookFlip.start(imgList);
+            }, 1000);
+          }, 4000);
+          break;
+
+        default:
+          currentText = current[0] === cmd ? 'What?' : current;
+          S.Shape.switchShape(S.ShapeBuilder.letter(currentText));
+      }
+    }, Math.min(window.innerWidth, window.innerHeight) < 500 ? 4000 : 2000, sequence.length);
+  }
+
+  // Re-render current text on resize/orientation change
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      if (currentText) {
+        S.Shape.switchShape(S.ShapeBuilder.letter(currentText));
+      }
+    }, 400);
+  });
+  window.addEventListener('orientationchange', function () {
+    setTimeout(function () {
+      if (currentText) {
+        S.Shape.switchShape(S.ShapeBuilder.letter(currentText));
+      }
+    }, 600);
+  });
+
+  return {
+    simulate: function (action) {
+      performAction(action);
+    }
+  };
+}());
+
+S.Point = function (args) {
+  this.x = args.x;
+  this.y = args.y;
+  this.z = args.z;
+  this.a = args.a;
+  this.h = args.h;
+};
+
+S.Color = function (r, g, b, a) {
+  this.r = r;
+  this.g = g;
+  this.b = b;
+  this.a = a;
+};
+
+S.Color.prototype = {
+  render: function () {
+    return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + this.a + ')';
+  }
+};
+
+S.Dot = function (x, y) {
+  var small = Math.min(window.innerWidth, window.innerHeight) < 500;
+  this.p = new S.Point({
+    x: x,
+    y: y,
+    z: small ? 4.5 : 5,
+    a: 1,
+    h: 0
+  });
+
+  this.e = 0.07;
+  this.s = true;
+
+  this.c = new S.Color(254, 168, 168, this.p.a);
+
+  this.t = this.clone();
+  this.q = [];
+};
+
+S.Dot.prototype = {
+  clone: function () {
+    return new S.Point({
+      x: this.x,
+      y: this.y,
+      z: this.z,
+      a: this.a,
+      h: this.h
+    });
+  },
+
+  _draw: function () {
+    this.c.a = this.p.a;
+    S.Drawing.drawCircle(this.p, this.c);
+  },
+
+  _moveTowards: function (n) {
+    var details = this.distanceTo(n, true),
+        dx = details[0],
+        dy = details[1],
+        d = details[2],
+        e = this.e * d;
+
+    if (this.p.h === -1) {
+      this.p.x = n.x;
+      this.p.y = n.y;
+      return true;
+    }
+
+    if (d > 1) {
+      this.p.x -= ((dx / d) * e);
+      this.p.y -= ((dy / d) * e);
+    } else {
+      if (this.p.h > 0) {
+        this.p.h--;
+      } else {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
+  _update: function () {
+    var d;
+    if (this._moveTowards(this.t)) {
+      var p = this.q.shift();
+
+      if (p) {
+        this.t.x = p.x || this.p.x;
+        this.t.y = p.y || this.p.y;
+        this.t.z = p.z || this.p.z;
+        this.t.a = p.a || this.p.a;
+        this.p.h = p.h || 0;
+      } else {
+        if (this.s) {
+          this.p.x -= Math.sin(Math.random() * 3.142);
+          this.p.y -= Math.sin(Math.random() * 3.142);
+        } else {
+          this.move(new S.Point({
+            x: this.p.x + (Math.random() * 50) - 25,
+            y: this.p.y + (Math.random() * 50) - 25,
+          }));
+        }
+      }
+    }
+
+    d = this.p.a - this.t.a;
+    this.p.a = Math.max(0.1, this.p.a - (d * 0.05));
+    d = this.p.z - this.t.z;
+    this.p.z = Math.max(1, this.p.z - (d * 0.05));
+  },
+
+  distanceTo: function (n, details) {
+    var dx = this.p.x - n.x,
+        dy = this.p.y - n.y,
+        d = Math.sqrt(dx * dx + dy * dy);
+
+    return details ? [dx, dy, d] : d;
+  },
+
+  move: function (p, avoidStatic) {
+    if (!avoidStatic || (avoidStatic && this.distanceTo(p) > 1)) {
+      this.q.push(p);
+    }
+  },
+
+  render: function () {
+    this._update();
+    this._draw();
+  }
+};
+
+S.ShapeBuilder = (function () {
+  var shapeCanvas = document.createElement('canvas'),
+      shapeContext = shapeCanvas.getContext('2d'),
+      fontSize = 500,
+      fontFamily = '"Be Vietnam Pro", Avenir, Helvetica Neue, Helvetica, Arial, sans-serif',
+      gap;
+
+  function calcGap() {
+    var minDim = Math.min(window.innerWidth, window.innerHeight);
+    gap = minDim < 500 ? 5 : (minDim < 1024 ? 7 : 11);
+  }
+
+  function fit() {
+    calcGap();
+    shapeCanvas.width = Math.floor(window.innerWidth / gap) * gap;
+    shapeCanvas.height = Math.floor(window.innerHeight / gap) * gap;
+    shapeContext.fillStyle = 'red';
+    shapeContext.textBaseline = 'middle';
+    shapeContext.textAlign = 'center';
+  }
+
+  function processCanvas() {
+    var pixels = shapeContext.getImageData(0, 0, shapeCanvas.width, shapeCanvas.height).data,
+        dots = [],
+        x = 0,
+        y = 0,
+        fx = shapeCanvas.width,
+        fy = shapeCanvas.height,
+        w = 0,
+        h = 0;
+
+    for (var p = 0; p < pixels.length; p += (4 * gap)) {
+      if (pixels[p + 3] > 0) {
+        dots.push(new S.Point({
+          x: x,
+          y: y
+        }));
+
+        w = x > w ? x : w;
+        h = y > h ? y : h;
+        fx = x < fx ? x : fx;
+        fy = y < fy ? y : fy;
+      }
+
+      x += gap;
+
+      if (x >= shapeCanvas.width) {
+        x = 0;
+        y += gap;
+        p += gap * 4 * shapeCanvas.width;
+      }
+    }
+
+    return { dots: dots, w: w + fx, h: h + fy };
+  }
+
+  function setFontSize(s) {
+    shapeContext.font = 'bold ' + s + 'px ' + fontFamily;
+  }
+
+  function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
+  function init() {
+    fit();
+    window.addEventListener('resize', fit);
+  }
+
+  init();
+
+  return {
+    imageFile: function (url, callback) {
+      var image = new Image(),
+          a = S.Drawing.getArea();
+
+      image.onload = function () {
+        shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
+        shapeContext.drawImage(this, 0, 0, a.h * 0.6, a.h * 0.6);
+        callback(processCanvas());
+      };
+
+      image.onerror = function () {
+        callback(S.ShapeBuilder.letter('What?'));
+      };
+
+      image.src = url;
+    },
+
+    circle: function (d) {
+      var r = Math.max(0, d) / 2;
+      shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
+      shapeContext.beginPath();
+      shapeContext.arc(r * gap, r * gap, r * gap, 0, 2 * Math.PI, false);
+      shapeContext.fill();
+      shapeContext.closePath();
+
+      return processCanvas();
+    },
+
+    letter: function (l) {
+      l = String(l);
+      var s = 0;
+      var words = l.split(' ');
+      var lines;
+
+      // Auto wrap on landscape: 3+ words → 2 lines for readability
+      var isLandscape = shapeCanvas.width > shapeCanvas.height;
+      var wrapThreshold = isLandscape ? 3 : 99;
+      if (words.length >= wrapThreshold) {
+        var mid = Math.ceil(words.length / 2);
+        lines = [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+      } else {
+        lines = [l];
+      }
+
+      setFontSize(fontSize);
+
+      // Measure widest line
+      var maxWidth = 0;
+      for (var i = 0; i < lines.length; i++) {
+        var lw = shapeContext.measureText(lines[i]).width;
+        if (lw > maxWidth) maxWidth = lw;
+      }
+
+      var lineSpacing = 1.4;
+      var isSmallScreen = Math.min(shapeCanvas.width, shapeCanvas.height) < 500;
+      var vertMult = isNumber(l) ? 1 : (isSmallScreen ? 0.85 : 0.7);
+      var heightLimit = (shapeCanvas.height * vertMult) / (1 + (lines.length - 1) * lineSpacing);
+
+      s = Math.min(fontSize,
+                  (shapeCanvas.width / maxWidth) * 0.8 * fontSize,
+                  heightLimit);
+      setFontSize(s);
+
+      shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
+
+      if (lines.length === 1) {
+        shapeContext.fillText(l, shapeCanvas.width / 2, shapeCanvas.height / 2);
+      } else {
+        var spacing = s * lineSpacing;
+        var startY = shapeCanvas.height / 2 - (lines.length - 1) * spacing / 2;
+        for (var j = 0; j < lines.length; j++) {
+          shapeContext.fillText(lines[j], shapeCanvas.width / 2, startY + j * spacing);
+        }
+      }
+
+      return processCanvas();
+    },
+
+    rectangle: function (w, h) {
+      var dots = [],
+          width = gap * w,
+          height = gap * h;
+
+      for (var y = 0; y < height; y += gap) {
+        for (var x = 0; x < width; x += gap) {
+          dots.push(new S.Point({
+            x: x,
+            y: y,
+          }));
+        }
+      }
+
+      return { dots: dots, w: width, h: height };
+    }
+  };
+}());
+
+S.Shape = (function () {
+  var dots = [],
+      width = 0,
+      height = 0,
+      cx = 0,
+      cy = 0;
+
+  function compensate() {
+    var a = S.Drawing.getArea();
+
+    cx = a.w / 2 - width / 2;
+    cy = a.h / 2 - height / 2;
+  }
+
+  return {
+    shuffleIdle: function () {
+      var a = S.Drawing.getArea();
+
+      for (var d = 0; d < dots.length; d++) {
+        if (!dots[d].s) {
+          dots[d].move({
+            x: Math.random() * a.w,
+            y: Math.random() * a.h
+          });
+        }
+      }
+    },
+
+    switchShape: function (n, fast) {
+      var size,
+          a = S.Drawing.getArea();
+      var minDim = Math.min(a.w, a.h);
+      var small = minDim < 500;
+      var tablet = minDim >= 500 && minDim < 1024;
+      var dotZ = small ? 2.5 : (tablet ? 2.5 : 5);
+
+      width = n.w;
+      height = n.h;
+
+      compensate();
+
+      if (n.dots.length > dots.length) {
+        size = n.dots.length - dots.length;
+        for (var d = 1; d <= size; d++) {
+          dots.push(new S.Dot(a.w / 2, a.h / 2));
+        }
+      }
+
+      var d = 0,
+          i = 0;
+
+      while (n.dots.length > 0) {
+        i = Math.floor(Math.random() * n.dots.length);
+        dots[d].e = fast ? (small ? 0.45 : 0.25) : (small ? (dots[d].s ? 0.22 : 0.18) : (dots[d].s ? 0.14 : 0.11));
+
+        if (dots[d].s) {
+          dots[d].move(new S.Point({
+            z: dotZ,
+            a: 1,
+            h: small ? 3 : 18
+          }));
+        } else {
+          dots[d].move(new S.Point({
+            z: dotZ,
+            a: 1,
+            h: small ? (fast ? 3 : 8) : (fast ? 18 : 30)
+          }));
+        }
+
+        dots[d].s = true;
+        dots[d].move(new S.Point({
+          x: n.dots[i].x + cx,
+          y: n.dots[i].y + cy,
+          a: 1,
+          z: dotZ,
+          h: 0
+        }));
+
+        n.dots = n.dots.slice(0, i).concat(n.dots.slice(i + 1));
+        d++;
+      }
+
+      for (var i = d; i < dots.length; i++) {
+        if (dots[i].s) {
+          dots[i].move(new S.Point({
+            z: dotZ,
+            a: 1,
+            h: small ? 10 : 20
+          }));
+
+          dots[i].s = false;
+          dots[i].e = 0.04;
+          dots[i].move(new S.Point({
+            x: Math.random() * a.w,
+            y: Math.random() * a.h,
+            a: 0.3,
+            z: small ? Math.random() * 1 : Math.random() * 4,
+            h: 0
+          }));
+        }
+      }
+    },
+
+    render: function () {
+      for (var d = 0; d < dots.length; d++) {
+        dots[d].render();
+      }
+    }
+  };
+}());
+
+// ==================== BOOK FLIP + TYPEWRITER ====================
+S.BookFlip = (function () {
+  // --- Typewriter ---
+  var messageArray = [
+    'Chúc mừng sinh nhật nha! 🎂',
+    'Chúc em luôn vui vẻ và hạnh phúc 🎉',
+    'Tuổi mới thật nhiều may mắn nhé! 🍀',
+    'Mãi xinh đẹp và toả sáng nha ✨',
+    'Happy Birthday! Em yêu 💗'
+  ];
+  var msgIndex = 0;
+  var charIndex = 0;
+  var isWaiting = false;
+  var waitStartTime = 0;
+  var lastTypingTime = 0;
+  var typingSpeed = 80;
+  var typewriterEl = null;
+  var typewriterTimer = null;
+
+  function updateTyping() {
+    if (!typewriterEl) return;
+    var now = Date.now();
+    if (!isWaiting) {
+      if (now - lastTypingTime > typingSpeed) {
+        charIndex++;
+        lastTypingTime = now;
+        if (charIndex > messageArray[msgIndex].length) {
+          isWaiting = true;
+          waitStartTime = now;
+        }
+      }
+    } else {
+      if (now - waitStartTime > 2500) {
+        isWaiting = false;
+        charIndex = 0;
+        msgIndex = (msgIndex + 1) % messageArray.length;
+      }
+    }
+    var currentMsg = messageArray[msgIndex];
+    var displayText = currentMsg.substring(0, Math.min(charIndex, currentMsg.length));
+    var cursor = (Math.floor(now / 500) % 2 === 0) ? '|' : '';
+    typewriterEl.textContent = displayText + cursor;
+  }
+
+  function startTypewriter() {
+    typewriterEl = document.getElementById('bookTypewriter');
+    msgIndex = 0; charIndex = 0;
+    isWaiting = false; lastTypingTime = Date.now();
+    typewriterTimer = setInterval(updateTyping, 50);
+  }
+
+  var currentFlipPage = 0;
+  var flipPages = [];
+  var totalPages = 0;
+  var flipping = false;
+  var listenerAdded = false;
+
+  function start(images) {
+    var imgList = (typeof images === 'string') ? [images] : images;
+    var n = imgList.length;
+
+    // Reset state from any previous run: remove dynamically created flip pages,
+    // clear inline transforms / flipped class on built-in cover page.
+    var oldDyn = document.querySelectorAll('.dynamic-flip-page');
+    for (var d = 0; d < oldDyn.length; d++) oldDyn[d].parentNode.removeChild(oldDyn[d]);
+    var coverEl = document.getElementById('flipPage1');
+    coverEl.classList.remove('flipped');
+    coverEl.style.transform = '';
+    coverEl.style.webkitTransform = '';
+    coverEl.removeAttribute('data-flip-pre');
+    coverEl.removeAttribute('data-flip-post');
+    // Built-in flipPage2/3 are no longer used — hide them.
+    document.getElementById('flipPage2').style.display = 'none';
+    document.getElementById('flipPage3').style.display = 'none';
+
+    var page4 = document.getElementById('bookPage4');
+    var bookEl = document.getElementById('bookClickArea');
+
+    if (n < 2) {
+      // Only the cover flip
+      page4.parentElement.style.display = 'none';
+      flipPages = ['flipPage1'];
+      totalPages = 1;
+      if (imgList[0]) {
+        var fb0 = document.getElementById('firstPageBack');
+        fb0.style.backgroundImage = 'url(' + imgList[0] + ')';
+        fb0.style.backgroundSize = 'cover';
+        fb0.style.backgroundPosition = 'center';
+      }
+    } else {
+      page4.parentElement.style.display = '';
+      // Last image always sits on the static background page
+      page4.style.backgroundImage = 'url(' + imgList[n - 1] + ')';
+      page4.style.backgroundSize = 'cover';
+      page4.style.backgroundPosition = 'center';
+      // First image goes on the back of the cover (revealed by first flip)
+      var firstBack = document.getElementById('firstPageBack');
+      firstBack.style.backgroundImage = 'url(' + imgList[0] + ')';
+      firstBack.style.backgroundSize = 'cover';
+      firstBack.style.backgroundPosition = 'center';
+
+      // We need (n - 1) flip pages total: 1 cover + (n - 2) middle pages.
+      var totalFlips = n - 1;
+      flipPages = [];
+      // Configure cover (flipPage1) with inline transforms generalising the
+      // original CSS pattern: pre Z = totalFlips, post Z = 1.
+      coverEl.style.transform = 'translateZ(' + totalFlips + 'px) rotateY(0deg)';
+      coverEl.style.webkitTransform = 'translateZ(' + totalFlips + 'px) rotateY(0deg)';
+      coverEl.setAttribute('data-flip-post', '1');
+      flipPages.push('flipPage1');
+
+      // Build (n - 2) dynamic middle pages, each carrying imgList[i+1].
+      // Insert them before the cover so the cover stays last in DOM (top of stack).
+      for (var i = 0; i < n - 2; i++) {
+        var flipIdx = i + 1; // 0 = cover, so middle pages start at 1
+        var preZ = totalFlips - flipIdx;
+        var postZ = flipIdx + 1;
+        var div = document.createElement('div');
+        div.className = 'point dynamic-flip-page';
+        div.id = 'dynFlipPage' + i;
+        div.style.cssText =
+          'transform-style:preserve-3d;-webkit-transform-style:preserve-3d;' +
+          'transform: translateZ(' + preZ + 'px) rotateY(0deg);' +
+          '-webkit-transform: translateZ(' + preZ + 'px) rotateY(0deg);';
+        div.setAttribute('data-flip-post', String(postZ));
+
+        var front = document.createElement('div');
+        front.className = 'book-page';
+        front.style.backgroundImage = 'url(' + imgList[i + 1] + ')';
+        front.style.backgroundSize = 'cover';
+        front.style.backgroundPosition = 'center';
+
+        var back = document.createElement('div');
+        back.className = 'book-page-back';
+        back.style.backgroundImage = 'url(' + imgList[i + 1] + ')';
+        back.style.backgroundSize = 'cover';
+        back.style.backgroundPosition = 'center';
+
+        div.appendChild(front);
+        div.appendChild(back);
+        bookEl.insertBefore(div, coverEl);
+        flipPages.push(div.id);
+      }
+
+      totalPages = flipPages.length;
+    }
+    // Show the book
+    currentFlipPage = 0;
+    var container = document.getElementById('bookContainer');
+    container.classList.add('active');
+    startTypewriter();
+
+    // Tap to flip pages (only add once)
+    if (!listenerAdded) {
+      var bookArea = document.getElementById('bookClickArea');
+      var touchHandled = false;
+      bookArea.addEventListener('touchend', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        touchHandled = true;
+        flipNext();
+        setTimeout(function () { touchHandled = false; }, 400);
+      }, { passive: false });
+      bookArea.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (touchHandled) return;
+        flipNext();
+      });
+      listenerAdded = true;
+    }
+  }
+
+  function flipNext() {
+    if (flipping) return;
+    if (currentFlipPage < totalPages) {
+      flipping = true;
+      var pageEl = document.getElementById(flipPages[currentFlipPage]);
+      pageEl.style.zIndex = 10 + currentFlipPage;
+      var postZ = pageEl.getAttribute('data-flip-post');
+      if (postZ !== null) {
+        pageEl.style.transform = 'translateZ(' + postZ + 'px) rotateY(-180deg)';
+        pageEl.style.webkitTransform = 'translateZ(' + postZ + 'px) rotateY(-180deg)';
+      } else {
+        pageEl.classList.add('flipped');
+      }
+      currentFlipPage++;
+      // Hide hint after first tap
+      if (currentFlipPage === 1) {
+        var hint = document.getElementById('bookTapHint');
+        if (hint) hint.style.display = 'none';
+      }
+      // Wait for flip animation to finish before allowing next flip
+      setTimeout(function () { flipping = false; }, 2100);
+    } else {
+      // All pages flipped, transition to heart
+      document.getElementById('bookContainer').style.transition = 'opacity 1.5s ease';
+      document.getElementById('bookContainer').style.opacity = '0';
+      setTimeout(function () {
+        document.getElementById('bookContainer').style.display = 'none';
+        clearInterval(typewriterTimer);
+        startHeart();
+      }, 1500);
+    }
+  }
+
+  function startHeart() {
+    var overlay = document.getElementById('heartOverlay');
+    overlay.classList.add('active');
+    // "I Love You" text will be shown after intro animation completes (in heart script)
+  }
+
+  function setMessages(msgs) {
+    if (msgs && msgs.length > 0) {
+      messageArray = msgs;
+    }
+  }
+
+  return { start: start, setMessages: setMessages };
+}());
+
+S.init();
+</script>
+
+<script>
+(function () {
+  var audio = document.getElementById('bgMusic');
+  var musicBtn = document.getElementById('musicToggle');
+  var isPlaying = false;
+
+  function updateButton() {
+    if (isPlaying) {
+      musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+      musicBtn.classList.add('playing');
+    } else {
+      musicBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
+      musicBtn.classList.remove('playing');
+    }
+  }
+
+  function playMusic() {
+    audio.play().then(function () {
+      isPlaying = true;
+      updateButton();
+    }).catch(function () {});
+  }
+
+  function pauseMusic() {
+    audio.pause();
+    isPlaying = false;
+    updateButton();
+  }
+
+  musicBtn.addEventListener('click', function () {
+    if (isPlaying) { pauseMusic(); } else { playMusic(); }
+  });
+
+  function tryAutoPlay() {
+    if (isPlaying) return;
+    playMusic();
+  }
+
+  // Try autoplay
+  audio.play().then(function () {
+    isPlaying = true;
+    updateButton();
+  }).catch(function () {
+    // Wait for any user interaction
+    var events = ['click', 'touchstart', 'keydown', 'scroll'];
+    var handler = function () {
+      if (!isPlaying) playMusic();
+      events.forEach(function (e) { document.removeEventListener(e, handler); });
+    };
+    events.forEach(function (e) { document.addEventListener(e, handler, { once: true }); });
+
+    // Also retry after 5s
+    setTimeout(tryAutoPlay, 5000);
+  });
+}());
+</script>
+
+<script>
+(function () {
+  var overlay = document.getElementById('rotateOverlay');
+  var dismissed = false;
+  function checkOrientation() {
+    if (dismissed) return;
+    if (window.innerWidth <= 900 && window.innerHeight > window.innerWidth) {
+      overlay.style.display = 'flex';
+    } else {
+      overlay.style.display = 'none';
+    }
+  }
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', function () {
+    setTimeout(checkOrientation, 300);
+  });
+  checkOrientation();
+
+  // Auto-dismiss after 15s if user hasn't rotated
+  setTimeout(function () {
+    dismissed = true;
+    overlay.style.display = 'none';
+  }, 15000);
+}());
+</script>
+
+<script>
+// Reload page on orientation change to restart all animations
+(function () {
+  var lastOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+  window.addEventListener('resize', function () {
+    var current = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+    if (current !== lastOrientation) {
+      lastOrientation = current;
+      location.reload();
+    }
+  });
+}());
+</script>
+
+<script>
+// ==================== MATRIX RAIN BACKGROUND (from love4.html) ====================
+(function () {
+  var matrixCanvas = document.getElementById('matrixCanvas');
+  var mctx = matrixCanvas.getContext('2d');
+
+  matrixCanvas.height = window.innerHeight;
+  matrixCanvas.width = window.innerWidth;
+
+  var texts = 'I LOVE U'.split('');
+  var fontSize = 16;
+  var isSmallScreen = Math.min(window.innerWidth, window.innerHeight) < 500;
+  var matrixOpacity = isSmallScreen ? 0.12 : 0.05;
+  var columns = matrixCanvas.width / fontSize;
+  var drops = [];
+  for (var x = 0; x < columns; x++) {
+    drops[x] = 1;
+  }
+
+  function drawMatrix() {
+    mctx.fillStyle = 'rgba(0, 0, 0, ' + matrixOpacity + ')';
+    mctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    mctx.fillStyle = '#fea8a8';
+    mctx.font = 'bold ' + fontSize + 'px arial';
+    for (var i = 0; i < drops.length; i++) {
+      var text = texts[Math.floor(Math.random() * texts.length)];
+      mctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > matrixCanvas.height || Math.random() > 0.95) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 33);
+
+  window.addEventListener('resize', function () {
+    matrixCanvas.width = window.innerWidth;
+    matrixCanvas.height = window.innerHeight;
+  });
+}());
+</script>
+
+<script>
+// ==================== HEART PARTICLE + EXPLODE ANIMATION ====================
+(function () {
+  var HEART_COLOR = '#ff6b6b';
+
+  function heartX(t) { return 160 * Math.pow(Math.sin(t), 3); }
+  function heartY(t) { return 130*Math.cos(t) - 50*Math.cos(2*t) - 20*Math.cos(3*t) - 10*Math.cos(4*t) + 25; }
+
+  function createHeartImage(size, color, glowSize) {
+    var c = document.createElement('canvas'), x = c.getContext('2d');
+    var pad = glowSize || 0;
+    c.width = size + pad * 2; c.height = size + pad * 2;
+    function to(t) {
+      return {
+        x: pad + size/2 + heartX(t) * size / 350,
+        y: pad + size/2 - heartY(t) * size / 350
+      };
+    }
+    if (pad > 0) { x.shadowColor = color; x.shadowBlur = pad; }
+    x.beginPath();
+    var t = -Math.PI, p = to(t);
+    x.moveTo(p.x, p.y);
+    while (t < Math.PI) { t += 0.01; p = to(t); x.lineTo(p.x, p.y); }
+    x.closePath();
+    x.fillStyle = color;
+    x.fill();
+    var img = new Image(); img.src = c.toDataURL(); return img;
+  }
+
+  // ===== Main heart particle animation =====
+  var heartCanvas = document.getElementById('heartCanvas');
+  if (!heartCanvas) return;
+  var ctx = heartCanvas.getContext('2d');
+  var isMobile = window.innerWidth < 768;
+  var particleCount = isMobile ? 200 : 500;
+  var particleDuration = 2;
+  var particleVelocity = 100;
+  var particleEffect = -0.75;
+  var particleSize = isMobile ? 22 : 30;
+  var heartImage = createHeartImage(particleSize, HEART_COLOR, 6);
+  var mobileScale = isMobile ? 0.4 : 1;
+
+  function HPoint(x, y) { this.x = x || 0; this.y = y || 0; }
+  HPoint.prototype.clone = function() { return new HPoint(this.x, this.y); };
+  HPoint.prototype.length = function(l) {
+    if (l === undefined) return Math.sqrt(this.x*this.x + this.y*this.y);
+    this.normalize(); this.x *= l; this.y *= l; return this;
+  };
+  HPoint.prototype.normalize = function() { var l = this.length(); this.x /= l; this.y /= l; return this; };
+
+  function Particle() { this.position = new HPoint(); this.velocity = new HPoint(); this.acceleration = new HPoint(); this.age = 0; }
+  Particle.prototype.initialize = function(x, y, dx, dy) {
+    this.position.x = x; this.position.y = y; this.velocity.x = dx; this.velocity.y = dy;
+    this.acceleration.x = dx * particleEffect; this.acceleration.y = dy * particleEffect; this.age = 0;
+  };
+  Particle.prototype.update = function(dt) {
+    this.position.x += this.velocity.x*dt; this.position.y += this.velocity.y*dt;
+    this.velocity.x += this.acceleration.x*dt; this.velocity.y += this.acceleration.y*dt; this.age += dt;
+  };
+  Particle.prototype.draw = function(context, image) {
+    var ease = function(t) { return (--t)*t*t+1; };
+    var size = image.width * ease(this.age / particleDuration);
+    context.globalAlpha = 1 - this.age / particleDuration;
+    context.drawImage(image, this.position.x - size/2, this.position.y - size/2, size, size);
+  };
+
+  // Particle pool
+  var particles = new Array(particleCount);
+  var firstActive = 0, firstFree = 0;
+  for (var i = 0; i < particleCount; i++) particles[i] = new Particle();
+  var particleRate = particleCount / particleDuration;
+  var time;
+
+  function addParticle(x, y, dx, dy) {
+    particles[firstFree].initialize(x, y, dx, dy);
+    firstFree++; if (firstFree == particleCount) firstFree = 0;
+    if (firstActive == firstFree) firstActive++;
+    if (firstActive == particleCount) firstActive = 0;
+  }
+  function updateParticles(dt) {
+    var i;
+    if (firstActive < firstFree) { for (i = firstActive; i < firstFree; i++) particles[i].update(dt); }
+    if (firstFree < firstActive) { for (i = firstActive; i < particleCount; i++) particles[i].update(dt); for (i = 0; i < firstFree; i++) particles[i].update(dt); }
+    while (particles[firstActive].age >= particleDuration && firstActive != firstFree) { firstActive++; if (firstActive == particleCount) firstActive = 0; }
+  }
+  function drawParticles(context, image) {
+    var i;
+    if (firstActive < firstFree) { for (i = firstActive; i < firstFree; i++) particles[i].draw(context, image); }
+    if (firstFree < firstActive) { for (i = firstActive; i < particleCount; i++) particles[i].draw(context, image); for (i = 0; i < firstFree; i++) particles[i].draw(context, image); }
+  }
+
+  function pointOnHeart(t) {
+    return new HPoint(heartX(t) * mobileScale, heartY(t) * mobileScale);
+  }
+
+  var heartStopped = false;
+
+  function renderHeart() {
+    if (heartStopped) return;
+    requestAnimationFrame(renderHeart);
+    var newTime = new Date().getTime() / 1000, dt = newTime - (time || newTime); time = newTime;
+    ctx.clearRect(0, 0, heartCanvas.width, heartCanvas.height);
+    var amount = particleRate * dt;
+    for (var i = 0; i < amount; i++) {
+      var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
+      var dir = pos.clone().length(particleVelocity * mobileScale);
+      addParticle(heartCanvas.width/2 + pos.x, heartCanvas.height/2 - pos.y, dir.x, -dir.y);
+    }
+    updateParticles(dt);
+    drawParticles(ctx, heartImage);
+  }
+
+  function onResize() {
+    heartCanvas.width = heartCanvas.clientWidth;
+    heartCanvas.height = heartCanvas.clientHeight;
+  }
+
+  // ===== INTRO: hearts fly in and form heart shape =====
+  function runIntro(callback) {
+    var W = heartCanvas.width, H = heartCanvas.height;
+    var cxI = W / 2, cyI = H / 2;
+    var numIntro = isMobile ? 30 : 60;
+    var scale = mobileScale;
+
+    // Create intro heart images (small, medium, big)
+    var glowPad = isMobile ? 0 : 8;
+    var introImgs = [
+      createHeartImage(20, HEART_COLOR, glowPad),
+      createHeartImage(28, HEART_COLOR, isMobile ? 0 : 12),
+      createHeartImage(36, HEART_COLOR, isMobile ? 0 : 16)
+    ];
+
+    var introHearts = [];
+    var startTime = Date.now();
+
+    var P1_DUR = 3000;   // spiral in
+    var P2_START = 3000;
+    var P2_DUR = 2500;   // gather into heart
+    var P3_START = 5500;
+    var P3_DUR = 800;    // pulse then fade
+    var TOTAL = 6800;
+
+    function bezier(t, p0, p1, p2, p3) {
+      var u = 1 - t;
+      return u*u*u*p0 + 3*u*u*t*p1 + 3*u*t*t*p2 + t*t*t*p3;
+    }
+    function easeOutBack(t) { var c = 1.7; return 1 + (c+1)*Math.pow(t-1,3) + c*Math.pow(t-1,2); }
+    function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+
+    for (var i = 0; i < numIntro; i++) {
+      var spawnAngle = Math.random() * Math.PI * 2;
+      var spawnDist = Math.max(W, H) * 0.8 + Math.random() * 200;
+      var sx = cxI + Math.cos(spawnAngle) * spawnDist;
+      var sy = cyI + Math.sin(spawnAngle) * spawnDist;
+
+      var orbitAngle = spawnAngle + Math.PI + (Math.random() - 0.5) * 1.5;
+      var orbitDist = 80 + Math.random() * 200;
+      var mx = cxI + Math.cos(orbitAngle) * orbitDist;
+      var my = cyI + Math.sin(orbitAngle) * orbitDist;
+
+      var t = -Math.PI + (2 * Math.PI * i / numIntro);
+      var tx = cxI + heartX(t) * scale;
+      var ty = cyI - heartY(t) * scale;
+
+      var cp1x = sx + (mx - sx) * 0.3 + (Math.random() - 0.5) * 300;
+      var cp1y = sy + (my - sy) * 0.3 + (Math.random() - 0.5) * 300;
+      var cp2x = sx + (mx - sx) * 0.7 + (Math.random() - 0.5) * 200;
+      var cp2y = sy + (my - sy) * 0.7 + (Math.random() - 0.5) * 200;
+
+      introHearts.push({
+        sx: sx, sy: sy, cp1x: cp1x, cp1y: cp1y, cp2x: cp2x, cp2y: cp2y,
+        mx: mx, my: my, tx: tx, ty: ty,
+        x: sx, y: sy,
+        imgIdx: Math.floor(Math.random() * 3),
+        alpha: 0,
+        scl: 0.3 + Math.random() * 0.7,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 4,
+        delay: Math.random() * 600
+      });
+    }
+
+    function renderIntro() {
+      var elapsed = Date.now() - startTime;
+      ctx.clearRect(0, 0, W, H);
+
+      for (var i = 0; i < introHearts.length; i++) {
+        var h = introHearts[i];
+        var lt = elapsed - h.delay;
+
+        if (lt >= 0 && lt < P2_START) {
+          var p = Math.max(0, Math.min(1, lt / P1_DUR));
+          var ep = easeOutBack(Math.min(p, 1));
+          h.x = bezier(ep, h.sx, h.cp1x, h.cp2x, h.mx);
+          h.y = bezier(ep, h.sy, h.cp1y, h.cp2y, h.my);
+          h.alpha = Math.min(1, p * 2);
+          h.rotation += h.rotSpeed * 0.016;
+        } else if (lt >= P2_START && lt < P3_START) {
+          var p = Math.max(0, Math.min(1, (lt - P2_START) / P2_DUR));
+          var ep = easeInOutCubic(p);
+          h.x = h.mx + (h.tx - h.mx) * ep;
+          h.y = h.my + (h.ty - h.my) * ep;
+          h.alpha = 1;
+          h.rotation *= (1 - p * 0.05);
+        } else if (lt >= P3_START) {
+          var p = Math.max(0, Math.min(1, (lt - P3_START) / P3_DUR));
+          h.x = h.tx; h.y = h.ty;
+          if (p < 0.2) { h.alpha = 1 + p * 3; }
+          else { h.alpha = Math.max(0, 1.6 - (p - 0.2) * 2); }
+          h.rotation = 0;
+        }
+
+        if (h.alpha > 0.01) {
+          ctx.save();
+          ctx.globalAlpha = Math.min(1, h.alpha);
+          ctx.translate(h.x, h.y);
+          ctx.rotate(h.rotation);
+          var img = introImgs[h.imgIdx];
+          var sz = img.width * h.scl;
+          ctx.drawImage(img, -sz/2, -sz/2, sz, sz);
+          ctx.restore();
+        }
+      }
+
+      if (elapsed < TOTAL + 300) {
+        requestAnimationFrame(renderIntro);
+      } else {
+        // Intro done → start main heart + show text
+        callback();
+      }
+    }
+
+    renderIntro();
+  }
+
+  // Start when overlay active
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      if (m.target.classList.contains('active')) {
+        onResize();
+        // Run intro first, then start main heart
+        runIntro(function() {
+          renderHeart();
+          // Show "I Love You" text after intro
+          var heartTextEl = document.getElementById('heartText');
+          heartTextEl.classList.add('active');
+        });
+        observer.disconnect();
+      }
+    });
+  });
+  observer.observe(document.getElementById('heartOverlay'), { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('resize', function() {
+    if (document.getElementById('heartOverlay').classList.contains('active')) onResize();
+  });
+
+  // ===== EXPLODE on tap =====
+  var heartTextEl = document.getElementById('heartText');
+  var thiepOverlay = document.getElementById('thiepOverlay');
+  var tapped = false;
+
+  function startExplode() {
+    if (tapped) return;
+    tapped = true;
+
+    // Hide text
+    heartTextEl.style.transition = 'opacity 0.3s ease';
+    heartTextEl.style.opacity = '0';
+
+    // Stop heart rendering
+    heartStopped = true;
+
+    var explodeCanvas = document.getElementById('explodeCanvas');
+    explodeCanvas.style.display = 'block';
+    explodeCanvas.width = window.innerWidth;
+    explodeCanvas.height = window.innerHeight;
+    var ectx = explodeCanvas.getContext('2d');
+
+    var cx = explodeCanvas.width / 2;
+    var cy = explodeCanvas.height / 2;
+
+    // Generate fragments along heart shape
+    var fragments = [];
+    var numFragments = isMobile ? 50 : 120;
+    for (var i = 0; i < numFragments; i++) {
+      var t = -Math.PI + (2 * Math.PI * i / numFragments);
+      var hx = heartX(t) * mobileScale;
+      var hy = heartY(t) * mobileScale;
+      var px = cx + hx;
+      var py = cy - hy;
+      var dx = hx + (Math.random() - 0.5) * 60;
+      var dy = -hy + (Math.random() - 0.5) * 60;
+      var dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      var speed = 300 + Math.random() * 500;
+      fragments.push({
+        x: px, y: py,
+        vx: (dx / dist) * speed, vy: (dy / dist) * speed,
+        size: 4 + Math.random() * 12,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 15,
+        alpha: 1,
+        gravity: 100 + Math.random() * 200
+      });
+    }
+    // Extra particles from inside heart
+    var extraCount = isMobile ? 25 : 60;
+    for (var j = 0; j < extraCount; j++) {
+      var rt = Math.random() * Math.PI * 2 - Math.PI;
+      var rScale = Math.random() * 0.8;
+      var rhx = heartX(rt) * mobileScale * rScale;
+      var rhy = heartY(rt) * mobileScale * rScale;
+      var angle = Math.random() * Math.PI * 2;
+      var spd = 200 + Math.random() * 600;
+      fragments.push({
+        x: cx + rhx, y: cy - rhy,
+        vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd,
+        size: 3 + Math.random() * 8,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 20,
+        alpha: 1,
+        gravity: 80 + Math.random() * 150
+      });
+    }
+
+    var fragImg = createHeartImage(20, HEART_COLOR, 4);
+
+    // Pulse phase first
+    var pulseStart = Date.now();
+    var pulseDuration = 500;
+    var explodeStart = null;
+    var explodeDuration = 1800;
+    var pinkboard = heartCanvas;
+    var pulsePhase = true;
+
+    function animateExplode() {
+      var now = Date.now();
+      ectx.clearRect(0, 0, explodeCanvas.width, explodeCanvas.height);
+
+      // Pulse: scale heart canvas
+      if (pulsePhase) {
+        var pt = (now - pulseStart) / pulseDuration;
+        if (pt < 1) {
+          var pulseScale = 1 + Math.sin(pt * Math.PI * 3) * 0.12;
+          pinkboard.style.transform = 'scale(' + pulseScale + ')';
+          requestAnimationFrame(animateExplode);
+          return;
+        } else {
+          pulsePhase = false;
+          explodeStart = Date.now();
+          // Hide heart canvas
+          pinkboard.style.transition = 'opacity 0.2s';
+          pinkboard.style.opacity = '0';
+          pinkboard.style.transform = '';
+        }
+      }
+
+      // Explode phase
+      if (explodeStart) {
+        var et = (now - explodeStart) / explodeDuration;
+
+        if (et > 1) {
+          // Done - fade overlay and show thiep
+          var heartOverlay = document.getElementById('heartOverlay');
+          heartOverlay.style.transition = 'opacity 1s ease';
+          heartOverlay.style.opacity = '0';
+          setTimeout(function() {
+            heartOverlay.style.display = 'none';
+            heartTextEl.style.display = 'none';
+            thiepOverlay.classList.add('active');
+          }, 1000);
+          return;
+        }
+
+        var dt = 0.016;
+        for (var i = 0; i < fragments.length; i++) {
+          var f = fragments[i];
+          f.x += f.vx * dt;
+          f.y += f.vy * dt;
+          f.vy += f.gravity * dt;
+          f.vx *= 0.99;
+          f.vy *= 0.99;
+          f.rotation += f.rotSpeed * dt;
+          if (et > 0.4) {
+            f.alpha = Math.max(0, 1 - (et - 0.4) / 0.6);
+          }
+          if (f.alpha > 0.01) {
+            ectx.save();
+            ectx.globalAlpha = f.alpha;
+            ectx.translate(f.x, f.y);
+            ectx.rotate(f.rotation);
+            var sz = f.size * fragImg.width / 20;
+            ectx.drawImage(fragImg, -sz/2, -sz/2, sz, sz);
+            ectx.restore();
+          }
+        }
+        requestAnimationFrame(animateExplode);
+      }
+    }
+
+    requestAnimationFrame(animateExplode);
+  }
+
+  heartTextEl.addEventListener('click', startExplode);
+  heartTextEl.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    startExplode();
+  }, { passive: false });
+}());
+</script>
+
+<script>
+// ==================== THIEP → BIRTHDAY POPUP ====================
+(function () {
+  var thiepImage = document.getElementById('thiepImage');
+  var bdayPopup = document.getElementById('bdayPopup');
+  var bdayClose = document.getElementById('bdayClose');
+  var bdayPhoto = document.getElementById('bdayPhoto');
+  var bdayMsg = document.getElementById('bdayMsg');
+
+  var typeTimer = null;
+
+  function typeMessage(text) {
+    bdayMsg.textContent = '';
+    var idx = 0;
+    clearInterval(typeTimer);
+    typeTimer = setInterval(function () {
+      if (idx < text.length) {
+        bdayMsg.textContent += text[idx];
+        idx++;
+      } else {
+        clearInterval(typeTimer);
+      }
+    }, 60);
+  }
+
+  thiepImage.addEventListener('click', function () {
+    // Get first image from flipbook
+    var imgList = (S.apiImages && S.apiImages.length > 0) ? S.apiImages : ['test.jpeg', 'test2.jpeg', 'test3.jpeg', 'test4.jpeg'];
+    bdayPhoto.src = imgList[0];
+
+    // Get message and type it out
+    var msg = S.apiMessage || 'Chúc mừng sinh nhật em yêu! Cảm ơn em vì đã đến bên anh, làm cuộc sống của anh trở nên đặc biệt và ý nghĩa hơn bao giờ hết. Mỗi ngày được ở bên em là một ngày tuyệt vời, mỗi nụ cười của em là động lực lớn nhất của anh. Chúc em tuổi mới luôn vui vẻ, hạnh phúc, mãi xinh đẹp và toả sáng nhé! Anh sẽ luôn ở đây, yêu thương và đồng hành cùng em!';
+
+    bdayPopup.classList.add('active');
+    setTimeout(function () { typeMessage(msg); }, 500);
+  });
+
+  thiepImage.style.cursor = 'pointer';
+  thiepImage.style.pointerEvents = 'auto';
+
+  function closePopup() {
+    bdayPopup.classList.remove('active');
+    clearInterval(typeTimer);
+  }
+
+  bdayClose.addEventListener('click', closePopup);
+
+  bdayPopup.addEventListener('click', function (e) {
+    if (e.target === bdayPopup) closePopup();
+  });
+}());
+</script>
+
+</body>
+</html>
