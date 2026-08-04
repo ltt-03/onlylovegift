@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <script src="./app.js" defer></script>
+    <title>Welcome</title>
+</head>
+<body>
+    <audio id="audio" controls autoplay hidden loop>
+        <source src="./music.mp3" type="audio/mpeg">
+    </audio>
+  
+      <script type="text/javascript">
+        if (window.DYNAMIC_DATA) {
+            sessionStorage.setItem('MERRY_CHRISTMAS_DATA', JSON.stringify(window.DYNAMIC_DATA));
+            if (window.DYNAMIC_DATA.music) {
+                document.getElementById('audio').src = window.DYNAMIC_DATA.music;
+            }
+        }
+        document.addEventListener('click', musicPlay);
+        function musicPlay() {
+            document.getElementById('audio').play();
+            document.removeEventListener('click', musicPlay);
+        }
+      </script>
+    <div class="loading">
+        <div class="boxHeartImg">
+            <div class="heartItem item1">
+                <img src="./tim.png" alt="">
+            </div>
+            <div class="heartItem item2">
+                <img src="./tim.png" alt="">
+            </div>
+            <div class="heartItem item3">
+                <img src="./tim.png" alt="">
+            </div>
+        </div>
+        <div class="heartBox">
+            <div class="heart"></div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress"></div>
+            <div class="percent">100%</div>
+        </div>
+        <h2 class="textBox">
+            <span class="textLoad">chờ xíu nhé</span>
+            <span class="cricle1">.</span>
+            <span class="cricle2">.</span>
+            <span class="cricle3">.</span>
+        </h2>
+        <div class="buttonCLick">
+            <img src="https://i.imgur.com/EFMJ8gK.png" alt="">
+            <div class="button">
+                <p class="textBtn"></p>
+            </div>
+        </div>
+        <div class="box3-3">
+            Music 🎧
+        </div>
+    </div>
+</body>
+</html>

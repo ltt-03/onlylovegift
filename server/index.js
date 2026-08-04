@@ -33,7 +33,22 @@ const upload = multer({
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  log: ['error'],
+});
+
+// ============================================================
+// GLOBAL ERROR HANDLERS — Prevent server crash on unhandled errors
+// ============================================================
+process.on('uncaughtException', (err) => {
+  console.error('[FATAL] Uncaught Exception:', err.message, err.stack);
+  // Don't exit — keep server alive
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[FATAL] Unhandled Rejection at:', promise, 'reason:', reason);
+  // Don't exit — keep server alive
+});
 
 app.use(cors());
 app.use(express.json());
@@ -316,9 +331,17 @@ app.get('/api/templates/stats', async (req, res) => {
   }
 });
 
-// Lightweight Ping Route for UptimeRobot (Giữ server luôn thức)
-app.get('/ping', (req, res) => {
-  res.status(200).send('pong');
+// Lightweight Ping Route for UptimeRobot / CronJob (Giữ server luôn thức)
+app.get('/ping', async (req, res) => {
+  try {
+    // Kiểm tra kết nối DB để đảm bảo Prisma vẫn sống
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ status: 'ok', db: 'connected', ts: Date.now() });
+  } catch (dbErr) {
+    console.error('[PING] DB check failed:', dbErr.message);
+    // Vẫn trả 200 để cron-job không báo lỗi, nhưng log DB lỗi
+    res.status(200).json({ status: 'ok', db: 'error', error: dbErr.message, ts: Date.now() });
+  }
 });
 
 // Demo Route (Public)
@@ -436,7 +459,12 @@ app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
       }
     });
 
-    const finalAmount = successfulOrderCount === 0 ? 29000 : 49000;
+    let finalAmount = successfulOrderCount === 0 ? 29000 : 49000;
+    
+    // Free templates
+    if (['x-mas-tree', 'merry-christmas', 'christmas'].includes(templateId)) {
+        finalAmount = 0;
+    }
 
     let finalMessage = message;
     if (passcode) {
@@ -444,10 +472,13 @@ app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
     }
 
     const imagesData = passImageUrl ? { gallery: uploadedImages, passImage: passImageUrl } : uploadedImages;
+    
+    const orderCode = generateOrderCode();
+    const isFree = finalAmount === 0;
 
     const order = await prisma.order.create({
       data: {
-        orderCode: generateOrderCode(),
+        orderCode: orderCode,
         templateId,
         senderName,
         receiverName,
@@ -455,8 +486,9 @@ app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
         message: finalMessage || '',
         musicUrl: customMusicUrl,
         amount: finalAmount,
-        status: 'PENDING',
+        status: isFree ? 'SUCCESS' : 'PENDING',
         userId: req.user.id,
+        deployUrl: isFree ? `${process.env.FRONTEND_URL || 'http://localhost:5173'}/gift/view/${orderCode}` : null,
         images: (Array.isArray(imagesData) && imagesData.length > 0) || (!Array.isArray(imagesData)) ? JSON.stringify(imagesData) : null
       }
     });
@@ -893,19 +925,39 @@ app.post('/api/admin/feedbacks/:id/status', authenticate, requireAdmin, async (r
 
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
   
-  // Tự động Ping chính mình mỗi 5 phút (300000ms) để chống ngủ
+  // Tự động Ping chính mình mỗi 12 phút để chống ngủ (không gây quá tải)
+  // Cron-job bên ngoài ping mỗi 15 phút → self-ping 12 phút bù vào khoảng trống
   setInterval(async () => {
     const backendUrl = process.env.BACKEND_URL;
     if (backendUrl && backendUrl.includes('onrender.com')) {
       try {
-        await fetch(`${backendUrl}/ping`, { method: 'HEAD' });
-        console.log('Self-ping successful');
+        const ctrl = new AbortController();
+        const timeout = setTimeout(() => ctrl.abort(), 10000); // 10s timeout
+        await fetch(`${backendUrl}/ping`, { method: 'GET', signal: ctrl.signal });
+        clearTimeout(timeout);
+        console.log(`[Self-Ping] OK at ${new Date().toISOString()}`);
       } catch (error) {
-        console.error('Self-ping failed:', error.message);
+        if (error.name === 'AbortError') {
+          console.error('[Self-Ping] Timed out after 10s');
+        } else {
+          console.error('[Self-Ping] Failed:', error.message);
+        }
       }
     }
-  }, 5 * 60 * 1000);
+  }, 12 * 60 * 1000);
 });
+
+// Graceful shutdown — đóng Prisma khi server tắt
+const gracefulShutdown = async (signal) => {
+  console.log(`[${signal}] Graceful shutdown...`);
+  await prisma.$disconnect();
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
+  });
+};
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

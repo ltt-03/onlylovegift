@@ -3,7 +3,12 @@ const { PrismaClient } = require('@prisma/client');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
-const prisma = new PrismaClient();
+
+// Dùng singleton Prisma — tránh tạo nhiều connection pool gây OOM
+if (!global.__prismaWallet) {
+  global.__prismaWallet = new PrismaClient();
+}
+const prisma = global.__prismaWallet;
 
 // Middleware auth
 const authMiddleware = async (req, res, next) => {

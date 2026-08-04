@@ -1,12 +1,38 @@
 const basePath = window.ASSET_BASE_PATH || "./";
 const heartsContainer = document.body;
-const imageFiles = window.DYNAMIC_DATA && window.DYNAMIC_DATA.images && window.DYNAMIC_DATA.images.length > 0 
-  ? window.DYNAMIC_DATA.images 
-  : Array.from({ length: 20 }, (_, i) => `${basePath}style/img/Anh (${i + 1}).jpg`);
 
+// Parse images: DYNAMIC_DATA.images có thể là array hoặc object {gallery, passImage}
+const _rawImages = window.DYNAMIC_DATA && window.DYNAMIC_DATA.images;
+let imageFiles;
+if (_rawImages && typeof _rawImages === 'object' && !Array.isArray(_rawImages) && _rawImages.gallery && _rawImages.gallery.length > 0) {
+  imageFiles = _rawImages.gallery;
+} else if (Array.isArray(_rawImages) && _rawImages.length > 0) {
+  imageFiles = _rawImages;
+} else {
+  imageFiles = Array.from({ length: 20 }, (_, i) => `${basePath}style/img/Anh (${i + 1}).jpg`);
+}
+
+// Parse passImage từ DYNAMIC_DATA
+const _passImageUrl = (_rawImages && typeof _rawImages === 'object' && !Array.isArray(_rawImages))
+  ? _rawImages.passImage
+  : null;
+
+// Cập nhật ảnh màn hình khóa nếu có passImage
+if (_passImageUrl) {
+  const lockImg = document.querySelector('.lock-image img');
+  if (lockImg) lockImg.src = _passImageUrl;
+}
+
+// Load letter text từ DYNAMIC_DATA.messages, nếu không có thì dùng letter.txt
 let letterText = [];
 
 async function loadLetter() {
+  // Ưu tiên dùng messages từ DYNAMIC_DATA (do khách hàng nhập)
+  if (window.DYNAMIC_DATA && window.DYNAMIC_DATA.messages && window.DYNAMIC_DATA.messages.length > 0) {
+    letterText = window.DYNAMIC_DATA.messages;
+    return;
+  }
+  // Fallback: đọc từ letter.txt (demo mặc định)
   try {
     const response = await fetch(`${basePath}style/letter.txt`);
     const text = await response.text();
@@ -458,7 +484,8 @@ const numBtns = document.querySelectorAll(".num-btn[data-value]");
 const deleteBtn = document.querySelector(".num-btn.delete-btn");
 
 let enteredPin = "";
-const correctPin = "0803";
+// Đọc mã PIN từ DYNAMIC_DATA.passcode (do khách nhập), mặc định 0803
+const correctPin = (window.DYNAMIC_DATA && window.DYNAMIC_DATA.passcode) ? String(window.DYNAMIC_DATA.passcode) : "0803";
 
 function updateDots() {
   passDots.forEach((dot, index) => {

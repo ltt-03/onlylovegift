@@ -6,7 +6,12 @@ const nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
 
 const router = express.Router();
-const prisma = new PrismaClient();
+
+// Dùng singleton Prisma — tránh tạo nhiều connection pool gây OOM
+if (!global.__prismaAuth) {
+  global.__prismaAuth = new PrismaClient();
+}
+const prisma = global.__prismaAuth;
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper: Setup Nodemailer transport

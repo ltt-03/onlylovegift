@@ -99,7 +99,11 @@ export default function CreateXMasTree() {
       const response = await api.post('/orders', submitData, { headers: { 'Content-Type': 'multipart/form-data' } });
       const data = response.data;
       if (data.success) {
-        navigate('/checkout?orderCode=' + data.order.orderCode);
+        if (data.order.amount === 0) {
+            navigate(`/success?orderCode=${data.order.orderCode}`);
+        } else {
+            navigate('/checkout?orderCode=' + data.order.orderCode);
+        }
       } else {
         alert('Có lỗi xảy ra khi tạo đơn hàng.');
       }

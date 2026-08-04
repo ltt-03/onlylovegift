@@ -18,15 +18,15 @@ export const dummyTemplates = [
   },
   {
     id: 'x-mas-tree',
-    name: 'Cây Thông Noel 3D Tương Tác',
-    description: 'Cây thông Noel 3D lung linh với ảnh của bạn trên từng quả cầu trang trí. Nhận diện cử chỉ tay để tương tác, kèm nhạc Giáng Sinh lãng mạn.',
-    price: '69,000đ',
-    discountPrice: '39,000đ',
-    discountPercent: '-43%',
-    discountLabel: 'Ưu đãi mùa lễ hội!',
+    name: 'Cây Thông Noel 3D',
+    description: 'Mẫu cây thông Noel 3D tuyệt đẹp với lời chúc bay lượn và nhạc nền giáng sinh sôi động. Món quà độc đáo mùa lễ hội.',
+    price: 'Miễn phí',
+    discountPrice: null,
+    discountPercent: null,
+    discountLabel: 'Tặng bạn!',
     image: '/images/x-mas-tree.jpg',
     videoUrl: null,
-    baseCount: 12,
+    baseCount: 15,
   },
   {
     id: 'gift-surprise-v2',
@@ -64,7 +64,30 @@ export const dummyTemplates = [
     image: '/images/love-box-01.jpeg',
     videoUrl: null,
     baseCount: 7,
-    lastUpdated: '03/08/2026 20:00'
+  },
+  {
+    id: 'merry-christmas',
+    name: 'Thư Giáng Sinh',
+    description: 'Bức thư gửi gắm yêu thương đêm Giáng Sinh với lời chúc ý nghĩa, kèm nhạc lãng mạn và hiệu ứng tuyết rơi tuyệt đẹp.',
+    price: 'Miễn phí',
+    discountPrice: null,
+    discountPercent: null,
+    discountLabel: 'Tặng bạn!',
+    image: '/images/merry-christmas.jpg',
+    videoUrl: null,
+    baseCount: 15,
+  },
+  {
+    id: 'christmas',
+    name: 'Thiệp Giáng Sinh Động',
+    description: 'Thiệp Giáng Sinh 3D có cây thông, hiệu ứng lung linh. Lời chúc hiện ra như phép màu.',
+    price: 'Miễn phí',
+    discountPrice: null,
+    discountPercent: null,
+    discountLabel: 'Tặng bạn!',
+    image: '/images/christmas.jpg',
+    videoUrl: null,
+    baseCount: 10,
   }
 ];
 
@@ -103,6 +126,10 @@ export default function Templates() {
   const handleSelect = (templateId) => {
     if (templateId === 'x-mas-tree') {
       navigate(`/create/x-mas-tree`);
+    } else if (templateId === 'merry-christmas') {
+      navigate(`/create/merry-christmas`);
+    } else if (templateId === 'christmas') {
+      navigate(`/create/christmas`);
     } else if (templateId === 'gift-surprise-v2') {
       navigate(`/create/gift-surprise-v2`);
     } else if (templateId === 'love-gift-3d') {

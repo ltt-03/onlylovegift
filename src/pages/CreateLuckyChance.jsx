@@ -106,11 +106,11 @@ export default function CreateLuckyChance() {
       images.forEach(img => submitData.append('images', img));
       if (musicFile) submitData.append('musicFile', musicFile);
 
-      const res = await api.post('/api/orders', submitData, {
+      const res = await api.post('/orders', submitData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       if (res.data.success) {
-        navigate(`/payment/${res.data.order.orderCode}`);
+        navigate(`/checkout?orderCode=${res.data.order.orderCode}`);
       } else {
         alert(res.data.message || 'Có lỗi xảy ra');
       }

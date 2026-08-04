@@ -21,6 +21,8 @@ import CreateXMasTree from './pages/CreateXMasTree';
 import CreateGiftSurprise from './pages/CreateGiftSurprise';
 import CreateLoveGift3D from './pages/CreateLoveGift3D';
 import CreateLuckyChance from './pages/CreateLuckyChance';
+import CreateMerryChristmas from './pages/CreateMerryChristmas';
+import CreateChristmas from './pages/CreateChristmas';
 
 
 // Layout Component
@@ -248,6 +250,8 @@ function App() {
           <Route path="/create/gift-surprise-v2" element={<CreateGiftSurprise />} />
           <Route path="/create/love-gift-3d" element={<CreateLoveGift3D />} />
           <Route path="/create/lucky-chance" element={<CreateLuckyChance />} />
+          <Route path="/create/merry-christmas" element={<CreateMerryChristmas />} />
+          <Route path="/create/christmas" element={<CreateChristmas />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<Success />} />
           <Route path="/feedback" element={<Feedback />} />
