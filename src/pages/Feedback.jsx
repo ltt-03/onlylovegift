@@ -40,7 +40,7 @@ export default function Feedback() {
         setMessage('');
         setRating(5);
         fetchFeedbacks(); // Refresh list
-        alert('Cảm ơn bạn đã gửi đánh giá!');
+        alert('Cảm ơn bạn! Đánh giá của bạn đã được ghi nhận.');
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại');

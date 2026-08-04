@@ -718,6 +718,7 @@ app.post('/api/feedbacks', authenticate, async (req, res) => {
 // 6. Admin Endpoints
 app.get('/api/admin/stats', authenticate, requireAdmin, async (req, res) => {
   try {
+    const os = require('os');
     const usersCount = await prisma.user.count();
     const ordersCount = await prisma.order.count({ where: { status: 'SUCCESS' } });
     
@@ -727,7 +728,49 @@ app.get('/api/admin/stats', authenticate, requireAdmin, async (req, res) => {
     });
     const revenue = revenueObj._sum.amount || 0;
 
-    res.json({ success: true, stats: { usersCount, ordersCount, revenue } });
+    // Calculate directory size for storage
+    const getDirSize = async (dirPath) => {
+      let size = 0;
+      try {
+        const files = await fs.promises.readdir(dirPath);
+        for (const file of files) {
+          const filePath = path.join(dirPath, file);
+          const stats = await fs.promises.stat(filePath);
+          if (stats.isDirectory()) {
+            size += await getDirSize(filePath);
+          } else {
+            size += stats.size;
+          }
+        }
+      } catch (e) {}
+      return size;
+    };
+    const storageBytes = await getDirSize(uploadImagesDir);
+    const storageMB = (storageBytes / (1024 * 1024)).toFixed(2);
+
+    // RAM usage (Total memory vs Free memory of the OS, or Process memory)
+    const totalMem = os.totalmem();
+    const freeMem = os.freemem();
+    const usedMem = totalMem - freeMem;
+    const usedMemGB = (usedMem / (1024 * 1024 * 1024)).toFixed(2);
+    const totalMemGB = (totalMem / (1024 * 1024 * 1024)).toFixed(2);
+    const processMemMB = (process.memoryUsage().rss / (1024 * 1024)).toFixed(2);
+
+    res.json({ 
+      success: true, 
+      stats: { 
+        usersCount, 
+        ordersCount, 
+        revenue,
+        system: {
+          storageMB: Number(storageMB),
+          ramUsedGB: Number(usedMemGB),
+          ramTotalGB: Number(totalMemGB),
+          processRamMB: Number(processMemMB),
+          osPlatform: os.platform()
+        }
+      } 
+    });
   } catch (error) {
     res.status(500).json({ success: false });
   }

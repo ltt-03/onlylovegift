@@ -8,7 +8,7 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
   
   // Data States
-  const [stats, setStats] = useState({ usersCount: 0, ordersCount: 0, revenue: 0 });
+  const [stats, setStats] = useState({ usersCount: 0, ordersCount: 0, revenue: 0, system: null });
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -120,6 +120,30 @@ export default function Admin() {
                 <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.ordersCount}</div>
               </div>
             </div>
+            
+            {stats.system && (
+              <>
+                <h3 style={{ marginTop: '40px' }}>Thông tin Máy chủ (Server)</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginTop: '20px' }}>
+                  <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
+                    <h4 style={{ color: 'var(--color-text-light)', marginBottom: '10px' }}>Dung lượng Ảnh (Disk)</h4>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.system.storageMB} <span style={{fontSize: '14px', color: 'var(--color-text-light)'}}>MB</span></div>
+                  </div>
+                  <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
+                    <h4 style={{ color: 'var(--color-text-light)', marginBottom: '10px' }}>RAM Hệ thống</h4>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.system.ramUsedGB} <span style={{fontSize: '14px', color: 'var(--color-text-light)'}}>/ {stats.system.ramTotalGB} GB</span></div>
+                  </div>
+                  <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
+                    <h4 style={{ color: 'var(--color-text-light)', marginBottom: '10px' }}>Node.js RAM</h4>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.system.processRamMB} <span style={{fontSize: '14px', color: 'var(--color-text-light)'}}>MB</span></div>
+                  </div>
+                  <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
+                    <h4 style={{ color: 'var(--color-text-light)', marginBottom: '10px' }}>Hệ điều hành</h4>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold', textTransform: 'capitalize' }}>{stats.system.osPlatform}</div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 
