@@ -68,3 +68,14 @@ model Feedback {
   status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
   createdAt DateTime @default(now())
 }
+
+model Report {
+  id          String   @id @default(uuid())
+  userId      String?
+  userName    String?
+  orderCode   String?
+  giftUrl     String   @db.Text
+  message     String   @db.Text
+  status      String   @default("PENDING") // PENDING, RESOLVED, DISMISSED
+  createdAt   DateTime @default(now())
+}

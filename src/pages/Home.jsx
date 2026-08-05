@@ -621,43 +621,80 @@ export default function Home() {
       {/* Preview Modal */}
       {activePreview && (
         <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.85)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-          }}
+          className="preview-modal-overlay"
           onClick={() => setActivePreview(null)}
         >
           <div 
-            style={{ width: '100%', maxWidth: '1000px', position: 'relative' }}
+            className="preview-modal-inner"
             onClick={(e) => e.stopPropagation()}
           >
             <button 
               onClick={() => setActivePreview(null)}
-              style={{
-                position: 'absolute',
-                top: '-40px',
-                right: '0',
-                background: 'transparent',
-                border: 'none',
-                color: 'white',
-                cursor: 'pointer'
-              }}
+              className="preview-modal-close"
             >
-              <X size={32} />
+              <X size={28} />
             </button>
-            <div style={{ maxHeight: '90vh', overflowY: 'auto', borderRadius: '16px' }}>
-              <SecurePreview templateId={activePreview} />
-            </div>
+            <SecurePreview templateId={activePreview} />
           </div>
+          <style>{`
+            .preview-modal-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100vw;
+              height: 100vh;
+              background-color: rgba(0,0,0,0.85);
+              z-index: 9999;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 20px;
+              box-sizing: border-box;
+            }
+            .preview-modal-inner {
+              width: 100%;
+              max-width: 1000px;
+              position: relative;
+            }
+            .preview-modal-close {
+              position: absolute;
+              top: -44px;
+              right: 0;
+              background: transparent;
+              border: none;
+              color: white;
+              cursor: pointer;
+              z-index: 10;
+              padding: 4px;
+            }
+            @media (max-width: 768px) {
+              .preview-modal-overlay {
+                padding: 0;
+                align-items: flex-start;
+              }
+              .preview-modal-inner {
+                width: 100vw;
+                max-width: 100vw;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+              }
+              .preview-modal-close {
+                position: fixed;
+                top: 8px;
+                right: 8px;
+                top: env(safe-area-inset-top, 8px);
+                background: rgba(0,0,0,0.6);
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+              }
+            }
+          `}</style>
         </div>
       )}
     </div>

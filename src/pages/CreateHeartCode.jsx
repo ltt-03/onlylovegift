@@ -115,7 +115,7 @@ export default function CreateHeartCode() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '1200px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }} className="responsive-grid">
+      <div className="create-page-grid">
         {/* Form bên trái */}
         <div className="card">
           <button 
@@ -271,8 +271,8 @@ export default function CreateHeartCode() {
           </form>
         </div>
 
-        {/* Demo bên phải */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {/* Demo bên phải - ẩn trên mobile, dùng nút Xem Trước thay thế */}
+        <div className="create-preview-panel">
           <div className="card" style={{ padding: 0, overflow: 'hidden', height: '600px', display: 'flex', flexDirection: 'column', position: 'sticky', top: '100px' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface)', fontWeight: 600, fontSize: '0.9rem' }}>
               Xem Trước Giao Diện
@@ -321,6 +321,26 @@ export default function CreateHeartCode() {
           </div>
         </div>
       )}
+
+      <style>{`
+        .create-page-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 40px;
+        }
+        @media (max-width: 768px) {
+          .create-page-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+          }
+          .create-preview-panel {
+            display: none;
+          }
+          .container {
+            padding: 20px 16px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

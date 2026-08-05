@@ -107,7 +107,7 @@ export default function Checkout() {
     <div className="container" style={{ padding: '60px 24px', maxWidth: '900px' }}>
       <h1 className="text-center" style={{ fontSize: '2.5rem', marginBottom: '40px' }}>Thanh Toán Đơn Hàng</h1>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+      <div className="grid-2col-layout">
         <div className="card">
           <h2 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Thông tin đơn hàng</h2>
           <div style={{ marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid var(--color-border)' }}>

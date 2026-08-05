@@ -142,7 +142,7 @@ export default function CreateLoveGift3D() {
 
         <form onSubmit={handleSubmit} style={{ marginTop: '30px' }}>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+          <div className="grid-2col-inputs" style={{ marginBottom: '24px' }}>
             <div className="input-group" style={{ margin: 0 }}>
               <label>Tên người gửi</label>
               <input type="text" name="senderName" value={formData.senderName} onChange={handleChange}
@@ -163,7 +163,7 @@ export default function CreateLoveGift3D() {
 
           <div className="input-group" style={{ marginBottom: '32px' }}>
             <label>4 Dòng chữ lơ lửng</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="grid-2col-inputs" style={{ marginTop: '8px' }}>
               <input type="text" name="msg1" value={formData.msg1} onChange={handleChange} className="input-field" />
               <input type="text" name="msg2" value={formData.msg2} onChange={handleChange} className="input-field" />
               <input type="text" name="msg3" value={formData.msg3} onChange={handleChange} className="input-field" />

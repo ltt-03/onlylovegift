@@ -251,13 +251,38 @@ button {
 
 .mobile-app-wrapper {
   width: 100%;
-  max-width: 430px; /* iPhone Pro Max width */
+  max-width: 430px; /* iPhone Pro Max width - only applies on desktop for framing */
   background-color: transparent;
   min-height: 100vh;
   position: relative;
   box-shadow: 0 0 20px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
+}
+
+/* On real mobile devices: remove the fake phone frame, go full width */
+@media (max-width: 768px) {
+  .layout-container {
+    justify-content: flex-start;
+  }
+  .mobile-app-wrapper {
+    max-width: 100%;
+    width: 100%;
+    box-shadow: none;
+  }
+  /* Header and bottom nav must also be full-width on real phones */
+  .top-header {
+    max-width: 100%;
+    width: 100vw;
+    left: 0;
+    right: 0;
+  }
+  .bottom-nav {
+    max-width: 100%;
+    width: 100vw;
+    left: 0;
+    right: 0;
+  }
 }
 
 /* Heart Animation Background */
@@ -304,6 +329,57 @@ button {
   flex-direction: column;
   min-height: 100vh;
 }
+
+/* ===== Responsive Grid Utilities ===== */
+/* Outer 2-col: form | preview side panel */
+.grid-2col-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+/* Inner 2-col: 2 input fields side by side */
+.grid-2col-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Create page container fix on mobile */
+.create-page-container {
+  padding: 60px 24px;
+  max-width: 1200px;
+}
+
+/* Image upload grid: 4-col desktop, 2-col mobile */
+.image-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+@media (max-width: 768px) {
+  .grid-2col-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .grid-2col-inputs {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .create-page-container {
+    padding: 20px 16px;
+  }
+  /* Hide desktop side preview panels on mobile */
+  .desktop-preview-panel {
+    display: none;
+  }
+  .image-upload-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+/* ===================================== */
 
 main {
   flex: 1;
@@ -414,9 +490,11 @@ footer {
   border-bottom: 1px solid var(--color-border);
   position: fixed;
   top: 0;
-  width: 100%;
-  max-width: 430px;
+  left: 0;
+  width: 100vw;
+  max-width: 100vw;
   z-index: 1000;
+  box-sizing: border-box;
 }
 [data-theme="dark"] .top-header {
   background: rgba(255, 42, 115, 0.1);
@@ -454,8 +532,9 @@ footer {
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  width: 100%;
-  max-width: 430px;
+  left: 0;
+  width: 100vw;
+  max-width: 100vw;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
@@ -465,7 +544,7 @@ footer {
   justify-content: space-around;
   padding: 12px 0;
   padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  z-index: 1000;
+  box-sizing: border-box;
 }
 [data-theme="dark"] .bottom-nav {
   background: rgba(43, 4, 22, 0.85);

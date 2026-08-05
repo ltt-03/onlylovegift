@@ -88,16 +88,7 @@ export default function SecurePreview({ templateId, autoLoad = false }) {
   }
 
   return (
-    <div style={{
-      width: '100%',
-      background: 'var(--color-bg-alt, #1a1b1e)',
-      border: '1px solid var(--color-border, #2c2e33)',
-      borderRadius: '16px',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      marginTop: '24px'
-    }}>
+    <div className="secure-preview-container">
       {/* Header Toolbar */}
       <div style={{
         padding: '12px 16px',
@@ -215,15 +206,7 @@ export default function SecurePreview({ templateId, autoLoad = false }) {
       </div>
 
       {/* Content Area */}
-      <div style={{
-        background: '#1a1b1e',
-        padding: '24px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '400px',
-        position: 'relative'
-      }}>
+      <div className="preview-content-area">
         {loading ? (
           <div style={{ color: '#868e96', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
             <RefreshCw size={24} className="spin" color="#10b981" />
@@ -237,42 +220,15 @@ export default function SecurePreview({ templateId, autoLoad = false }) {
             }}>Thử lại</button>
           </div>
         ) : (
-          <div style={{
-            width: viewMode === 'mobile' ? '375px' : '100%',
-            maxWidth: '1000px',
-            height: viewMode === 'mobile' ? '812px' : '650px',
-            border: '8px solid #343a40',
-            borderRadius: viewMode === 'mobile' ? '36px' : '12px',
-            overflow: 'hidden',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            position: 'relative',
-            backgroundColor: '#fff'
-          }}>
+          <div className={`preview-frame ${viewMode === 'mobile' ? 'mobile-mode' : 'desktop-mode'}`}>
             {/* Mobile Notch (Simulated) */}
             {viewMode === 'mobile' && (
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '120px',
-                height: '24px',
-                background: '#343a40',
-                borderBottomLeftRadius: '12px',
-                borderBottomRightRadius: '12px',
-                zIndex: 10
-              }}></div>
+              <div className="mobile-notch"></div>
             )}
             
             <iframe 
               src={iframeUrl}
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                background: '#fff'
-              }}
+              className="preview-iframe"
               title="Template Preview"
               allow="autoplay; fullscreen"
             />
@@ -286,6 +242,104 @@ export default function SecurePreview({ templateId, autoLoad = false }) {
         }
         .spin {
           animation: spin 1s linear infinite;
+        }
+
+        .secure-preview-container {
+          width: 100%;
+          background: var(--color-bg-alt, #1a1b1e);
+          border: 1px solid var(--color-border, #2c2e33);
+          border-radius: 16px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          margin-top: 24px;
+        }
+        
+        .preview-content-area {
+          background: #1a1b1e;
+          padding: 24px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 400px;
+          position: relative;
+        }
+        
+        .preview-frame {
+          overflow: hidden;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          background-color: #fff;
+        }
+        
+        .preview-frame.mobile-mode {
+          width: 100%;
+          max-width: 375px;
+          height: 812px;
+          max-height: 75vh;
+          border: 8px solid #343a40;
+          border-radius: 36px;
+        }
+        
+        .preview-frame.desktop-mode {
+          width: 100%;
+          max-width: 1000px;
+          height: 650px;
+          max-height: 75vh;
+          border: 8px solid #343a40;
+          border-radius: 12px;
+        }
+        
+        .mobile-notch {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 120px;
+          height: 24px;
+          background: #343a40;
+          border-bottom-left-radius: 12px;
+          border-bottom-right-radius: 12px;
+          z-index: 10;
+        }
+        
+        .preview-iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+          background: #fff;
+          display: block;
+        }
+        
+        @media (max-width: 768px) {
+          .secure-preview-container {
+            border-radius: 0;
+            margin-top: 0;
+            border: none;
+            flex: 1;
+            height: 100%;
+          }
+          
+          .preview-content-area {
+            padding: 0;
+            min-height: auto;
+            flex: 1;
+          }
+          
+          .preview-frame.mobile-mode, .preview-frame.desktop-mode {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            max-height: none;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+          }
+          
+          .mobile-notch {
+            display: none;
+          }
         }
       `}</style>
     </div>

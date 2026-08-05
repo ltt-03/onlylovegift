@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { Users, ShoppingBag, CreditCard, MessageSquare, TrendingUp, Check, X, Trash2 } from 'lucide-react';
+import { Users, ShoppingBag, CreditCard, MessageSquare, TrendingUp, Check, X, Trash2, AlertTriangle, ExternalLink } from 'lucide-react';
 
 export default function Admin() {
   const { user, api } = useContext(AuthContext);
@@ -13,6 +13,7 @@ export default function Admin() {
   const [orders, setOrders] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
+  const [reports, setReports] = useState([]);
 
   // Chặn người dùng không phải Admin
   if (!user || user.role !== 'ADMIN') {
@@ -35,6 +36,9 @@ export default function Admin() {
   const fetchFeedbacks = async () => {
     try { const res = await api.get('/admin/feedbacks'); setFeedbacks(res.data.feedbacks); } catch (e) {}
   };
+  const fetchReports = async () => {
+    try { const res = await api.get('/admin/reports'); setReports(res.data.reports); } catch (e) {}
+  };
 
   useEffect(() => {
     if (activeTab === 'dashboard') fetchStats();
@@ -42,6 +46,7 @@ export default function Admin() {
     else if (activeTab === 'orders') fetchOrders();
     else if (activeTab === 'transactions') fetchTransactions();
     else if (activeTab === 'feedbacks') fetchFeedbacks();
+    else if (activeTab === 'reports') fetchReports();
   }, [activeTab]);
 
   // Actions
@@ -96,6 +101,14 @@ export default function Admin() {
         </button>
         <button className={`btn ${activeTab === 'feedbacks' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('feedbacks')} style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '10px', padding: '12px' }}>
           <MessageSquare size={20} /> Đánh giá
+        </button>
+        <button className={`btn ${activeTab === 'reports' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('reports')} style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '10px', padding: '12px', position: 'relative' }}>
+          <AlertTriangle size={20} /> Báo Cáo Lỗi
+          {reports.filter(r => r.status === 'PENDING').length > 0 && (
+            <span style={{ marginLeft: 'auto', background: '#ef4444', color: 'white', borderRadius: '50px', padding: '2px 8px', fontSize: '11px', fontWeight: 700 }}>
+              {reports.filter(r => r.status === 'PENDING').length}
+            </span>
+          )}
         </button>
       </div>
 
@@ -243,28 +256,48 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Feedbacks Tab */}
-        {activeTab === 'feedbacks' && (
+        {/* Reports Tab */}
+        {activeTab === 'reports' && (
           <div>
-            <h3>Kiểm duyệt đánh giá</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px', marginTop: '20px' }}>
-              {feedbacks.map(fb => (
-                <div key={fb.id} className="card" style={{ padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <h4 style={{ margin: '0 0 5px 0' }}>{fb.name} - {fb.rating} Sao</h4>
-                    <p style={{ margin: 0, color: 'var(--color-text-light)' }}>{fb.message}</p>
-                    <span style={{ fontSize: '12px', color: fb.status === 'APPROVED' ? '#4ade80' : fb.status === 'REJECTED' ? '#f87171' : 'orange' }}>
-                      Trạng thái: {fb.status}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    {fb.status !== 'APPROVED' && (
-                      <button className="btn" style={{ padding: '8px 12px', background: '#4ade80', color: '#000' }} onClick={() => handleUpdateFeedbackStatus(fb.id, 'APPROVED')}>Duyệt</button>
-                    )}
-                    {fb.status !== 'REJECTED' && (
-                      <button className="btn" style={{ padding: '8px 12px', background: '#f87171', color: '#fff' }} onClick={() => handleUpdateFeedbackStatus(fb.id, 'REJECTED')}>Từ chối</button>
-                    )}
-                    <button className="btn" style={{ padding: '8px', background: 'transparent', border: '1px solid var(--color-border)' }} onClick={() => handleUpdateFeedbackStatus(fb.id, 'DELETED')}><Trash2 size={16} /></button>
+            <h3>Báo Cáo Lỗi Quà Tặng</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px', marginTop: '20px' }}>
+              {reports.length === 0 ? (
+                <p style={{ color: 'var(--color-text-light)' }}>Chưa có báo cáo nào.</p>
+              ) : reports.map(r => (
+                <div key={r.id} className="card" style={{ padding: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 700, color: 'var(--color-text)' }}>{r.userName || 'Ẩn danh'}</span>
+                        {r.orderCode && <span style={{ fontSize: '12px', background: 'rgba(0,0,0,0.07)', padding: '2px 8px', borderRadius: '50px' }}>#{r.orderCode}</span>}
+                        <span style={{
+                          fontSize: '11px', padding: '2px 8px', borderRadius: '50px', fontWeight: 700,
+                          background: r.status === 'RESOLVED' ? 'rgba(34,197,94,0.12)' : r.status === 'DISMISSED' ? 'rgba(156,163,175,0.2)' : 'rgba(239,68,68,0.12)',
+                          color: r.status === 'RESOLVED' ? '#16a34a' : r.status === 'DISMISSED' ? '#6b7280' : '#dc2626'
+                        }}>{r.status}</span>
+                      </div>
+                      <p style={{ margin: '0 0 8px', color: 'var(--color-text)', fontSize: '14px', lineHeight: 1.5 }}>{r.message}</p>
+                      <a href={r.giftUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: 'var(--color-primary)', display: 'inline-flex', alignItems: 'center', gap: '4px', wordBreak: 'break-all' }}>
+                        <ExternalLink size={12} /> {r.giftUrl}
+                      </a>
+                      <div style={{ fontSize: '11px', color: 'var(--color-text-light)', marginTop: '6px' }}>
+                        {new Date(r.createdAt).toLocaleString('vi-VN')}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                      {r.status !== 'RESOLVED' && (
+                        <button className="btn" style={{ padding: '6px 12px', background: '#4ade80', color: '#000', fontSize: '12px' }}
+                          onClick={async () => { await api.post(`/admin/reports/${r.id}/status`, { status: 'RESOLVED' }); fetchReports(); }}>
+                          <Check size={14} /> Đã xử lý
+                        </button>
+                      )}
+                      {r.status !== 'DISMISSED' && (
+                        <button className="btn" style={{ padding: '6px 12px', background: '#d1d5db', color: '#374151', fontSize: '12px' }}
+                          onClick={async () => { await api.post(`/admin/reports/${r.id}/status`, { status: 'DISMISSED' }); fetchReports(); }}>
+                          <X size={14} /> Bỏ qua
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

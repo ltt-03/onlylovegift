@@ -153,7 +153,7 @@ export default function CreateGiftSurprise() {
 
         <form onSubmit={handleSubmit}>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+          <div className="grid-2col-inputs" style={{ marginBottom: '24px' }}>
             <div className="input-group" style={{ margin: 0 }}>
               <label>Tên người gửi</label>
               <input type="text" name="senderName" value={formData.senderName} onChange={handleChange}
@@ -166,7 +166,7 @@ export default function CreateGiftSurprise() {
             </div>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+          <div className="grid-2col-inputs" style={{ marginBottom: '24px' }}>
             <div className="input-group" style={{ margin: 0 }}>
               <label>Mật khẩu mở khóa (4 số)</label>
               <div style={{ position: 'relative' }}>

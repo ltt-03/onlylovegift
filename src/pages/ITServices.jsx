@@ -1,7 +1,15 @@
-import React from 'react';
-import { Code, Server, Smartphone, GraduationCap, ArrowRight, ShieldCheck, Zap, MessageCircle, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { Code, Server, Smartphone, GraduationCap, ArrowRight, ShieldCheck, Zap, MessageCircle, Users, Copy, Check } from 'lucide-react';
 
 export default function ITServices() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText('0848290617');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const services = [
     {
       icon: <GraduationCap size={32} className="text-primary" />,
@@ -39,16 +47,57 @@ export default function ITServices() {
           <p style={{ fontSize: '1.1rem', color: 'var(--color-text-light)', maxWidth: '700px', margin: '0 auto 30px', lineHeight: 1.6 }}>
             Đội ngũ kỹ sư phần mềm chuyên nghiệp cung cấp các giải pháp công nghệ toàn diện. Hỗ trợ sinh viên công nghệ thông tin hoàn thiện đồ án chất lượng cao và chinh phục điểm số xuất sắc.
           </p>
-          <a 
-            href="https://zalo.me/0848290617" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="btn-cute-candy"
-            style={{ display: 'inline-flex', padding: '14px 28px', fontSize: '1.1rem', gap: '8px' }}
-          >
-            <MessageCircle size={20} />
-            Liên hệ Zalo tư vấn ngay
-          </a>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
+            <a 
+              href="https://zalo.me/0848290617" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn-cute-candy"
+              style={{ display: 'inline-flex', padding: '14px 28px', fontSize: '1.1rem', gap: '8px' }}
+            >
+              <MessageCircle size={20} />
+              Zalo tư vấn ngay
+            </a>
+
+            {/* Phone + Copy */}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px',
+              background: 'rgba(255,255,255,0.85)',
+              backdropFilter: 'blur(12px)',
+              border: '2px solid var(--color-border)',
+              borderRadius: '50px',
+              padding: '12px 20px',
+              fontSize: '1.05rem',
+              fontWeight: 700,
+              color: 'var(--color-primary-dark)',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.08)'
+            }}>
+              <MessageCircle size={18} style={{ color: 'var(--color-primary)' }} />
+              <span>0848.290.617</span>
+              <button
+                onClick={handleCopy}
+                title="Sao chép số điện thoại"
+                style={{
+                  background: copied ? '#22c55e' : 'var(--color-primary)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50px',
+                  padding: '6px 14px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {copied ? <><Check size={14} /> Đã sao chép!</> : <><Copy size={14} /> Copy</>}
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 

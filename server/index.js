@@ -1020,6 +1020,60 @@ app.post('/api/admin/feedbacks/:id/status', authenticate, requireAdmin, async (r
 });
 
 
+// =============================================
+// REPORT SYSTEM (User báo cáo lỗi quà tặng)
+// =============================================
+
+// User gửi báo cáo (không cần đăng nhập bắt buộc)
+app.post('/api/reports', async (req, res) => {
+  try {
+    const { giftUrl, orderCode, message, userName } = req.body;
+    if (!giftUrl || !message) {
+      return res.status(400).json({ success: false, error: 'Thiếu thông tin báo cáo' });
+    }
+    let userId = null;
+    let uName = userName || 'Ẩn danh';
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const jwt = require('jsonwebtoken');
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const u = await prisma.user.findUnique({ where: { id: decoded.userId } });
+        if (u) { userId = u.id; uName = u.name; }
+      } catch (e) {}
+    }
+    const report = await prisma.report.create({
+      data: { userId, userName: uName, giftUrl, orderCode: orderCode || null, message, status: 'PENDING' }
+    });
+    res.json({ success: true, reportId: report.id });
+  } catch (error) {
+    console.error('Report error:', error);
+    res.status(500).json({ success: false, error: 'Lỗi server' });
+  }
+});
+
+// Admin xem danh sách báo cáo
+app.get('/api/admin/reports', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const reports = await prisma.report.findMany({ orderBy: { createdAt: 'desc' } });
+    res.json({ success: true, reports });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+// Admin cập nhật trạng thái báo cáo
+app.post('/api/admin/reports/:id/status', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    await prisma.report.update({ where: { id: req.params.id }, data: { status } });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 const server = app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);

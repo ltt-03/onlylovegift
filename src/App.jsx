@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useContext, useState } from 'react';
-import { Gift, LogOut, User, Sun, Moon, ChevronLeft, ChevronRight, Home as HomeIcon, LayoutTemplate, Sparkles, LogIn, Wallet, Trophy, MessageSquareHeart } from 'lucide-react';
+import { useContext, useState, useEffect } from 'react';
+import { Gift, LogOut, User, Sun, Moon, ChevronLeft, ChevronRight, Home as HomeIcon, LayoutTemplate, Sparkles, LogIn, Wallet, Trophy, MessageSquareHeart, Globe, Wrench } from 'lucide-react';
 import { AuthContext } from './context/AuthContext';
 import { ThemeContext } from './context/ThemeContext';
 import Home from './pages/Home';
@@ -26,6 +26,15 @@ import CreateMerryChristmas from './pages/CreateMerryChristmas';
 import CreateChristmas from './pages/CreateChristmas';
 import FreeProjects from './pages/FreeProjects';
 import ITServices from './pages/ITServices';
+
+// Scroll to top on every route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
 
 // Layout Component
 const Layout = ({ children }) => {
@@ -177,70 +186,30 @@ const Layout = ({ children }) => {
 
         {/* Bottom Navigation */}
         <nav className="bottom-nav">
-          <div style={{ position: 'relative', flex: 1 }}>
-            <div 
-              className={`bottom-nav-link ${location.pathname === '/' ? 'active' : ''}`}
-              onClick={() => {
-                if (location.pathname !== '/') {
-                  navigate('/');
-                } else {
-                  setIsHomeMenuOpen(!isHomeMenuOpen);
-                }
-              }}
-              style={{ cursor: 'pointer' }}
-            >
-              <HomeIcon size={22} />
-              Trang chủ
-            </div>
-            
-            {isHomeMenuOpen && (
-              <div className="mobile-dropdown-menu">
-                <a 
-                  href="/#featured-templates" 
-                  className="mobile-dropdown-item"
-                  onClick={(e) => {
-                    setIsHomeMenuOpen(false);
-                    if (location.pathname === '/') {
-                      e.preventDefault();
-                      document.getElementById('featured-templates')?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                >
-                  Sản phẩm nổi bật
-                </a>
-                {/* Tạm ẩn link BCT
-                <a 
-                  href="/#vip-leaderboard" 
-                  className="mobile-dropdown-item"
-                  onClick={(e) => {
-                    setIsHomeMenuOpen(false);
-                    if (location.pathname === '/') {
-                      e.preventDefault();
-                      document.getElementById('vip-leaderboard')?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                >
-                  Top VIP
-                </a>
-                <Link to="/feedback" className="mobile-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
-                  Khách Hàng
-                </Link>
-                */}
-                <Link to="/free-projects" className="mobile-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
-                  Web Miễn Phí
-                </Link>
-                <Link to="/it-services" className="mobile-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
-                  Dịch Vụ IT
-                </Link>
-              </div>
-            )}
+          <div
+            className={`bottom-nav-link ${location.pathname === '/' ? 'active' : ''}`}
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer', flex: 1 }}
+          >
+            <HomeIcon size={22} />
+            Trang chủ
           </div>
-          
+
           <Link to="/templates" className={`bottom-nav-link ${location.pathname === '/templates' ? 'active' : ''}`}>
             <LayoutTemplate size={22} />
             Mẫu
           </Link>
-          
+
+          <Link to="/free-projects" className={`bottom-nav-link ${location.pathname === '/free-projects' ? 'active' : ''}`}>
+            <Globe size={20} />
+            Khám Phá
+          </Link>
+
+          <Link to="/it-services" className={`bottom-nav-link ${location.pathname === '/it-services' ? 'active' : ''}`}>
+            <Wrench size={20} />
+            Dịch Vụ IT
+          </Link>
+
           {user && (
             <Link to="/dashboard" className={`bottom-nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>
               <User size={22} />
@@ -249,7 +218,7 @@ const Layout = ({ children }) => {
           )}
         </nav>
 
-        <AIChat />
+        {/* <AIChat /> */}
       </div>
     </div>
   );
@@ -258,6 +227,7 @@ const Layout = ({ children }) => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />

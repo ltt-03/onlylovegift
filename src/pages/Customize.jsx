@@ -161,7 +161,7 @@ export default function Customize() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div className="grid-2col-inputs">
             <div className="input-group">
               <label htmlFor="senderName">Tên người gửi (Bạn)</label>
               <input 
@@ -264,7 +264,8 @@ export default function Customize() {
             </label>
             
             <div 
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginTop: '10px', padding: '15px', borderRadius: '12px', border: isDragging ? '2px dashed var(--color-primary)' : '2px dashed transparent', backgroundColor: isDragging ? 'rgba(255,107,157,0.05)' : 'transparent', transition: 'all 0.2s' }}
+              className="image-upload-grid"
+              style={{ marginTop: '10px', padding: '15px', borderRadius: '12px', border: isDragging ? '2px dashed var(--color-primary)' : '2px dashed transparent', backgroundColor: isDragging ? 'rgba(255,107,157,0.05)' : 'transparent', transition: 'all 0.2s' }}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
