@@ -121,13 +121,35 @@ app.get('/gift/render/:code', async (req, res) => {
     } catch(e) {}
 
     // Create the dynamic data
+    // Parse images và lọc chỉ giữ lại URL hợp lệ
+    let parsedImages = [];
+    try {
+      if (order.images) {
+        const rawImages = JSON.parse(order.images);
+        if (Array.isArray(rawImages)) {
+          // Lọc chỉ lấy URL http(s) (ImgBB) + /uploads/ local nếu có
+          parsedImages = rawImages.filter(img => {
+            if (!img || typeof img !== 'string') return false;
+            // Giữ URL ImgBB hoặc https bất kỳ
+            if (img.startsWith('http://') || img.startsWith('https://')) return true;
+            // Giữ /uploads/ (local) - sẽ serve được nếu file còn tồn tại
+            if (img.startsWith('/uploads/')) {
+              const localPath = path.join(__dirname, 'public', img);
+              return fs.existsSync(localPath);
+            }
+            return false;
+          });
+        }
+      }
+    } catch(e) { parsedImages = []; }
+
     const dynamicData = {
       recipientName: order.receiverName,
       senderName: order.senderName || "Người Giấu Tên",
       birthday: order.birthday,
       messages: messageData ? messageData.split('\n').filter(msg => msg.trim() !== '') : [],
       passcode: passcode,
-      images: order.images ? JSON.parse(order.images) : [],
+      images: parsedImages,
       music: order.musicUrl || "",
       ...extraData
     };
@@ -158,6 +180,10 @@ app.use('/deploy', express.static(path.join(__dirname, 'public', 'deploy')));
 
 // Serve raw template assets for dynamic rendering
 app.use('/templates', express.static(path.join(__dirname, templateDirName)));
+
+// Serve uploaded images (fallback khi không dùng ImgBB)
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
 
 // ----------------------------------------------------
 // DYNAMIC RENDER ROUTE (On-The-Fly Generation)
