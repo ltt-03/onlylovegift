@@ -8,14 +8,17 @@
     <script src="./app.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/DrawSVGPlugin.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/MorphSVGPlugin.min.js"></script>
-    <script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/MorphSVGPlugin3.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/DrawSVGPlugin3.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/MotionPathPlugin.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/Physics2DPlugin3.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/EasePack3.min.js"></script>
+    <!-- GSAP v3 (free, local) -->
+    <script src="./gsap.min.js"></script>
+    <script src="./MotionPathPlugin.min.js"></script>
+    <!-- Stubs cho paid plugins (DrawSVG, MorphSVG, Physics2D) -->
+    <script src="./gsap-paid-stubs.js"></script>
+    <script>
+      // Đăng ký MotionPathPlugin sau khi đã load
+      if (typeof gsap !== 'undefined' && typeof MotionPathPlugin !== 'undefined') {
+        gsap.registerPlugin(MotionPathPlugin);
+      }
+    </script>
     <title>Christmas</title>
   </head>
   <body>

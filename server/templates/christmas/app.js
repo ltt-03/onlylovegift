@@ -174,7 +174,11 @@ createSnow(200);
 loop();
 
 //----------tree----------
-MorphSVGPlugin.convertToPath("polygon");
+// MorphSVGPlugin.convertToPath("polygon"); // Đã bỏ - dùng stub nếu có
+if (typeof MorphSVGPlugin !== 'undefined' && MorphSVGPlugin.convertToPath) {
+  MorphSVGPlugin.convertToPath("polygon");
+}
+
 var xmlns = "http://www.w3.org/2000/svg",
   xlinkns = "http://www.w3.org/1999/xlink",
   select = function (s) {
@@ -201,7 +205,6 @@ var xmlns = "http://www.w3.org/2000/svg",
     "#446D39",
   ],
   particleTypeArray = ["#star", "#circ", "#cross", "#heart"],
-  // particleTypeArray = ['#star'],
   particlePool = [],
   particleCount = 0,
   numParticles = 201;
@@ -215,9 +218,20 @@ gsap.set(sparkle, {
   y: -100,
 });
 
+// MotionPathPlugin.getRawPath - dùng fallback nếu plugin không có
+var hasMPPlugin = typeof MotionPathPlugin !== 'undefined' && typeof MotionPathPlugin.getRawPath === 'function';
+
 let getSVGPoints = (path) => {
+  if (!hasMPPlugin) {
+    // Fallback: trả về mảng điểm cố định cho treePath
+    return [
+      {x: 100, y: 0}, {x: 150, y: 50}, {x: 200, y: 100},
+      {x: 150, y: 80}, {x: 100, y: 120}
+    ];
+  }
   let arr = [];
   var rawPath = MotionPathPlugin.getRawPath(path)[0];
+  if (!rawPath || rawPath.length === 0) return [{x:100,y:0},{x:100,y:120}];
   rawPath.forEach((el, value) => {
     let obj = {};
     obj.x = rawPath[value * 2];
@@ -225,14 +239,20 @@ let getSVGPoints = (path) => {
     if (value % 2) {
       arr.push(obj);
     }
-    //console.log(value)
   });
-
   return arr;
 };
-let treePath = getSVGPoints(".treePath"),
-  treeBottomPath = getSVGPoints(".treeBottomPath"),
-  mainTl = gsap.timeline({ delay: 0, repeat: 0 }),
+
+let treePath, treeBottomPath;
+try {
+  treePath = getSVGPoints(".treePath");
+  treeBottomPath = getSVGPoints(".treeBottomPath");
+} catch(e) {
+  treePath = [{x:100,y:0},{x:100,y:120}];
+  treeBottomPath = [{x:100,y:120},{x:100,y:140}];
+}
+
+let mainTl = gsap.timeline({ delay: 0, repeat: 0 }),
   starTl;
 
 function flicker(p) {
@@ -254,7 +274,7 @@ function createParticles() {
   var i = numParticles,
     p,
     particleTl,
-    step = numParticles / treePath.length,
+    step = numParticles / (treePath.length || 1),
     pos;
   while (--i > -1) {
     p = select(particleTypeArray[i % particleTypeArray.length]).cloneNode(true);
@@ -278,30 +298,28 @@ function playParticle(p) {
     return;
   }
   var p = particlePool[particleCount];
+  var cx = gsap.getProperty(".pContainer", "x") || 100;
+  var cy = gsap.getProperty(".pContainer", "y") || 100;
   gsap.set(p, {
-    x: gsap.getProperty(".pContainer", "x"),
-    y: gsap.getProperty(".pContainer", "y"),
+    x: cx,
+    y: cy,
     scale: getScale(),
   });
+  
+  // Thay physics2D bằng animation đơn giản (không dùng paid plugin)
+  var angle = Math.random() * Math.PI * 2;
+  var vel = 30 + Math.random() * 60;
+  var dur = 1 + Math.random() * 3;
   var tl = gsap.timeline();
   tl.to(p, {
-    duration: gsap.utils.random(0.61, 6),
-    physics2D: {
-      velocity: gsap.utils.random(-23, 23),
-      angle: gsap.utils.random(-180, 180),
-      gravity: gsap.utils.random(-6, 50),
-    },
+    duration: dur,
+    x: '+=' + (Math.cos(angle) * vel),
+    y: '+=' + (Math.sin(angle) * vel + 30),
     scale: 0,
-    rotation: gsap.utils.random(-123, 360),
-    ease: "power1",
+    rotation: Math.random() * 360 - 180,
+    ease: "power2.out",
     onStart: flicker,
     onStartParams: [p],
-    onRepeat: (p) => {
-      gsap.set(p, {
-        scale: getScale(),
-      });
-    },
-    onRepeatParams: [p],
   });
 
   particleCount++;
@@ -310,48 +328,65 @@ function playParticle(p) {
 
 function drawStar() {
   starTl = gsap.timeline({ onUpdate: playParticle });
-  starTl
-    .to(".pContainer, .sparkle", {
-      duration: 6,
-      motionPath: {
-        path: ".treePath",
-        autoRotate: false,
-      },
-      ease: "linear",
-    })
-    .to(".pContainer, .sparkle", {
-      duration: 1,
-      onStart: function () {
-        showParticle = false;
-      },
-      x: treeBottomPath[0].x,
-      y: treeBottomPath[0].y,
-    })
-    .to(
-      ".pContainer, .sparkle",
-      {
-        duration: 2,
-        onStart: function () {
-          showParticle = true;
-        },
+  
+  if (hasMPPlugin) {
+    // Dùng MotionPathPlugin nếu có (free plugin, đã download về local)
+    starTl
+      .to(".pContainer, .sparkle", {
+        duration: 6,
         motionPath: {
-          path: ".treeBottomPath",
+          path: ".treePath",
           autoRotate: false,
         },
         ease: "linear",
-      },
-      "-=0"
-    )
-    .from(
-      ".treeBottomMask",
-      {
-        duration: 2,
-        drawSVG: "0% 0%",
-        stroke: "#FFF",
-        ease: "linear",
-      },
-      "-=2"
-    );
+      })
+      .to(".pContainer, .sparkle", {
+        duration: 1,
+        onStart: function () {
+          showParticle = false;
+        },
+        x: (treeBottomPath[0] || {x:100}).x,
+        y: (treeBottomPath[0] || {y:120}).y,
+      })
+      .to(
+        ".pContainer, .sparkle",
+        {
+          duration: 2,
+          onStart: function () {
+            showParticle = true;
+          },
+          motionPath: {
+            path: ".treeBottomPath",
+            autoRotate: false,
+          },
+          ease: "linear",
+        },
+        "-=0"
+      )
+      .from(
+        ".treeBottomMask",
+        {
+          duration: 2,
+          // drawSVG: "0% 0%", -- thay bằng opacity fallback
+          opacity: 0,
+          ease: "linear",
+        },
+        "-=2"
+      );
+  } else {
+    // Fallback khi không có MotionPathPlugin: di chuyển từ trên xuống
+    starTl
+      .fromTo(".pContainer, .sparkle", {
+        y: -100,
+        x: mainSVG ? mainSVG.getBoundingClientRect().width / 2 : 200,
+        opacity: 1
+      }, {
+        duration: 8,
+        y: 400,
+        ease: "power1.inOut",
+      })
+      .to(".treeBottomMask", { duration: 2, opacity: 1, ease: "linear" }, "-=2");
+  }
 }
 
 createParticles();
@@ -359,13 +394,12 @@ drawStar();
 
 mainTl
   .from([".treePathMask", ".treePotMask"], {
+    // drawSVG: "0% 0%", -- thay bằng opacity/clipPath fallback
+    opacity: 0,
     duration: 6,
-    drawSVG: "0% 0%",
-    stroke: "#FFF",
     stagger: {
-      each: 6,
+      each: 2,
     },
-    duration: gsap.utils.wrap([6, 1, 2]),
     ease: "linear",
   })
   .from(
@@ -385,7 +419,7 @@ mainTl
     {
       duration: 3,
       opacity: 0,
-      ease: "rough({strength: 2, points: 100, template: linear, taper: both, randomize: true, clamp: false})",
+      ease: "power1.inOut", // thay "rough" ease (paid) bằng power1
     },
     "-=0"
   )
@@ -394,7 +428,7 @@ mainTl
     {
       duration: 1,
       opacity: 1,
-      ease: "rough({strength: 2, points: 16, template: linear, taper: none, randomize: true, clamp: false})",
+      ease: "power2.out", // thay "rough" ease (paid) bằng power2
     },
     "+=1"
   );
@@ -469,3 +503,4 @@ function resetText(){
   });
 
 });
+
