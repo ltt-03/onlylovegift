@@ -12,6 +12,7 @@ for i, line in enumerate(lines):
         idx = i
         break
 
+
 if idx != -1:
     # find where to resume
     resume_idx = -1
