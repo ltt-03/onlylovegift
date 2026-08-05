@@ -6,10 +6,21 @@ export default function SecurePreview({ templateId, autoLoad = false }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('mobile'); // 'mobile' | 'desktop'
+
   // Chỉ hiện màn hình cảnh báo cho x-mas-tree (template duy nhất cần cam/mic)
   // Tất cả template khác → tự load ngay, không hỏi
   const needsWarning = templateId === 'x-mas-tree';
+
+  // Dùng state khởi tạo dựa trên needsWarning
   const [isStarted, setIsStarted] = useState(!needsWarning);
+
+  // Khi templateId thay đổi (user mở preview template khác),
+  // reset isStarted đúng theo needsWarning mới để tránh hiện warning sai
+  useEffect(() => {
+    setIsStarted(!needsWarning);
+    setToken(null);
+    setError(null);
+  }, [templateId]);
 
   const fetchToken = async () => {
     setLoading(true);
@@ -46,7 +57,9 @@ export default function SecurePreview({ templateId, autoLoad = false }) {
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
   const iframeUrl = token ? `${apiUrl}/demo/secure/${token}` : '';
 
-  if (!isStarted) {
+  // Chỉ hiện màn hình cảnh báo khi template thực sự cần (x-mas-tree)
+  // Nếu không phải needsWarning mà isStarted=false (vd: user bấm X), tự động reset lại
+  if (!isStarted && needsWarning) {
     return (
       <div style={{
         width: '100%',
@@ -180,7 +193,7 @@ export default function SecurePreview({ templateId, autoLoad = false }) {
             <RefreshCw size={16} className={loading ? "spin" : ""} />
           </button>
           
-          {!autoLoad && (
+          {!autoLoad && needsWarning && (
             <button
               onClick={(e) => { e.preventDefault(); setIsStarted(false); setToken(null); }}
               title="Đóng bản xem trước"

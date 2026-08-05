@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Heart Code - Trái Tim Mã Nguồn</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;min-height:100dvh;background:#020912;overflow:hidden}
+#codebg{
+  position:fixed;top:0;left:0;width:78%;height:100%;
+  font-family:'Courier New',monospace;font-size:13px;line-height:1.72;
+  color:rgba(130,205,255,0.34);overflow:hidden;pointer-events:none;z-index:3;
+  white-space:pre;text-shadow:0 0 8px rgba(68,160,255,.18);
+  opacity:.92;mix-blend-mode:screen;
+}
+#codebg::before{
+  content:"";position:absolute;inset:0;z-index:2;
+  background:
+    radial-gradient(circle at 58% 48%,rgba(2,9,18,.82) 0 22%,rgba(2,9,18,.42) 42%,rgba(2,9,18,.10) 72%),
+    linear-gradient(90deg,rgba(2,9,18,.02),rgba(2,9,18,.25) 74%,rgba(2,9,18,.80));
+}
+.code-scroll{
+  position:absolute;left:22px;top:0;will-change:transform;
+}
+canvas{position:fixed;top:0;left:0;z-index:1;touch-action:none;}
+#soundBtn{
+  position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));
+  z-index:12;width:34px;height:34px;border:1px solid rgba(135,205,255,.22);
+  border-radius:50%;background:rgba(2,12,24,.24);color:rgba(210,238,255,.72);
+  display:grid;place-items:center;cursor:pointer;opacity:.56;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:opacity .2s ease,background .2s ease,transform .2s ease;
+}
+#soundBtn:hover{opacity:.9;background:rgba(14,34,56,.38);transform:scale(1.04);}
+#soundBtn svg{width:18px;height:18px;display:block;}
+#soundBtn:not(.is-muted) .mute{display:none;}
+#soundBtn.is-muted .wave{display:none;}
+#wm{
+  display:none !important;
+}
+@media (max-width: 768px){
+  #codebg{
+    width:100%;
+    font-size:10px;
+    line-height:1.6;
+    color:rgba(130,205,255,0.18);
+    opacity:.65;
+  }
+  #codebg::before{
+    background:
+      radial-gradient(circle at 50% 46%,rgba(2,9,18,.92) 0 32%,rgba(2,9,18,.60) 52%,rgba(2,9,18,.22) 80%),
+      linear-gradient(90deg,rgba(2,9,18,.10),rgba(2,9,18,.28) 60%,rgba(2,9,18,.65));
+  }
+  .code-scroll{left:6px;}
+  #wm{
+    right:max(8px,env(safe-area-inset-right));
+    bottom:max(10px,env(safe-area-inset-bottom));
+    font-size:9px;
+    letter-spacing:.15px;
+    opacity:.7;
+    max-width:70vw;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  #wm i{width:5px;height:5px;flex:0 0 auto;}
+  #soundBtn{
+    width:30px;height:30px;
+    top:max(10px,env(safe-area-inset-top));
+    right:max(10px,env(safe-area-inset-right));
+    opacity:.45;
+  }
+}
+@media (max-width: 480px){
+  #codebg{
+    font-size:8.5px;
+    color:rgba(130,205,255,0.15);
+    opacity:.55;
+  }
+  #wm{font-size:8px;}
+}
+</style>
+</head>
+<body>
+<div id="codebg"><pre class="code-scroll"></pre></div>
+<canvas id="cv"></canvas>
+<audio id="bgm" src="Falling You.mp4" autoplay loop preload="auto" playsinline></audio>
+<button id="soundBtn" type="button" aria-label="Tắt nhạc" title="Bật/tắt nhạc">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
+    <path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7"/>
+    <path class="wave" d="M18.5 5.5a9 9 0 0 1 0 13"/>
+    <path class="mute" d="m19 9-5 5"/>
+    <path class="mute" d="m14 9 5 5"/>
+  </svg>
+</button>
+<div id="wm"><i></i></div>
+<script>
+(function(){
+'use strict';
+
+// ── Background music ─────────────────────────────────────────────────────────
+const bgm=document.getElementById('bgm');
+const soundBtn=document.getElementById('soundBtn');
+bgm.volume=.58;
+let musicOn=true;
+bgm.autoplay=true;
+function syncSoundButton(){
+  soundBtn.classList.toggle('is-muted',!musicOn||bgm.muted||bgm.paused);
+  soundBtn.setAttribute('aria-label',musicOn?'Tắt nhạc':'Bật nhạc');
+}
+function playMusic(){
+  musicOn=true;bgm.muted=false;
+  bgm.play().then(syncSoundButton).catch(()=>syncSoundButton());
+}
+function startMusicAuto(){
+  if(!musicOn)return;
+  bgm.muted=false;
+  bgm.currentTime=bgm.currentTime||0;
+  playMusic();
+}
+function pauseMusic(){
+  musicOn=false;bgm.pause();syncSoundButton();
+}
+soundBtn.addEventListener('click',()=>{(musicOn&&!bgm.paused)?pauseMusic():playMusic();});
+document.addEventListener('DOMContentLoaded',startMusicAuto);
+window.addEventListener('load',startMusicAuto);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&musicOn&&bgm.paused)startMusicAuto();});
+window.addEventListener('pointerdown',()=>{if(musicOn&&bgm.paused)startMusicAuto();},{once:true});
+window.addEventListener('keydown',()=>{if(musicOn&&bgm.paused)startMusicAuto();},{once:true});
+syncSoundButton();
+
+// ── Runtime editable site config ─────────────────────────────────────────────
+const siteConfig={image:'img1.jpg',copyright:'Lê Thanh Tùng: Trái Tim Mã Nguồn',updatedAt:'',music:'Falling You.mp4'};
+const wmEl=document.getElementById('wm');
+let frameImg;
+function setWatermarkText(text){
+  wmEl.textContent='';
+  const dot=document.createElement('i');
+  wmEl.appendChild(dot);
+  wmEl.appendChild(document.createTextNode(text||siteConfig.copyright));
+}
+function applySiteConfig(next){
+  Object.assign(siteConfig,next||{});
+  setWatermarkText(siteConfig.copyright);
+  if(frameImg&&siteConfig.image){
+    const sep=siteConfig.image.includes('?')?'&':'?';
+    frameImg.src=siteConfig.updatedAt?siteConfig.image+sep+'v='+encodeURIComponent(siteConfig.updatedAt):siteConfig.image;
+  }
+  if(siteConfig.music && bgm.getAttribute('src') !== siteConfig.music){
+    const sep=siteConfig.music.includes('?')?'&':'?';
+    bgm.src=siteConfig.updatedAt?siteConfig.music+sep+'v='+encodeURIComponent(siteConfig.updatedAt):siteConfig.music;
+    if(musicOn) bgm.play().catch(()=>{});
+  }
+}
+// DYNAMIC_DATA will be applied after frameImg is initialized below
+
+
+// ── Code background text ──────────────────────────────────────────────────────
+const CL=[
+  '<html lang="en">',
+  '<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">',
+  '<body>',
+  '<script>',
+  '  41  var init = function () {',
+  '  45    var heartPosition = function (rad) {',
+  '  46      //return [Math.sin(rad), Math.cos(rad)];',
+  '  47      return [Math.pow(Math.sin(rad), 3),',
+  '  48        -(15 * Math.cos(rad) - 5 * Math.cos(2 * rad)',
+  '  49           - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))];',
+  '  50    };',
+  '  51',
+  '  52    var scaleAndTranslate = function (pos, sx, sy, dx, dy) {',
+  '  53      return [dx + pos[0] * sx, dy + pos[1] * sy];',
+  '  54    };',
+  '  55',
+  "  56    window.addEventListener('resize', function() {",
+  '  57      width  = canvas.width  = kow * window.innerWidth;',
+  '  58      height = canvas.height = window.innerHeight;',
+  '  59      ctx.fillStyle = "rgba(0,0,0,1)";',
+  '  60      ctx.fillRect(0, 0, width, height);',
+  '  61    });',
+  '  62',
+  '  63    var traceCount = mobile ? 20 : 50;',
+  '  64    var pointsOrigin = [];',
+  '  65    var i;',
+  '  66    var dr = mobile ? 0.1 : 0.05;',
+  '  67    for (i=0;i<Math.PI*2;i+=dr)',
+  '  68      pointsOrigin.push(scaleAndTranslate(heartPosition(i),210,13,0,0));',
+  '  69    for (i=0;i<Math.PI*2;i+=dr)',
+  '  70      pointsOrigin.push(scaleAndTranslate(heartPosition(i),150, 9,0,0));',
+  '  71    for (i=0;i<Math.PI*2;i+=dr)',
+  '  72      pointsOrigin.push(scaleAndTranslate(heartPosition(i), 90, 5,0,0));',
+  '  73    targetPoints = [];',
+  '  74    for (i=0; i<pointsOrigin.length; i++) {',
+  '  75      targetPoints[i] = [];',
+  '  76      var next = scaleAndTranslate(pointsOrigin[i], ...',
+  '  77    }',
+  '  78',
+  '  79    // pulse function (kx, ky) {',
+  '  80    for (i=0; i<pointsOrigin.length; i++) {',
+  '  81      targetPoints[i] = [];',
+  "  82      var next = point.next(fill('...'+ width /",
+];
+const codeBlock=Array(40).fill(CL.join('\n')).join('\n');
+const codeEl=document.querySelector('.code-scroll');
+codeEl.textContent=codeBlock+'\n'+codeBlock;
+let codeOffset=0,codeLast=performance.now(),codeHalf=0;
+function animateCode(now){
+  if(!codeHalf)codeHalf=codeEl.scrollHeight/2;
+  const dt=Math.min(64,now-codeLast);
+  codeLast=now;
+  codeOffset=(codeOffset+dt*.028)%codeHalf;
+  codeEl.style.transform=`translate3d(0,${-codeOffset}px,0)`;
+  requestAnimationFrame(animateCode);
+}
+requestAnimationFrame(animateCode);
+
+// ── Canvas setup ─────────────────────────────────────────────────────────────
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+ctx.lineCap='round';ctx.lineJoin='round';
+let W,H,CX,CY;
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;CX=W/2;CY=H*.45;}
+resize();window.addEventListener('resize',resize);
+
+// ── Math helpers ──────────────────────────────────────────────────────────────
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,lo,hi)=>v<lo?lo:v>hi?hi:v;
+const ss=t=>t*t*(3-2*t);
+const rand=(a,b)=>a+Math.random()*(b-a);
+const eio=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+
+// ── Heart shape ───────────────────────────────────────────────────────────────
+function hXY(t){
+  return[
+    Math.pow(Math.sin(t),3),
+    -(15*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))/16
+  ];
+}
+frameImg=new Image();
+// Apply config after frameImg is ready
+if (window.DYNAMIC_DATA) {
+  const dynamicConfig = {};
+  if (window.DYNAMIC_DATA.images && window.DYNAMIC_DATA.images.length > 0) {
+    dynamicConfig.image = window.DYNAMIC_DATA.images[0];
+  }
+  if (window.DYNAMIC_DATA.messages && window.DYNAMIC_DATA.messages.length > 0) {
+    dynamicConfig.copyright = window.DYNAMIC_DATA.messages[0];
+  }
+  if (window.DYNAMIC_DATA.music) {
+    dynamicConfig.music = window.DYNAMIC_DATA.music;
+  }
+  applySiteConfig(dynamicConfig);
+} else {
+  fetch('config.json?ts='+Date.now(),{cache:'no-store'})
+    .then(r=>r.ok?r.json():null)
+    .then(applySiteConfig)
+    .catch(()=>applySiteConfig(siteConfig));
+}
+applySiteConfig(siteConfig);
+const HP_N=1600,HP=[];
+for(let i=0;i<HP_N;i++) HP.push(hXY(i/HP_N*Math.PI*2));
+// bottom tip = max Y
+let HY_TIP=-Infinity,HX_MAX=-Infinity;
+for(const[hx,hy] of HP){if(hy>HY_TIP)HY_TIP=hy;if(Math.abs(hx)>HX_MAX)HX_MAX=Math.abs(hx);}
+
+function BASE_SC(){return Math.min(W,H)*.27;}
+
+// ── Pulse ─────────────────────────────────────────────────────────────────────
+let pT=0;
+function pulse(){
+  const t=pT%1;let p=0;
+  if(t<.08)p=t/.08;
+  else if(t<.18)p=1-(t-.08)/.10;
+  else if(t<.25)p=(t-.18)/.07*.38;
+  else if(t<.35)p=.38-(t-.25)/.10*.38;
+  return 1+p*.058;
+}
+
+// ── 3-D projection (gentle Y-rotation) ───────────────────────────────────────
+let rotY=0;
+function proj(hx,hy,hz,sc){
+  const c=Math.cos(rotY),s=Math.sin(rotY);
+  const x2=hx*c+hz*s,z2=hz*c-hx*s;
+  const fov=5,k=fov/(fov+z2*.14);
+  return[CX+x2*k*sc,CY+hy*k*sc,k];
+}
+
+// ── Radial glow ───────────────────────────────────────────────────────────────
+function glowAt(x,y,r,a,r8=255,g8=255,b8=255){
+  if(a<.01||r<.4)return;
+  const g=ctx.createRadialGradient(x,y,0,x,y,r);
+  g.addColorStop(0,`rgba(${r8},${g8},${b8},${a})`);
+  g.addColorStop(.5,`rgba(${r8},${g8},${b8},${a*.22})`);
+  g.addColorStop(1,`rgba(${r8},${g8},${b8},0)`);
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+}
+
+function heartPath(x,y,sc){
+  ctx.beginPath();
+  for(let i=0;i<=HP_N;i++){
+    const[hx,hy]=HP[i%HP_N];
+    const px=x+hx*sc,py=y+hy*sc;
+    i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+}
+
+function drawCoverImage(img,x,y,w,h){
+  const ir=img.width/img.height,br=w/h;
+  let sw=img.width,sh=img.height,sx=0,sy=0;
+  if(ir>br){
+    sw=img.height*br;
+    sx=(img.width-sw)/2;
+  }else{
+    sh=img.width/br;
+    sy=(img.height-sh)/2;
+  }
+  ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h);
+}
+
+function drawHeartPhotoFrame(sc){
+  const fs=sc*.78;
+  const fx=CX,fy=CY+sc*.030;
+  const bw=fs*2.08,bh=fs*2.18;
+  if(frameImg.complete&&frameImg.naturalWidth){
+    ctx.save();
+    heartPath(fx,fy,fs);
+    ctx.clip();
+    drawCoverImage(frameImg,fx-bw/2,fy-bh*.52,bw,bh);
+    const shade=ctx.createRadialGradient(fx,fy,fs*.18,fx,fy,fs*1.10);
+    shade.addColorStop(0,'rgba(4,12,22,.04)');
+    shade.addColorStop(.72,'rgba(4,12,22,.24)');
+    shade.addColorStop(1,'rgba(4,12,22,.60)');
+    ctx.fillStyle=shade;
+    ctx.fillRect(fx-bw/2,fy-bh/2,bw,bh);
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  glowAt(fx,fy,fs*1.04,.055,120,190,255);
+  ctx.restore();
+}
+
+// ── 3-D Heart Particle cloud ──────────────────────────────────────────────────
+// Densely clustered on the heart surface + inner volume
+const N_HP=4000,hPart=[];
+for(let i=0;i<N_HP;i++){
+  const t=rand(0,Math.PI*2);
+  const[hx,hy]=hXY(t);
+  const isLobe=hy<-0.05;   // top lobes
+  const isEdge=Math.random()<.60; // majority on/near surface
+  const vr=isEdge?(isLobe?.055:.030):(isLobe?.16:.08);
+  hPart.push({
+    hx:hx+rand(-vr,vr),
+    hy:hy+rand(-vr,vr),
+    hz:rand(-.20,.20),
+    sz:rand(.5,isLobe?2.6:1.8),
+    br:rand(.45,1.0),
+    ph:rand(0,Math.PI*2),
+    twSpd:rand(.0014,.0055),
+    isLobe,
+  });
+}
+
+// ── Fiber Strands ─────────────────────────────────────────────────────────────
+// Origin on heart perimeter; crest around the top, then fall into layered waves
+const N_ST=120,strands=[];
+for(let i=0;i<N_ST;i++){
+  const t=rand(0,Math.PI*2);
+  const[hx,hy]=hXY(t);
+  const side=hx>=0?1:-1;
+  // classify
+  const isTop=hy<-.05&&Math.abs(hx)>.24;
+  const isSide=Math.abs(hx)>.35&&hy>-.05&&hy<.4;
+  const isBot=hy>.52;
+  let tailLen,amp,wCy,alpha,kind;
+  if(isBot){
+    tailLen=.25+rand(0,.40);amp=5+rand(0,10);wCy=.5+rand(0,.5);alpha=.020+rand(0,.030);kind='bot';
+  }else if(isTop){
+    // Long top strands crest around the heart before dropping into waves.
+    tailLen=3.6+rand(0,2.8);amp=28+rand(0,38);wCy=1.35+rand(0,1.10);alpha=.014+rand(0,.032);kind='top';
+  }else if(isSide){
+    tailLen=3.0+rand(0,2.5);amp=24+rand(0,34);wCy=1.15+rand(0,1.00);alpha=.012+rand(0,.028);kind='side';
+  }else{
+    tailLen=1.7+rand(0,2.2);amp=18+rand(0,32);wCy=.46+rand(0,.56);alpha=.040+rand(0,.074);kind='low';
+  }
+  const nb=4+Math.floor(rand(0,9));
+  const beads=Array.from({length:nb},()=>({
+    pos:Math.random(),spd:rand(.00022,.00072),
+    sz:rand(.6,2.8),br:rand(.32,.90),
+  }));
+  strands.push({
+    hx,hy,hz:rand(-.16,.16),side,kind,
+    ph:i/N_ST*Math.PI*2+rand(0,.8),
+    amp,wCy,alpha,tailLen,
+    animSpd:rand(5.5e-5,1.3e-4),
+    beads,t:rand(0,1000),
+  });
+}
+
+const N_SG=22,sGuides=[];
+for(let i=0;i<N_SG;i++){
+  const side=i%2===0?1:-1;
+  const u=(i>>1)/(N_SG/2-1);
+  sGuides.push({
+    side,u,
+    ph:rand(0,Math.PI*2),
+    lift:rand(.85,1.12),
+    drop:rand(.86,1.12),
+    bend:rand(.88,1.15),
+    alpha:rand(.048,.125),
+    width:rand(.38,1.05),
+    flow:rand(.18,.62),
+    lace:rand(.6,1.4),
+  });
+}
+
+// ── Flow particles (tip → heart surface) ─────────────────────────────────────
+const N_FL=500,flow=[];
+function mkFlow(sc){
+  const hi=Math.floor(Math.random()*HP_N);
+  const[hx,hy]=HP[hi];
+  return{sx:CX,sy:CY+HY_TIP*sc,tx:CX+hx*sc,ty:CY+hy*sc,
+    t:Math.random(),sp:rand(.0007,.0018),sz:rand(.3,1.4),gl:rand(.12,.30)};
+}
+
+// ── Stardust ──────────────────────────────────────────────────────────────────
+const N_SD=700,sdust=[];
+for(let i=0;i<N_SD;i++) sdust.push({
+  nx:Math.random(),ny:Math.random(),
+  sz:rand(.3,2.0),br:rand(.06,.42),
+  ph:rand(0,Math.PI*2),twSpd:rand(.001,.0045),
+});
+
+// ── Base wave surface ─────────────────────────────────────────────────────────
+let GT=0;
+function drawBase(sc,tipX,tipY){
+  const baseY=tipY+sc*.048;
+  // Concentric ellipse rings at focal point
+  for(let n=0;n<5;n++){
+    ctx.beginPath();
+    ctx.ellipse(tipX,baseY,sc*(.95+n*.22),sc*(.055+n*.014),0,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(210,238,255,${.060-n*.009})`;
+    ctx.lineWidth=.65-n*.08;ctx.stroke();
+  }
+  // Radial fiber lines from tip spreading outward
+  for(let n=0;n<48;n++){
+    const sd=n%2===0?1:-1;
+    const u=n/48,bias=u;
+    const sX=tipX+(Math.random()-.5)*sc*.05;
+    const sY=baseY+Math.random()*sc*.016;
+    const eX=CX+sd*W*(.25+bias*.58);
+    const eY=baseY+sc*(.06+bias*.52)+Math.sin(n*.78)*sc*.12;
+    const c1x=CX+sd*sc*(.28+bias*.50);
+    const c1y=sY-sc*(.018+.055*Math.cos(n));
+    const c2x=lerp(CX,eX,.63)+sd*sc*.24*Math.sin(n*.52+GT*6.5);
+    const c2y=lerp(sY,eY,.73)+sc*(.09+.09*Math.sin(n*.42));
+    ctx.beginPath();ctx.moveTo(sX,sY);
+    ctx.bezierCurveTo(c1x,c1y,c2x,c2y,eX,eY);
+    ctx.strokeStyle=`rgba(208,234,255,${.012+.024*(1-bias)*((n*17%7)/7+.48)})`;
+    ctx.lineWidth=.20+.42*((n*31%17)/17);ctx.stroke();
+  }
+  // Broad horizontal shimmer waves
+  for(let n=0;n<10;n++){
+    const span=W*(.52+n*.068);
+    const y0=baseY+sc*(.006+n*.013);
+    const amp2=sc*(.013+n*.006);
+    const ph=GT*(3+n*.42)+n*.88;
+    ctx.beginPath();
+    for(let i=0;i<=180;i++){
+      const u=i/180;
+      const x=CX-span/2+u*span;
+      const y=y0+Math.sin(u*Math.PI*(1.3+n*.15)+ph)*amp2*Math.sin(Math.PI*u);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=`rgba(200,228,255,${.013+n*.003})`;
+    ctx.lineWidth=.18+n*.030;ctx.stroke();
+  }
+}
+
+function drawSCurveGuides(sc,tipX,tipY,wT){
+  ctx.globalCompositeOperation='lighter';
+  for(const g of sGuides){
+    const sd=g.side,u=g.u;
+    const phase=wT*.78+g.ph;
+    const sx=CX+sd*sc*(.76+u*.22);
+    const sy=CY-sc*(.48-u*.10)+Math.sin(phase)*sc*.020;
+    const ex=CX+sd*W*(.42+u*.16);
+    const ey=tipY+sc*(.02+u*.15)+Math.cos(phase*.9)*sc*.040;
+    const c1x=CX+sd*W*(.17+u*.08);
+    const c1y=CY-sc*(.58-u*.05);
+    const c2x=CX+sd*W*(.28+u*.10);
+    const c2y=tipY+sc*(.12+u*.08)*g.drop;
+    const drawRibbonLine=(offset,alphaMul,widthMul,phaseShift)=>{
+      ctx.beginPath();
+      const pts=[];
+      for(let j=0;j<=170;j++){
+        const t=j/170;
+        const iv=1-t;
+        let x=iv*iv*iv*sx+3*iv*iv*t*c1x+3*iv*t*t*c2x+t*t*t*ex;
+        let y=iv*iv*iv*sy+3*iv*iv*t*c1y+3*iv*t*t*c2y+t*t*t*ey;
+        const env=Math.sin(Math.PI*t);
+        const wave1=Math.sin(t*Math.PI*2.25+phase*.70+phaseShift);
+        const wave2=Math.sin(t*Math.PI*5.10-wT*1.35+g.ph*1.7+phaseShift*.6);
+        const wave3=Math.sin(t*Math.PI*8.60+wT*1.05+g.ph*.8);
+        x+=sd*(wave1*sc*(.030+u*.018)+wave2*sc*(.026+u*.014))*env;
+        y+=(wave1*sc*(.125+u*.038)+wave2*sc*(.055+u*.020)+wave3*sc*.018)*env;
+        y+=offset*sc*(.010+.040*env);
+        pts.push([x,y]);
+        j===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      const a=g.alpha*alphaMul*(.70+.30*Math.sin(phase+phaseShift));
+      ctx.strokeStyle=`rgba(225,244,255,${a})`;
+      ctx.lineWidth=g.width*widthMul*(.78+.22*Math.sin(phaseShift+u*3));ctx.stroke();
+      return pts;
+    };
+    drawRibbonLine(0,.78,1.00,0);
+    drawRibbonLine(-g.lace,.34,.46,1.7);
+    drawRibbonLine(g.lace,.28,.36,3.2);
+    ctx.strokeStyle=`rgba(120,190,255,${g.alpha*.22})`;
+    ctx.lineWidth=g.width*5.6;
+    ctx.beginPath();
+    for(let j=0;j<=110;j++){
+      const t=j/110,iv=1-t;
+      let x=iv*iv*iv*sx+3*iv*iv*t*c1x+3*iv*t*t*c2x+t*t*t*ex;
+      let y=iv*iv*iv*sy+3*iv*iv*t*c1y+3*iv*t*t*c2y+t*t*t*ey;
+      const env=Math.sin(Math.PI*t);
+      x+=sd*Math.sin(t*Math.PI*2.0+phase*.55)*sc*.045*env;
+      y+=Math.sin(t*Math.PI*4.2+wT*.9+g.ph)*sc*.090*env;
+      j===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    for(let k=0;k<3;k++){
+      const t=(g.flow+wT*(.030+.010*k)+k*.31)%1;
+      const iv=1-t;
+      let bx=iv*iv*iv*sx+3*iv*iv*t*c1x+3*iv*t*t*c2x+t*t*t*ex;
+      let by=iv*iv*iv*sy+3*iv*iv*t*c1y+3*iv*t*t*c2y+t*t*t*ey;
+      const env=Math.sin(Math.PI*t);
+      bx+=sd*Math.sin(t*Math.PI*2.4+phase)*sc*.050*env;
+      by+=Math.sin(t*Math.PI*5.2+wT+g.ph)*sc*.070*env;
+      const ba=g.alpha*(.9-k*.18)*Math.sin(Math.PI*t);
+      if(ba>.015)glowAt(bx,by,sc*(.018+.010*k),ba,218,238,255);
+    }
+  }
+  ctx.globalCompositeOperation='source-over';
+}
+
+// ── Main render loop ──────────────────────────────────────────────────────────
+function draw(ts){
+  GT+=.000080; pT+=.00110;
+  rotY=Math.sin(ts*.000090)*.26;
+  const wT=ts*.001;
+  const sc=BASE_SC()*pulse();
+  const tipX=CX, tipY=CY+HY_TIP*sc;
+
+  while(flow.length<N_FL) flow.push(mkFlow(sc));
+
+  // Dim trail
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='rgba(2,9,18,.045)';
+  ctx.fillRect(0,0,W,H);
+
+  // ── Stardust ─────────────────────────────────────────────────────────────
+  ctx.globalCompositeOperation='lighter';
+  for(const d of sdust){
+    const a=d.br*(.5+.5*Math.sin(ts*d.twSpd+d.ph));
+    if(a<.04)continue;
+    ctx.beginPath();ctx.arc(d.nx*W,d.ny*H,d.sz*.44,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${a})`;ctx.fill();
+  }
+  ctx.globalCompositeOperation='source-over';
+
+  // ── Base surface ─────────────────────────────────────────────────────────
+  drawBase(sc,tipX,tipY);
+
+  // ── Flow particles ────────────────────────────────────────────────────────
+  for(let k=0;k<flow.length;k++){
+    const p=flow[k];p.t+=p.sp;
+    if(p.t>=1){flow[k]=mkFlow(sc);continue;}
+    const e=eio(p.t);
+    const x=lerp(p.sx,p.tx,e),y=lerp(p.sy,p.ty,e);
+    const a=Math.sin(p.t*Math.PI)*p.gl;
+    if(a<.03)continue;
+    ctx.beginPath();ctx.arc(x,y,p.sz*.68,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${a})`;ctx.fill();
+    if(a>.28&&k%8===0)glowAt(x,y,p.sz*5,a*.18,220,236,255);
+  }
+
+  // ── Fixed heart photo frame ───────────────────────────────────────────────
+  drawHeartPhotoFrame(sc);
+
+  // ── Fiber Strands ─────────────────────────────────────────────────────────
+  for(const s of strands){
+    s.t+=s.animSpd;
+    const[EX,EY]=proj(s.hx,s.hy,s.hz,sc);
+    const sd=s.side;
+    const tl=s.tailLen*sc;
+    let endX,endY,c1x,c1y,c2x,c2y;
+
+    switch(s.kind){
+      case'top':
+        endX=CX+sd*(sc*1.58+tl*.56);
+        endY=tipY+sc*(.040+s.tailLen*.032)+Math.sin(wT*.55+s.ph)*sc*.076;
+        c1x=EX+sd*sc*(.76+s.tailLen*.060);
+        c1y=EY-sc*(.020+s.tailLen*.004)+Math.sin(wT*.82+s.ph)*sc*.040;
+        c2x=CX+sd*(sc*.66+tl*.26)+sd*Math.sin(wT*.70+s.ph)*sc*.38;
+        c2y=tipY-sc*(.070-s.tailLen*.004)+Math.cos(wT*.95+s.ph)*sc*.084;
+        break;
+      case'side':
+        endX=CX+sd*W*(.30+s.tailLen*.082);
+        endY=tipY+sc*(.045+s.tailLen*.034)+Math.sin(wT*.60+s.ph)*sc*.070;
+        c1x=EX+sd*sc*.78; c1y=EY-sc*(.018+s.tailLen*.004);
+        c2x=lerp(EX,endX,.50)+sd*Math.sin(wT*.72+s.ph)*sc*.40;
+        c2y=tipY-sc*(.050-s.tailLen*.004)+sc*.095*Math.cos(wT+s.ph);
+        break;
+      case'bot':
+        endX=EX+sd*sc*.25; endY=EY+tl;
+        c1x=EX; c1y=EY+tl*.32;
+        c2x=EX+sd*sc*.08; c2y=EY+tl*.72;
+        break;
+      default:
+        endX=CX+sd*sc*(.78+s.tailLen*.28);
+        endY=tipY+sc*(.035+s.tailLen*.055);
+        c1x=EX+sd*sc*.38; c1y=EY+sc*.12;
+        c2x=lerp(EX,endX,.60); c2y=tipY-sc*.025;
+    }
+
+    const TOTAL=115;
+    const pts=[];
+    ctx.beginPath();
+    let started=false;
+    for(let j=0;j<=TOTAL;j++){
+      const tt=j/TOTAL,iv=1-tt;
+      let x=iv*iv*iv*EX+3*iv*iv*tt*c1x+3*iv*tt*tt*c2x+tt*tt*tt*endX;
+      let y=iv*iv*iv*EY+3*iv*iv*tt*c1y+3*iv*tt*tt*c2y+tt*tt*tt*endY;
+      const env=ss(clamp(tt*2.5,0,1))*(1-ss(clamp((tt-.90)*8,0,1))*.30);
+      const dx=endX-EX,dy=endY-EY,dl=Math.sqrt(dx*dx+dy*dy)||1;
+      const wave=s.amp*env*Math.sin(s.wCy*Math.PI*2*tt+wT*1.30+s.ph);
+      const longWave=Math.sin(tt*Math.PI*2.35+wT*.78+s.ph*.7);
+      const layeredWave=Math.sin(tt*Math.PI*(4.2+s.wCy*.9)+wT*1.05+s.ph*1.3);
+      const fall=ss(clamp((tt-.10)/.58,0,1));
+      const softEnd=1-ss(clamp((tt-.88)/.12,0,1))*.10;
+      const verticalDrop=s.kind==='top'
+        ?sc*.34*fall*softEnd
+        :s.kind==='side'
+          ?sc*.25*fall*softEnd
+          :0;
+      const outwardHook=s.kind==='top'
+        ?sd*sc*.34*Math.sin(Math.PI*clamp(tt/.52,0,1))*(1-ss(clamp((tt-.58)*4.0,0,1)))
+        :s.kind==='side'
+          ?sd*sc*.26*Math.sin(Math.PI*clamp(tt/.50,0,1))*(1-ss(clamp((tt-.56)*4.2,0,1)))
+          :0;
+      const crestLift=s.kind==='top'
+        ?-sc*.030*Math.sin(Math.PI*clamp(tt/.28,0,1))*(1-ss(clamp((tt-.30)*6.0,0,1)))
+        :s.kind==='side'
+          ?-sc*.020*Math.sin(Math.PI*clamp(tt/.26,0,1))*(1-ss(clamp((tt-.28)*6.0,0,1)))
+          :0;
+      const midDrop=s.kind==='top'
+        ?sc*.12*ss(clamp((tt-.26)/.40,0,1))
+        :s.kind==='side'
+          ?sc*.08*ss(clamp((tt-.28)/.40,0,1))
+          :0;
+      const endRise=s.kind==='top'
+        ?-sc*.18*ss(clamp((tt-.72)/.28,0,1))
+        :s.kind==='side'
+          ?-sc*.12*ss(clamp((tt-.74)/.26,0,1))
+          :0;
+      const sBend=(s.kind==='top'||s.kind==='side')
+        ?sd*Math.sin(Math.PI*tt)*Math.sin(Math.PI*2*tt-.25)*sc*(s.kind==='top'?.72:.54)
+        :0;
+      const sDrop=(s.kind==='top'||s.kind==='side')
+        ?Math.sin(Math.PI*tt)*Math.sin(Math.PI*2*tt+1.05)*sc*(s.kind==='top'?.34:.24)
+        :0;
+      const waveArc=(s.kind==='top'||s.kind==='side')
+        ?Math.sin(Math.PI*tt)*Math.sin(tt*Math.PI*3.05+wT*.42+s.ph*.45)*sc*(s.kind==='top'?.16:.12)
+        :0;
+      const waterSag=crestLift+midDrop+endRise+
+        (s.kind==='top'?sc*.018:sc*.010)*longWave*env+
+        (s.kind==='top'?sc*.030:sc*.018)*layeredWave*env+
+        waveArc+sDrop;
+      const horizontalRipple=s.kind==='top'||s.kind==='side';
+      const verticalPin=horizontalRipple
+        ?(s.kind==='top'?.08:.06)*(1-ss(clamp((tt-.08)/.18,0,1)))
+        :0;
+      const pinnedX=EX+sd*sc*(.035*layeredWave+.020*longWave)*env;
+      x=lerp(x,pinnedX,verticalPin);
+      x+=horizontalRipple?outwardHook+sBend+sd*(wave*.42+longWave*env*sc*.024):(-dy/dl)*wave;
+      if(horizontalRipple){
+        const outside=sd*(x-CX);
+        const minOutside=sc*((s.kind==='top'?.70:.62)+.34*ss(clamp((tt-.08)/.48,0,1))-.18*ss(clamp((tt-.72)/.28,0,1)));
+        if(outside<minOutside) x=lerp(x,CX+sd*minOutside,.72);
+      }
+      y+=horizontalRipple?verticalDrop+waterSag+Math.abs(wave)*.14:(dx/dl)*wave;
+      pts.push([x,y]);
+      if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
+    }
+    const aP=.48+.52*Math.abs(Math.sin(s.t*Math.PI+s.ph));
+    // Outer glow stroke
+    ctx.strokeStyle=`rgba(180,218,255,${s.alpha*aP*.34})`;
+    ctx.lineWidth=s.kind==='top'?.90:s.kind==='side'?.78:1.15;ctx.stroke();
+    // Fine bright core
+    ctx.strokeStyle=`rgba(242,252,255,${s.alpha*aP*.38})`;
+    ctx.lineWidth=s.kind==='top'?.28:s.kind==='side'?.24:.40;ctx.stroke();
+
+    // Light beads along strand
+    ctx.globalCompositeOperation='lighter';
+    for(const b of s.beads){
+      b.pos=(b.pos+b.spd*1.75)%1;
+      const idx=Math.min(Math.floor(b.pos*pts.length),pts.length-1);
+      const[bx,by]=pts[idx];
+      const ba=b.br*aP;
+      ctx.beginPath();ctx.arc(bx,by,b.sz*.52,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${ba*.62})`;ctx.fill();
+      if(ba>.56&&idx%9===0) glowAt(bx,by,b.sz*6.5,ba*.22,225,240,255);
+    }
+    ctx.globalCompositeOperation='source-over';
+  }
+
+  drawSCurveGuides(sc,tipX,tipY,wT);
+
+  // ── 3-D Heart Particle Cloud ──────────────────────────────────────────────
+  ctx.globalCompositeOperation='lighter';
+  for(const p of hPart){
+    const tw=.55+.45*Math.sin(ts*p.twSpd+p.ph);
+    const[px,py,k]=proj(p.hx,p.hy,p.hz,sc);
+    const a=p.br*tw*clamp(k,.75,1.28);
+    if(a<.07)continue;
+    const r=p.sz*k*.54;
+    ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${a*.75})`;ctx.fill();
+    if(a>.72&&r>1.0) glowAt(px,py,r*8,a*.20);
+  }
+  ctx.globalCompositeOperation='source-over';
+
+  // ── Bright focal tip ──────────────────────────────────────────────────────
+  glowAt(tipX,tipY,sc*.32,.44,140,192,255);
+  glowAt(tipX,tipY,sc*.10,.78,222,240,255);
+  glowAt(tipX,tipY,sc*.034,.99);
+  ctx.beginPath();ctx.arc(tipX,tipY,2.5,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,1)';ctx.fill();
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

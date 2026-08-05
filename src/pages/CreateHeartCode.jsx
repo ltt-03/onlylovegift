@@ -98,13 +98,13 @@ export default function CreateHeartCode() {
 
       const response = await api.post('/orders', submitData, { headers: { 'Content-Type': 'multipart/form-data' } });
       if (response.data.success) {
-        navigate(`/payment/${response.data.order.orderCode}`);
+        navigate('/checkout?orderCode=' + response.data.order.orderCode);
       }
     } catch (error) {
       console.error(error);
       if (error.response?.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        navigate('/login?returnUrl=/create/x-mas-tree');
+        navigate('/login?returnUrl=/create/heart-code');
       } else {
         alert('Không thể kết nối đến máy chủ. (Bạn đã chạy backend chưa?)');
       }
