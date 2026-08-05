@@ -618,12 +618,7 @@ async function initMediaPipe() {
         
         if (navigator.mediaDevices?.getUserMedia) {
             try {
-                const stream = await Promise.race([
-                    navigator.mediaDevices.getUserMedia(constraints),
-                    new Promise((_, reject) => {
-                        setTimeout(() => reject(new Error('Camera permission timeout')), 3000);
-                    })
-                ]);
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 video.srcObject = stream;
                 video.addEventListener("loadeddata", predictWebcam);
                 debugInfo.innerText = "Webcam active. Show hand.";

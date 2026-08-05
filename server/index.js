@@ -462,7 +462,7 @@ app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
     let finalAmount = successfulOrderCount === 0 ? 29000 : 49000;
     
     // Free templates
-    if (['x-mas-tree', 'merry-christmas', 'christmas'].includes(templateId)) {
+    if (['merry-christmas', 'christmas'].includes(templateId)) {
         finalAmount = 0;
     }
 

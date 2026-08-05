@@ -165,14 +165,9 @@ export default function CreateXMasTree() {
         <form onSubmit={handleSubmit}>
 
           {/* Names */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginBottom: '24px' }}>
             <div className="input-group" style={{ margin: 0 }}>
-              <label>Tên người gửi</label>
-              <input type="text" name="senderName" value={formData.senderName} onChange={handleChange}
-                placeholder="VD: Người Giấu Tên 🎅" className="input-field" />
-            </div>
-            <div className="input-group" style={{ margin: 0 }}>
-              <label>Tên người nhận <span style={{ color: '#ef4444' }}>*</span></label>
+              <label>Tên người nhận (để lưu đơn) <span style={{ color: '#ef4444' }}>*</span></label>
               <input type="text" name="receiverName" value={formData.receiverName} onChange={handleChange}
                 placeholder="VD: Linh Ơi ❤️" className="input-field" required />
             </div>
