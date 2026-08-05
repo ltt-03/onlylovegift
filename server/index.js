@@ -554,6 +554,7 @@ app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
         if (file.fieldname === 'images' || file.fieldname === 'passImage') {
           let url = `/uploads/images/${file.filename}`;
           if (process.env.IMGBB_API_KEY) {
+            let imgbbSuccess = false;
             try {
               const formData = new FormData();
               const fileStream = fs.createReadStream(file.path);
@@ -563,10 +564,14 @@ app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
               });
               if (imgbbRes.data && imgbbRes.data.success) {
                 url = imgbbRes.data.data.url;
+                imgbbSuccess = true;
               }
             } catch (uploadErr) {
               console.error('ImgBB Upload Error:', uploadErr.response ? uploadErr.response.data : uploadErr.message);
-            } finally {
+            }
+            // Chỉ xóa file local khi ImgBB upload thành công
+            // Nếu ImgBB fail → giữ file local để serve qua /uploads/
+            if (imgbbSuccess) {
               try { fs.unlinkSync(file.path); } catch (e) {}
             }
           }
