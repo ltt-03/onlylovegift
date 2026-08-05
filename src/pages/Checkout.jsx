@@ -177,11 +177,11 @@ export default function Checkout() {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--color-primary)' }}>
                 <div className="spinner" style={{ width: '20px', height: '20px', border: '3px solid', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-                Đang chờ thanh toán...
+                Đang chờ xác nhận thanh toán...
               </div>
-              <button onClick={handleManualConfirm} className="btn btn-outline" style={{ fontSize: '0.9rem', padding: '8px 16px' }}>
-                (Dev Mode: Bấm để xác nhận)
-              </button>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', margin: 0, textAlign: 'center' }}>
+                Hệ thống sẽ tự động xác nhận trong vòng <strong>1–3 phút</strong> sau khi chuyển khoản thành công.
+              </p>
             </div>
           )}
         </div>

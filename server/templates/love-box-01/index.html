@@ -949,7 +949,16 @@ S.Dot = function (x, y) {
   this.e = 0.07;
   this.s = true;
 
-  this.c = new S.Color(254, 168, 168, this.p.a);
+  var mixedRGB = [
+    [253, 251, 247], // #fdfbf7
+    [255, 230, 230], // #ffe6e6
+    [255, 179, 198], // #ffb3c6
+    [255, 141, 161], // #ff8da1
+    [255, 77, 109],  // #ff4d6d
+    [201, 24, 74]    // #c9184a
+  ];
+  var rndColor = mixedRGB[Math.floor(Math.random() * mixedRGB.length)];
+  this.c = new S.Color(rndColor[0], rndColor[1], rndColor[2], this.p.a);
 
   this.t = this.clone();
   this.q = [];
@@ -1667,13 +1676,15 @@ S.init();
     drops[x] = 1;
   }
 
+  var mixColors = ['#fdfbf7', '#ffe6e6', '#ffb3c6', '#ff8da1', '#ff4d6d', '#c9184a'];
+  
   function drawMatrix() {
     mctx.fillStyle = 'rgba(0, 0, 0, ' + matrixOpacity + ')';
     mctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-    mctx.fillStyle = '#fea8a8';
     mctx.font = 'bold ' + fontSize + 'px arial';
     for (var i = 0; i < drops.length; i++) {
       var text = texts[Math.floor(Math.random() * texts.length)];
+      mctx.fillStyle = mixColors[Math.floor(Math.random() * mixColors.length)];
       mctx.fillText(text, i * fontSize, drops[i] * fontSize);
       if (drops[i] * fontSize > matrixCanvas.height || Math.random() > 0.95) {
         drops[i] = 0;
@@ -1729,7 +1740,8 @@ S.init();
   var particleVelocity = 100;
   var particleEffect = -0.75;
   var particleSize = isMobile ? 22 : 30;
-  var heartImage = createHeartImage(particleSize, HEART_COLOR, 6);
+  var mixedRGBHex = ['#fdfbf7', '#ffe6e6', '#ffb3c6', '#ff8da1', '#ff4d6d', '#c9184a'];
+  var heartImages = mixedRGBHex.map(function(c) { return createHeartImage(particleSize, c, 6); });
   var mobileScale = isMobile ? 0.4 : 1;
 
   function HPoint(x, y) { this.x = x || 0; this.y = y || 0; }
@@ -1740,20 +1752,22 @@ S.init();
   };
   HPoint.prototype.normalize = function() { var l = this.length(); this.x /= l; this.y /= l; return this; };
 
-  function Particle() { this.position = new HPoint(); this.velocity = new HPoint(); this.acceleration = new HPoint(); this.age = 0; }
+  function Particle() { this.position = new HPoint(); this.velocity = new HPoint(); this.acceleration = new HPoint(); this.age = 0; this.colorIndex = Math.floor(Math.random() * heartImages.length); }
   Particle.prototype.initialize = function(x, y, dx, dy) {
     this.position.x = x; this.position.y = y; this.velocity.x = dx; this.velocity.y = dy;
     this.acceleration.x = dx * particleEffect; this.acceleration.y = dy * particleEffect; this.age = 0;
+    this.colorIndex = Math.floor(Math.random() * heartImages.length);
   };
   Particle.prototype.update = function(dt) {
     this.position.x += this.velocity.x*dt; this.position.y += this.velocity.y*dt;
     this.velocity.x += this.acceleration.x*dt; this.velocity.y += this.acceleration.y*dt; this.age += dt;
   };
-  Particle.prototype.draw = function(context, image) {
+  Particle.prototype.draw = function(context, imagesArray) {
     var ease = function(t) { return (--t)*t*t+1; };
-    var size = image.width * ease(this.age / particleDuration);
+    var img = imagesArray[this.colorIndex];
+    var size = img.width * ease(this.age / particleDuration);
     context.globalAlpha = 1 - this.age / particleDuration;
-    context.drawImage(image, this.position.x - size/2, this.position.y - size/2, size, size);
+    context.drawImage(img, this.position.x - size/2, this.position.y - size/2, size, size);
   };
 
   // Particle pool
@@ -1775,10 +1789,10 @@ S.init();
     if (firstFree < firstActive) { for (i = firstActive; i < particleCount; i++) particles[i].update(dt); for (i = 0; i < firstFree; i++) particles[i].update(dt); }
     while (particles[firstActive].age >= particleDuration && firstActive != firstFree) { firstActive++; if (firstActive == particleCount) firstActive = 0; }
   }
-  function drawParticles(context, image) {
+  function drawParticles(context, imagesArray) {
     var i;
-    if (firstActive < firstFree) { for (i = firstActive; i < firstFree; i++) particles[i].draw(context, image); }
-    if (firstFree < firstActive) { for (i = firstActive; i < particleCount; i++) particles[i].draw(context, image); for (i = 0; i < firstFree; i++) particles[i].draw(context, image); }
+    if (firstActive < firstFree) { for (i = firstActive; i < firstFree; i++) particles[i].draw(context, imagesArray); }
+    if (firstFree < firstActive) { for (i = firstActive; i < particleCount; i++) particles[i].draw(context, imagesArray); for (i = 0; i < firstFree; i++) particles[i].draw(context, imagesArray); }
   }
 
   function pointOnHeart(t) {
@@ -1799,7 +1813,7 @@ S.init();
       addParticle(heartCanvas.width/2 + pos.x, heartCanvas.height/2 - pos.y, dir.x, -dir.y);
     }
     updateParticles(dt);
-    drawParticles(ctx, heartImage);
+    drawParticles(ctx, heartImages);
   }
 
   function onResize() {
@@ -1817,9 +1831,9 @@ S.init();
     // Create intro heart images (small, medium, big)
     var glowPad = isMobile ? 0 : 8;
     var introImgs = [
-      createHeartImage(20, HEART_COLOR, glowPad),
-      createHeartImage(28, HEART_COLOR, isMobile ? 0 : 12),
-      createHeartImage(36, HEART_COLOR, isMobile ? 0 : 16)
+      createHeartImage(20, '#ffb3c6', glowPad),
+      createHeartImage(28, '#ff4d6d', isMobile ? 0 : 12),
+      createHeartImage(36, '#fdfbf7', isMobile ? 0 : 16)
     ];
 
     var introHearts = [];

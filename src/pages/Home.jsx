@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Wand2, CreditCard, Rocket, CheckCircle, PlayCircle, Star, Trophy, Gift, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, Wand2, CreditCard, Rocket, CheckCircle, PlayCircle, ShieldCheck, Sparkles, Zap, Star, MessageCircle, X, ChevronLeft, ChevronRight, Trophy, Gift } from 'lucide-react';
 import { dummyTemplates } from './Templates';
+import SecurePreview from '../components/SecurePreview';
+import { getCreateRoute } from '../utils/templateRoutes';
 
 const FallingHearts = () => {
   const [hearts, setHearts] = useState([]);
@@ -50,6 +52,7 @@ const FallingHearts = () => {
 export default function Home() {
   const navigate = useNavigate();
   const [activeVideo, setActiveVideo] = useState(null);
+  const [activePreview, setActivePreview] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
   const [stats, setStats] = useState({});
@@ -88,23 +91,11 @@ export default function Home() {
   };
 
   const handlePreview = (templateId) => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-    window.open(`${apiUrl}/demo/${templateId}`, '_blank');
+    setActivePreview(templateId);
   };
 
-  const handleSelect = (templateId) => {
-    if (templateId === 'x-mas-tree') {
-      navigate(`/create/x-mas-tree`);
-    } else if (templateId === 'gift-surprise-v2') {
-      navigate(`/create/gift-surprise-v2`);
-    } else if (templateId === 'love-gift-3d') {
-      navigate(`/create/love-gift-3d`);
-    } else if (templateId === 'lucky-chance') {
-      navigate(`/create/lucky-chance`);
-    } else {
-      navigate(`/create?template=${templateId}`);
-    }
-  };
+  // Dùng getCreateRoute từ utils/templateRoutes.js — KHÔNG viết if/else thủ công ở đây
+  const handleSelect = (templateId) => navigate(getCreateRoute(templateId));
 
   return (
     <div className="home-page">
@@ -128,7 +119,7 @@ export default function Home() {
           
           {/* Subtitle */}
           <p className="hero-subtitle-cute" style={{ color: 'var(--color-text-light)', fontSize: '1.1rem', maxWidth: '500px' }}>
-            Hàng ngàn người đã dùng Only Love Gift để tạo ra những trang web tình yêu độc quyền làm quà tặng sinh nhật, kỷ niệm đầy ý nghĩa.
+            Nền tảng giúp bạn tạo ra những trang web tình yêu độc quyền làm quà tặng sinh nhật, kỷ niệm đầy ý nghĩa.
           </p>
           
           {/* CTA */}
@@ -144,7 +135,7 @@ export default function Home() {
           <div className="social-proof-cute" style={{ background: 'transparent', padding: '0', backdropFilter: 'none', border: 'none', boxShadow: 'none', marginTop: '30px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text)' }}>
               <CheckCircle size={20} color="#10b981" />
-              <span style={{ fontSize: '15px', fontWeight: '600' }}>Hơn 10,000+ món quà đã tạo</span>
+              <span style={{ fontSize: '15px', fontWeight: '600' }}>Thiết kế độc đáo, cá nhân hóa</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text)' }}>
               <CheckCircle size={20} color="#10b981" />
@@ -165,7 +156,7 @@ export default function Home() {
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
               border: '8px solid white'
             }}>
-              <img src="/images/love-box-01.jpeg" alt="Quà Tặng Sinh Nhật 3D" style={{ width: '100%', display: 'block', objectFit: 'cover', height: '400px' }} />
+              <img src="/images/heart-code.jpg" alt="Trái Tim Mã Nguồn" style={{ width: '100%', display: 'block', objectFit: 'cover', height: '400px' }} />
             </div>
             <div className="floating-emoji" style={{ top: '-5%', right: '-5%', fontSize: '32px', animationDelay: '0s', background: 'white', padding: '10px', borderRadius: '50%', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>🎁</div>
             <div className="floating-emoji" style={{ bottom: '10%', left: '-10%', fontSize: '28px', animationDelay: '1.5s', background: 'white', padding: '10px', borderRadius: '50%', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>💖</div>
@@ -300,7 +291,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* VIP Leaderboard Section */}
+      {/* VIP Leaderboard Section (Tạm ẩn để duyệt BCT)
       <section id="vip-leaderboard" style={{ padding: '80px 0', backgroundColor: 'transparent' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -336,7 +327,7 @@ export default function Home() {
                   transition: 'background-color 0.2s'
                 }}>
                   <div style={{ width: '40px', fontWeight: 'bold', fontSize: '1.2rem', color: index === 0 ? '#fbbf24' : (index === 1 ? '#9ca3af' : (index === 2 ? '#b45309' : '#d1d5db')) }}>
-                    {index === 0 ? <Trophy size={24} /> : (index === 1 ? <Star size={24} /> : (index === 2 ? <Star size={24} /> : `#${index + 1}`))}
+                    {index === 0 ? <Trophy size={24} /> : (index === 1 ? <Star size={24} /> : (index === 2 ? <Star size={24} /> : \`#\${index + 1}\`))}
                   </div>
                   
                   {user.avatar ? (
@@ -409,7 +400,48 @@ export default function Home() {
           </div>
         </div>
       </section>
+      */}
 
+      {/* Ecosystem & Services Section */}
+      <section style={{ padding: '80px 0', backgroundColor: 'var(--color-bg-alt)', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #34d399)', color: 'white', marginBottom: '16px', boxShadow: '0 10px 25px rgba(16, 185, 129, 0.4)' }}>
+              <Sparkles size={28} />
+            </div>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 850, color: 'var(--color-text)', marginBottom: '12px' }}>Hệ Sinh Thái & Dịch Vụ</h2>
+            <p style={{ fontSize: '15px', color: 'var(--color-text-light)', maxWidth: '600px', margin: '0 auto' }}>Không chỉ là quà tặng, chúng tôi còn mang đến những giải pháp công nghệ và tiện ích mở rộng.</p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
+            
+            {/* Free Projects Card */}
+            <div className="card" style={{ padding: '40px', background: 'var(--color-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', border: '1px solid var(--color-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+               <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+                 <Rocket size={40} className="text-primary" />
+               </div>
+               <h3 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '16px', color: 'var(--color-text)' }}>Dự Án Web Miễn Phí</h3>
+               <p style={{ color: 'var(--color-text-light)', lineHeight: 1.6, marginBottom: '32px', fontSize: '1.05rem' }}>Khám phá các nền tảng học tập, tiện ích (Study with me, nhạc Lofi, Pomodoro...) do đội ngũ phát triển hoàn toàn miễn phí.</p>
+               <Link to="/free-projects" className="btn btn-outline" style={{ marginTop: 'auto', padding: '12px 30px', fontSize: '1.05rem', fontWeight: 'bold', width: '100%' }}>
+                 Khám phá ngay 👉
+               </Link>
+            </div>
+
+            {/* IT Services Card */}
+            <div className="card" style={{ padding: '40px', background: 'var(--color-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', border: '1px solid var(--color-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+               <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+                 <ShieldCheck size={40} color="#10b981" />
+               </div>
+               <h3 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '16px', color: 'var(--color-text)' }}>Hỗ Trợ Đồ Án IT & Setup</h3>
+               <p style={{ color: 'var(--color-text-light)', lineHeight: 1.6, marginBottom: '32px', fontSize: '1.05rem' }}>Nhận làm đồ án môn học, tốt nghiệp IT trọn gói (Code + Slide + Báo cáo). Hỗ trợ cài đặt và triển khai hệ thống.</p>
+               <Link to="/it-services" className="btn btn-primary" style={{ marginTop: 'auto', padding: '12px 30px', fontSize: '1.05rem', fontWeight: 'bold', width: '100%', background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none', color: '#fff' }}>
+                 Xem chi tiết dịch vụ
+               </Link>
+            </div>
+
+          </div>
+        </div>
+      </section>
       {/* Video Modal */}
       {activeVideo && (
         <div 
@@ -458,7 +490,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Customer Feedbacks Section */}
+      {/* Customer Feedbacks Section (Tạm ẩn để duyệt BCT)
       <section style={{ padding: '80px 0', backgroundColor: 'transparent' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '50px' }}>
@@ -530,6 +562,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      */}
 
       {/* How it works */}
       <section className="steps-section">
@@ -584,6 +617,49 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Preview Modal */}
+      {activePreview && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+          onClick={() => setActivePreview(null)}
+        >
+          <div 
+            style={{ width: '100%', maxWidth: '1000px', position: 'relative' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setActivePreview(null)}
+              style={{
+                position: 'absolute',
+                top: '-40px',
+                right: '0',
+                background: 'transparent',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={32} />
+            </button>
+            <div style={{ maxHeight: '90vh', overflowY: 'auto', borderRadius: '16px' }}>
+              <SecurePreview templateId={activePreview} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

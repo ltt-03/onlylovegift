@@ -1182,8 +1182,10 @@
         var risingAnim = false;
 
         // Camera
+        var cameraZ = isMob ? 4500 : 3000;
+        var risingCameraZ = isMob ? 2500 : 1500;
         sCamera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
-        sCamera.position.z = 3000;
+        sCamera.position.z = cameraZ;
 
         sScene = new THREE.Scene();
 
@@ -1300,7 +1302,7 @@
                 // Ảnh bay từ dưới lên + hiện envelope
                 transformSphere(objects, targets.rising, 2000, sRenderer, sScene, sCamera);
                 new TWEEN.Tween(sCamera.position)
-                    .to({ x: 0, y: 0, z: 1500 }, 2000)
+                    .to({ x: 0, y: 0, z: risingCameraZ }, 2000)
                     .easing(TWEEN.Easing.Cubic.InOut)
                     .onUpdate(function() { sRenderer.render(sScene, sCamera); })
                     .onComplete(function() {
@@ -1317,7 +1319,7 @@
                 risingAnim = false;
                 transformSphere(objects, targets.sphere, 1500, sRenderer, sScene, sCamera);
                 new TWEEN.Tween(sCamera.position)
-                    .to({ x: 0, y: 0, z: 3000 }, 2000)
+                    .to({ x: 0, y: 0, z: cameraZ }, 2000)
                     .easing(TWEEN.Easing.Cubic.InOut)
                     .onUpdate(function() { sRenderer.render(sScene, sCamera); })
                     .onComplete(function() {
@@ -1335,7 +1337,7 @@
             risingAnim = false;
             transformSphere(objects, targets.sphere, 1500, sRenderer, sScene, sCamera);
             new TWEEN.Tween(sCamera.position)
-                .to({ x: 0, y: 0, z: 3000 }, 2000)
+                .to({ x: 0, y: 0, z: cameraZ }, 2000)
                 .easing(TWEEN.Easing.Cubic.InOut)
                 .onUpdate(function() { sRenderer.render(sScene, sCamera); })
                 .onComplete(function() {

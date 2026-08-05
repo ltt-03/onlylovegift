@@ -33,6 +33,10 @@ const upload = multer({
 dotenv.config();
 
 const app = express();
+
+const templateDirName = process.env.NODE_ENV === 'production' && fs.existsSync(path.join(__dirname, 'templates_dist')) 
+  ? 'templates_dist' 
+  : 'templates';
 const prisma = new PrismaClient({
   log: ['error'],
 });
@@ -68,10 +72,6 @@ const PROTECTION_SCRIPT = [
   "  },true);",
   "  document.addEventListener('selectstart',function(e){e.preventDefault();},true);",
   "  document.addEventListener('dragstart',function(e){e.preventDefault();},true);",
-  "  var _dt=false,_th=160;",
-  "  function _chk(){var w=window.outerWidth-window.innerWidth,h=window.outerHeight-window.innerHeight;if(w>_th||h>_th){if(!_dt){_dt=true;document.body.style.filter='blur(8px)';}}else{if(_dt){_dt=false;document.body.style.filter='';}}}",
-  "  setInterval(_chk,1000);",
-  "  if(window.top!==window.self){window.top.location=window.self.location;}",
   "  console.log('%c\uD83D\uDD12 Only Love Gift','color:#ff6b9d;font-size:22px;font-weight:bold;');",
   "  console.log('%cNoi dung nay duoc bao ve boi Only Love Gift.','color:#aaa;font-size:12px;');",
   '})();',
@@ -100,7 +100,7 @@ app.get('/gift/render/:code', async (req, res) => {
     }
 
     const templateId = order.templateId;
-    const htmlPath = path.join(__dirname, 'templates', templateId, 'index.html');
+    const htmlPath = path.join(__dirname, templateDirName, templateId, 'index.html');
     
     if (!fs.existsSync(htmlPath)) {
       return res.status(404).send('Giao diện quà tặng không tồn tại.');
@@ -157,7 +157,7 @@ app.use('/gift/lucky-chance', express.static(path.join(__dirname, 'public', 'tem
 app.use('/deploy', express.static(path.join(__dirname, 'public', 'deploy')));
 
 // Serve raw template assets for dynamic rendering
-app.use('/templates', express.static(path.join(__dirname, 'templates')));
+app.use('/templates', express.static(path.join(__dirname, templateDirName)));
 
 // ----------------------------------------------------
 // DYNAMIC RENDER ROUTE (On-The-Fly Generation)
@@ -173,7 +173,7 @@ app.get('/gift/view/:code', async (req, res) => {
     }
 
     const templateId = order.templateId;
-    const htmlPath = path.join(__dirname, 'templates', templateId, 'index.html');
+    const htmlPath = path.join(__dirname, templateDirName, templateId, 'index.html');
     
     if (!fs.existsSync(htmlPath)) {
       return res.status(404).send('Giao diện quà tặng đang được bảo trì.');
@@ -344,16 +344,16 @@ app.get('/ping', async (req, res) => {
   }
 });
 
-// Demo Route (Public)
+// Demo Route (Public - Deprecated for embedded usage)
 app.get('/demo/:templateId', (req, res) => {
   const templateId = req.params.templateId;
-  const htmlPath = path.join(__dirname, 'templates', templateId, 'index.html');
+  const htmlPath = path.join(__dirname, templateDirName, templateId, 'index.html');
   if (fs.existsSync(htmlPath)) {
     let html = fs.readFileSync(htmlPath, 'utf8');
     
     // Inject dynamic data for demo
     const dynamicData = {
-      recipientName: "Linh Ơi",
+      recipientName: "Chu Vận",
       senderName: "Người Giấu Tên",
       birthday: "01/01/2000",
       messages: [],
@@ -367,6 +367,110 @@ app.get('/demo/:templateId', (req, res) => {
     html = html.replace(/src="\.\//g, `src="/templates/${templateId}/`);
     html = html.replace(/href="\.\//g, `href="/templates/${templateId}/`);
     
+    html = injectProtection(html);
+    res.send(html);
+  } else {
+    res.status(404).send('Demo không tồn tại');
+  }
+});
+
+// Secure Demo Routes with Anti-Bot Protection
+const crypto = require('crypto');
+const demoTokens = new Map();
+const rateLimitMap = new Map(); // Simple rate limiting for IPs
+
+// Clean up maps periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of demoTokens.entries()) {
+    if (value.expiresAt < now) demoTokens.delete(key);
+  }
+  for (const [ip, data] of rateLimitMap.entries()) {
+    if (now - data.timestamp > 60000) rateLimitMap.delete(ip); // clear after 1 minute
+  }
+}, 60000);
+
+app.post('/api/demo/token', (req, res) => {
+  // 1. Check Origin/Referer (Anti-CURL / Anti-Postman)
+  const origin = req.headers.origin || req.headers.referer || '';
+  if (process.env.NODE_ENV === 'production' && !origin.includes('onlylovegift.vercel.app')) {
+    return res.status(403).json({ success: false, message: 'Forbidden: Invalid Origin' });
+  }
+
+  // 2. Rate Limiting — chỉ áp dụng trên production, dev không giới hạn
+  if (process.env.NODE_ENV === 'production') {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const now = Date.now();
+    const rlData = rateLimitMap.get(ip) || { count: 0, timestamp: now };
+    if (now - rlData.timestamp < 60000) {
+      if (rlData.count > 60) { // Max 60 demo previews per minute per IP (production)
+        return res.status(429).json({ success: false, message: 'Rate limit exceeded. Try again later.' });
+      }
+      rlData.count += 1;
+    } else {
+      rlData.count = 1;
+      rlData.timestamp = now;
+    }
+    rateLimitMap.set(ip, rlData);
+  }
+
+  const { templateId } = req.body;
+  if (!templateId) return res.status(400).json({ success: false, message: 'Missing templateId' });
+  
+  const token = crypto.randomBytes(16).toString('hex');
+  // Token tồn tại 5 phút để preview không bị expire khi user đang xem
+  demoTokens.set(token, { templateId, expiresAt: Date.now() + 5 * 60 * 1000 });
+  
+  res.json({ success: true, token });
+});
+
+app.get('/demo/secure/:token', (req, res) => {
+  // 3. Browser Fetch Metadata check (Anti-Bot / Ensure it's an iframe)
+  const fetchDest = req.headers['sec-fetch-dest'];
+  if (fetchDest && fetchDest !== 'iframe') {
+    return res.status(403).send('<h2>Truy cập bị từ chối.</h2><p>Vui lòng xem trên website chính thức.</p>');
+  }
+
+  const token = req.params.token;
+  const tokenData = demoTokens.get(token);
+  
+  if (!tokenData || tokenData.expiresAt < Date.now()) {
+    if (tokenData) demoTokens.delete(token); // cleanup
+    return res.status(403).send('<h2>Mã xem trước đã hết hạn hoặc không hợp lệ.</h2><p>Vì lý do bảo mật, vui lòng tải lại trang để xem demo mới.</p>');
+  }
+  
+  // Consume token (Single-Use)
+  demoTokens.delete(token);
+  
+  const templateId = tokenData.templateId;
+  const htmlPath = path.join(__dirname, templateDirName, templateId, 'index.html');
+  if (fs.existsSync(htmlPath)) {
+    let html = fs.readFileSync(htmlPath, 'utf8');
+
+    // Read template's config.json for demo defaults (supports heart-code and similar templates)
+    let templateConfig = {};
+    const configPath = path.join(__dirname, templateDirName, templateId, 'config.json');
+    if (fs.existsSync(configPath)) {
+      try { templateConfig = JSON.parse(fs.readFileSync(configPath, 'utf8')); } catch(e) {}
+    }
+    const assetBase = `/templates/${templateId}/`;
+
+    const dynamicData = {
+      recipientName: "Chu Vận",
+      senderName: "Người Giấu Tên",
+      birthday: "01/01/2000",
+      messages: templateConfig.copyright ? [templateConfig.copyright] : [],
+      images: templateConfig.image ? [assetBase + templateConfig.image] : [],
+      music: templateConfig.music ? (assetBase + templateConfig.music) : ""
+    };
+    const dataScript = `<script>window.DYNAMIC_DATA = ${JSON.stringify(dynamicData)}; window.ASSET_BASE_PATH = "${assetBase}";</script>`;
+    html = html.replace('</head>', `\n${dataScript}\n</head>`);
+
+    html = html.replace(/src="\.\/'/g, `src="${assetBase}`);
+    html = html.replace(/href="\.\/'/g, `href="${assetBase}`);
+    html = html.replace(/src="\.\//g, `src="${assetBase}`);
+    html = html.replace(/href="\.\//g, `href="${assetBase}`);
+
     html = injectProtection(html);
     res.send(html);
   } else {
@@ -451,15 +555,7 @@ app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
       }
     }
 
-    // Giảm giá lần đầu: Kiểm tra xem user đã có đơn hàng nào thanh toán thành công chưa
-    const successfulOrderCount = await prisma.order.count({
-      where: { 
-        userId: req.user.id,
-        status: { in: ['PAID', 'DEPLOYING', 'SUCCESS'] }
-      }
-    });
-
-    let finalAmount = successfulOrderCount === 0 ? 29000 : 49000;
+    let finalAmount = 29000; // Đồng giá 29k trong 10 ngày
     
     // Free templates
     if (['merry-christmas', 'christmas'].includes(templateId)) {
@@ -687,8 +783,8 @@ app.post('/api/orders/:code/pay-with-wallet', authMiddleware, async (req, res) =
   }
 });
 
-// 4. Mock Vercel Deploy Endpoint (for testing frontend before Webhooks are set up)
-app.post('/api/orders/:code/mock-pay', async (req, res) => {
+// 4. Mock Pay Endpoint (Admin only - protected for production)
+app.post('/api/orders/:code/mock-pay', authenticate, requireAdmin, async (req, res) => {
   try {
     const { code } = req.params;
     const order = await prisma.order.findUnique({ where: { orderCode: code } });

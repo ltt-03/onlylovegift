@@ -2,6 +2,7 @@ import { useState, useContext, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, CheckCircle2 } from 'lucide-react';
+import SecurePreview from '../components/SecurePreview';
 
 export default function CreateMerryChristmas() {
   const navigate = useNavigate();
@@ -165,6 +166,7 @@ export default function CreateMerryChristmas() {
             {isSubmitting ? 'Đang xử lý...' : <><CheckCircle2 size={22} /> Tạo Quà Ngay</>}
           </button>
         </form>
+        <SecurePreview templateId="merry-christmas" />
       </div>
     </div>
   );

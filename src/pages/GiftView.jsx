@@ -14,7 +14,7 @@ export default function GiftView() {
         src={iframeSrc} 
         style={{ width: '100%', height: '100%', border: 'none', margin: 0, padding: 0, display: 'block' }}
         title="Quà Tặng Của Bạn"
-        allow="autoplay; fullscreen; camera; microphone"
+        allow="autoplay; fullscreen"
       />
     </div>
   );

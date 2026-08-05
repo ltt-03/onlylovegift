@@ -19,7 +19,7 @@ const legalContent = {
       <h2>5. Thông tin liên hệ giải quyết tranh chấp</h2>
       <p>Mọi thắc mắc hoặc tranh chấp liên quan đến điều khoản, xin vui lòng liên hệ trực tiếp với cá nhân chịu trách nhiệm vận hành: <strong>Lê Thanh Tùng</strong>.</p>
       <ul>
-        <li><strong>Điện thoại/Zalo:</strong> 0848290617</li>
+        <li><strong>Điện thoại:</strong> 0583652509 | <strong>Zalo:</strong> 0848290617</li>
         <li><strong>Email:</strong> tunglecode@gmail.com</li>
       </ul>
     `
@@ -33,13 +33,17 @@ const legalContent = {
       <h2>2. Cam kết bảo vệ thông tin</h2>
       <p>Chúng tôi (Đại diện: Lê Thanh Tùng) cam kết <strong>KHÔNG BÁN, KHÔNG CHO THUÊ</strong> dữ liệu cá nhân của khách hàng cho bên thứ ba. Dữ liệu của bạn được lưu trữ an toàn và chỉ chia sẻ cho các đối tác hạ tầng công nghệ (ví dụ: máy chủ lưu trữ) để duy trì hoạt động.</p>
       
-      <h2>3. Quyền lợi của khách hàng</h2>
+      <h2>3. Thời gian lưu trữ thông tin</h2>
+      <p>Dữ liệu cá nhân của Thành viên sẽ được lưu trữ cho đến khi có yêu cầu hủy bỏ từ chính khách hàng hoặc khách hàng tự đăng nhập vào tài khoản để xóa. Còn lại trong mọi trường hợp, thông tin cá nhân của khách hàng sẽ được bảo mật trên máy chủ của chúng tôi.</p>
+
+      <h2>4. Quyền lợi của khách hàng</h2>
       <p>Khách hàng có quyền yêu cầu trích xuất, chỉnh sửa hoặc xóa vĩnh viễn dữ liệu cá nhân cũng như các hình ảnh, website đã tạo khỏi hệ thống của chúng tôi bất cứ lúc nào.</p>
       
-      <h2>4. Đơn vị thu thập và quản lý thông tin</h2>
+      <h2>5. Đơn vị thu thập và quản lý thông tin</h2>
       <p>Website được điều hành và quản lý bởi cá nhân: <strong>Lê Thanh Tùng</strong></p>
       <ul>
-        <li><strong>Hotline CSKH:</strong> 0848290617</li>
+        <li><strong>Địa chỉ:</strong> La Xuyên, Cổ Đô, Hà Nội</li>
+        <li><strong>Hotline CSKH:</strong> 0583652509 (Zalo: 0848290617)</li>
         <li><strong>Email hỗ trợ:</strong> tunglecode@gmail.com</li>
       </ul>
     `
@@ -60,7 +64,7 @@ const legalContent = {
       <h2>3. Xử lý sự cố giao nhận kỹ thuật số</h2>
       <p>Trong trường hợp bạn đã thanh toán nhưng không nhận được liên kết website trên màn hình hoặc qua email (có thể do nhập sai email hoặc email vào mục Spam), xin vui lòng liên hệ ngay với chúng tôi để được cấp phát lại sản phẩm:</p>
       <ul>
-        <li><strong>Quản lý kỹ thuật (Lê Thanh Tùng):</strong> 0848290617</li>
+        <li><strong>Quản lý kỹ thuật (Lê Thanh Tùng):</strong> 0583652509 (Zalo: 0848290617)</li>
         <li><strong>Email:</strong> tunglecode@gmail.com</li>
       </ul>
     `
@@ -82,7 +86,7 @@ const legalContent = {
       <h2>3. Quy trình yêu cầu Hoàn tiền</h2>
       <p>Nếu bạn gặp phải một trong các trường hợp trên, vui lòng thực hiện các bước sau để được hoàn tiền:</p>
       <ol>
-        <li>Liên hệ trực tiếp qua số <strong>Hotline/Zalo: 0848290617 (Gặp Tùng)</strong> hoặc gửi email tới <strong>tunglecode@gmail.com</strong> trong vòng <strong>7 ngày</strong> kể từ ngày thanh toán.</li>
+        <li>Liên hệ trực tiếp qua số <strong>Hotline: 0583652509</strong> hoặc <strong>Zalo: 0848290617 (Gặp Tùng)</strong> hoặc gửi email tới <strong>tunglecode@gmail.com</strong> trong vòng <strong>7 ngày</strong> kể từ ngày thanh toán.</li>
         <li>Cung cấp hình ảnh biên lai thanh toán và ảnh chụp màn hình báo lỗi hệ thống.</li>
         <li>Chúng tôi sẽ đối soát và thực hiện lệnh hoàn tiền về đúng tài khoản ngân hàng/ví điện tử gốc của bạn trong thời gian tối đa từ 2 - 5 ngày làm việc.</li>
       </ol>
@@ -110,7 +114,7 @@ const legalContent = {
       <h2>3. Hỗ trợ sự cố thanh toán</h2>
       <p>Trong trường hợp bạn đã chuyển tiền thành công nhưng hệ thống chưa tự động cập nhật hoặc bị treo do lỗi mạng, xin đừng lo lắng. Vui lòng chụp lại biên lai chuyển khoản và liên hệ ngay với chúng tôi để được kích hoạt đơn hàng thủ công nhanh chóng:</p>
       <ul>
-        <li><strong>Hotline CSKH (Lê Thanh Tùng):</strong> 0848290617</li>
+        <li><strong>Hotline CSKH (Lê Thanh Tùng):</strong> 0583652509 (Zalo: 0848290617)</li>
         <li><strong>Email:</strong> tunglecode@gmail.com</li>
       </ul>
     `

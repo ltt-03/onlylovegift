@@ -84,7 +84,6 @@ const debugInfo = document.getElementById('debug-info');
 
 async function init() {
     initMusic();
-    tryAutoPlayMusic();
     initThree();
     setupEnvironment(); 
     setupLights();
@@ -95,11 +94,27 @@ async function init() {
     loadPredefinedImages();
     setupPostProcessing();
     setupEvents();
-    await initMediaPipe();
     
     const loader = document.getElementById('loader');
     loader.style.opacity = 0;
     setTimeout(() => loader.remove(), 800);
+
+    const startBtn = document.getElementById('start-btn');
+    if (startBtn) {
+        startBtn.addEventListener('click', async () => {
+            const startScreen = document.getElementById('start-screen');
+            if (startScreen) {
+                startScreen.style.opacity = 0;
+                setTimeout(() => startScreen.remove(), 800);
+            }
+            
+            tryAutoPlayMusic();
+            await initMediaPipe();
+        });
+    } else {
+        tryAutoPlayMusic();
+        await initMediaPipe();
+    }
 
     animate();
 }

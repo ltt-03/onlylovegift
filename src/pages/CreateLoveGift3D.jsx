@@ -2,6 +2,7 @@ import { useState, useContext, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, Music, Heart, ImagePlus, CheckCircle2 } from 'lucide-react';
+import SecurePreview from '../components/SecurePreview';
 
 const MAX_IMAGES = 10;
 
@@ -252,6 +253,7 @@ export default function CreateLoveGift3D() {
             </button>
           </div>
         </form>
+        <SecurePreview templateId="love-gift-3d" />
       </div>
     </div>
   );

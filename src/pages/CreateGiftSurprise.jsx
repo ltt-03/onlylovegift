@@ -2,6 +2,7 @@ import { useState, useContext, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, Music, Flower2, ImagePlus, CheckCircle2, Lock } from 'lucide-react';
+import SecurePreview from '../components/SecurePreview';
 
 const MAX_IMAGES = 20;
 
@@ -285,6 +286,7 @@ export default function CreateGiftSurprise() {
             </button>
           </div>
         </form>
+        <SecurePreview templateId="gift-surprise-v2" />
       </div>
     </div>
   );

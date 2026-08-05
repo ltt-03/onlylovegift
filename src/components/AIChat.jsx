@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, X, Send, Bot, User, CheckCircle2 } from 'lucide-react';
+import { getCreateRoute } from '../utils/templateRoutes';
 
 export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -76,19 +77,9 @@ export default function AIChat() {
   const handleAction = (action) => {
     if (action.type === 'fill_form') {
       const { templateId, senderName, receiverName, message } = action.data;
-      // Navigate to customize page with query params
-      const params = new URLSearchParams({
-        senderName,
-        receiverName,
-        message,
-        autoFill: 'true'
-      });
-      if (templateId === 'x-mas-tree') {
-        navigate(`/create/x-mas-tree?${params.toString()}`);
-      } else {
-        params.append('template', templateId);
-        navigate(`/create?${params.toString()}`);
-      }
+      // Dùng getCreateRoute từ utils/templateRoutes.js — KHÔNG viết if/else thủ công ở đây
+      const extraParams = new URLSearchParams({ senderName, receiverName, message, autoFill: 'true' });
+      navigate(getCreateRoute(templateId, extraParams));
       setIsOpen(false);
     }
   };

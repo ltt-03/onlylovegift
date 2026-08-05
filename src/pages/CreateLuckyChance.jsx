@@ -2,6 +2,7 @@ import { useState, useContext, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, ImagePlus, CheckCircle2 } from 'lucide-react';
+import SecurePreview from '../components/SecurePreview';
 
 const MAX_IMAGES = 6;
 
@@ -251,6 +252,8 @@ export default function CreateLuckyChance() {
             {isSubmitting ? 'Đang xử lý...' : <><CheckCircle2 size={22} /> Tạo Quà Ngay</>}
           </button>
         </form>
+
+        <SecurePreview templateId="lucky-chance" />
       </div>
     </div>
   );

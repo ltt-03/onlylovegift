@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import './index.css'
 import App from './App.jsx'
+import { ErrorBoundary } from './ErrorBoundary.jsx'
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID';
 
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')).render(
     <GoogleOAuthProvider clientId={clientId}>
       <ThemeProvider>
         <AuthProvider>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </AuthProvider>
       </ThemeProvider>
     </GoogleOAuthProvider>

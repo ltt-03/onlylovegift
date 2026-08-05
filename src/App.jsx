@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import { Gift, LogOut, User, Sun, Moon, ChevronLeft, ChevronRight, Home as HomeIcon, LayoutTemplate, Sparkles, LogIn, Wallet, Trophy, MessageSquareHeart } from 'lucide-react';
 import { AuthContext } from './context/AuthContext';
@@ -19,17 +19,20 @@ import Feedback from './pages/Feedback';
 import Admin from './pages/Admin';
 import CreateXMasTree from './pages/CreateXMasTree';
 import CreateGiftSurprise from './pages/CreateGiftSurprise';
+import CreateHeartCode from './pages/CreateHeartCode';
 import CreateLoveGift3D from './pages/CreateLoveGift3D';
 import CreateLuckyChance from './pages/CreateLuckyChance';
 import CreateMerryChristmas from './pages/CreateMerryChristmas';
 import CreateChristmas from './pages/CreateChristmas';
-
+import FreeProjects from './pages/FreeProjects';
+import ITServices from './pages/ITServices';
 
 // Layout Component
 const Layout = ({ children }) => {
   const { user, logout } = useContext(AuthContext);
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
+  const navigate = useNavigate();
   const [isHomeMenuOpen, setIsHomeMenuOpen] = useState(false);
 
   if (location.pathname.startsWith('/gift/view')) {
@@ -53,7 +56,7 @@ const Layout = ({ children }) => {
                 style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
                 onClick={() => {
                   if (location.pathname !== '/') {
-                    window.location.href = '/';
+                    navigate('/');
                   } else {
                     setIsHomeMenuOpen(!isHomeMenuOpen);
                   }
@@ -77,6 +80,7 @@ const Layout = ({ children }) => {
                   >
                     Sản phẩm nổi bật
                   </a>
+                  {/* Tạm ẩn link BCT
                   <a 
                     href="/#vip-leaderboard" 
                     className="nav-dropdown-item"
@@ -93,11 +97,13 @@ const Layout = ({ children }) => {
                   <Link to="/feedback" className="nav-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
                     Khách Hàng
                   </Link>
+                  */}
                 </div>
               )}
             </div>
-            
             <Link to="/templates" className={`desktop-nav-link ${location.pathname === '/templates' ? 'active' : ''}`}>Mẫu Quà Tặng</Link>
+            <Link to="/free-projects" className={`desktop-nav-link ${location.pathname === '/free-projects' ? 'active' : ''}`}>Web Miễn Phí</Link>
+            <Link to="/it-services" className={`desktop-nav-link ${location.pathname === '/it-services' ? 'active' : ''}`}>Dịch Vụ IT</Link>
             
             {user && (
               <Link to="/dashboard" className={`desktop-nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>Quản Lý</Link>
@@ -137,9 +143,11 @@ const Layout = ({ children }) => {
                 <div className="footer-col">
                   <h3>Only Love Gift</h3>
                   <p className="text-light" style={{ fontSize: '15px' }}>Nền tảng tạo website quà tặng tình yêu lãng mạn.</p>
-                  <p className="text-light" style={{ fontSize: '15px', marginTop: '10px' }}>
-                    Đại diện quản lý: <strong>Lê Thanh Tùng</strong>
-                  </p>
+                  <div className="text-light" style={{ fontSize: '14px', marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div>Đại diện quản lý: <strong>Lê Thanh Tùng</strong></div>
+                    <div>MST: <strong>8781172614</strong></div>
+                    <div>Địa chỉ: <strong>La Xuyên, Cổ Đô, Hà Nội</strong></div>
+                  </div>
                 </div>
                 <div className="footer-col">
                   <h3>Hỗ Trợ & Pháp Lý</h3>
@@ -154,7 +162,8 @@ const Layout = ({ children }) => {
                 <div className="footer-col">
                   <h3>Thông Tin Liên Hệ</h3>
                   <ul className="footer-links" style={{ fontSize: '15px' }}>
-                    <li>Hotline/Zalo: 0848.290.617</li>
+                    <li>Hotline: 0583.652.509</li>
+                    <li>Zalo: 0848.290.617</li>
                     <li>Email: tunglecode@gmail.com</li>
                   </ul>
                 </div>
@@ -171,9 +180,9 @@ const Layout = ({ children }) => {
           <div style={{ position: 'relative', flex: 1 }}>
             <div 
               className={`bottom-nav-link ${location.pathname === '/' ? 'active' : ''}`}
-              onClick={(e) => {
+              onClick={() => {
                 if (location.pathname !== '/') {
-                  window.location.href = '/';
+                  navigate('/');
                 } else {
                   setIsHomeMenuOpen(!isHomeMenuOpen);
                 }
@@ -199,6 +208,7 @@ const Layout = ({ children }) => {
                 >
                   Sản phẩm nổi bật
                 </a>
+                {/* Tạm ẩn link BCT
                 <a 
                   href="/#vip-leaderboard" 
                   className="mobile-dropdown-item"
@@ -214,6 +224,13 @@ const Layout = ({ children }) => {
                 </a>
                 <Link to="/feedback" className="mobile-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
                   Khách Hàng
+                </Link>
+                */}
+                <Link to="/free-projects" className="mobile-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
+                  Web Miễn Phí
+                </Link>
+                <Link to="/it-services" className="mobile-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
+                  Dịch Vụ IT
                 </Link>
               </div>
             )}
@@ -248,6 +265,7 @@ function App() {
           <Route path="/create" element={<Customize />} />
           <Route path="/create/x-mas-tree" element={<CreateXMasTree />} />
           <Route path="/create/gift-surprise-v2" element={<CreateGiftSurprise />} />
+          <Route path="/create/heart-code" element={<CreateHeartCode />} />
           <Route path="/create/love-gift-3d" element={<CreateLoveGift3D />} />
           <Route path="/create/lucky-chance" element={<CreateLuckyChance />} />
           <Route path="/create/merry-christmas" element={<CreateMerryChristmas />} />
@@ -255,6 +273,8 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<Success />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/free-projects" element={<FreeProjects />} />
+          <Route path="/it-services" element={<ITServices />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/gift/view/:orderCode" element={<GiftView />} />
           <Route path="/legal/:pageId" element={<Legal />} />

@@ -2,6 +2,7 @@ import { useState, useContext, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, Music, TreePine, ImagePlus, CheckCircle2 } from 'lucide-react';
+import SecurePreview from '../components/SecurePreview';
 
 const MAX_IMAGES = 30;
 
@@ -169,7 +170,7 @@ export default function CreateXMasTree() {
             <div className="input-group" style={{ margin: 0 }}>
               <label>Tên người nhận (để lưu đơn) <span style={{ color: '#ef4444' }}>*</span></label>
               <input type="text" name="receiverName" value={formData.receiverName} onChange={handleChange}
-                placeholder="VD: Linh Ơi ❤️" className="input-field" required />
+                placeholder="VD: Chu Vận ❤️" className="input-field" required />
             </div>
           </div>
 
@@ -177,7 +178,7 @@ export default function CreateXMasTree() {
           <div className="input-group" style={{ marginBottom: '32px' }}>
             <label>Lời chúc hiển thị trên cây thông</label>
             <input type="text" name="message" value={formData.message} onChange={handleChange}
-              placeholder="VD: Merry Christmas Linh ❄️ (mặc định: Merry Christmas)"
+              placeholder="VD: Merry Christmas Chu Vận ❄️ (mặc định: Merry Christmas)"
               className="input-field" maxLength={80} />
             <p style={{ fontSize: '12px', color: 'var(--color-text-light)', marginTop: '6px' }}>
               Dòng chữ này sẽ xuất hiện nổi bật ở trung tâm phía trên cây thông.
@@ -269,11 +270,13 @@ export default function CreateXMasTree() {
           {/* Submit */}
           <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '28px', display: 'flex', justifyContent: 'flex-end' }}>
             <button type="submit" disabled={isSubmitting} className="btn btn-primary"
-              style={{ padding: '15px 44px', fontSize: '1.1rem', opacity: isSubmitting ? 0.7 : 1, display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {isSubmitting ? 'Đang xử lý...' : <><TreePine size={20} /> Tiếp Tục Thanh Toán</>}
+              style={{ width: '100%', padding: '14px', fontSize: '1.1rem', marginTop: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+              {isSubmitting ? 'Đang xử lý...' : <><CheckCircle2 size={22} /> Tạo Quà Ngay</>}
             </button>
           </div>
         </form>
+
+        <SecurePreview templateId="x-mas-tree" />
       </div>
     </div>
   );

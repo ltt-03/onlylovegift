@@ -1,41 +1,58 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlayCircle, X } from 'lucide-react';
+import SecurePreview from '../components/SecurePreview';
+import { getCreateRoute } from '../utils/templateRoutes';
 
 export const dummyTemplates = [
+  {
+    id: 'heart-code',
+    name: 'Trái Tim Mã Nguồn',
+    description: 'Trái tim mã nguồn rơi với hiệu ứng tuyệt đẹp. Thể hiện tình yêu theo cách của dân IT.',
+    price: '49,000đ',
+    discountPrice: '29,000đ',
+    discountPercent: '-40%',
+    discountLabel: 'Mới!',
+    image: '/images/heart-code.jpg',
+    videoUrl: null,
+    baseCount: 12,
+  },
   {
     id: 'love-box-01',
     name: 'Hộp Quà Sinh Nhật 3D',
     description: 'Hộp quà sinh nhật độc đáo với hiệu ứng mở hộp bất ngờ, thiệp chúc mừng và bóng bay. Tùy chỉnh tên, ảnh và lời chúc dễ dàng.',
     price: '49,000đ',
     discountPrice: '29,000đ',
-    discountPercent: '-41%',
-    discountLabel: 'Chỉ áp dụng cho lần đầu!',
-    image: '/images/love-box-01.jpeg',
+    discountPercent: '-40%',
+    discountLabel: 'Đồng giá 10 ngày!',
+    image: '/images/thumb_1.jpg',
     videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     baseCount: 34,
     lastUpdated: '12/12/2025 14:30'
   },
+  /* Tạm ẩn để BCT dễ test
   {
     id: 'x-mas-tree',
     name: 'Cây Thông Noel 3D',
     description: 'Mẫu cây thông Noel 3D tuyệt đẹp với lời chúc bay lượn và nhạc nền giáng sinh sôi động. Món quà độc đáo mùa lễ hội.',
-    price: 'Miễn phí',
-    discountPrice: null,
-    discountPercent: null,
-    discountLabel: 'Tặng bạn!',
+    price: '59,000đ',
+    discountPrice: '29,000đ',
+    discountPercent: '-50%',
+    discountLabel: 'Đồng giá 10 ngày!',
     image: '/images/x-mas-tree.jpg',
     videoUrl: null,
     baseCount: 15,
   },
+  */
+  /* Tạm ẩn để BCT dễ test (Cần nhiều ảnh)
   {
     id: 'gift-surprise-v2',
     name: 'Bông Hoa 8/3 Bất Ngờ',
     description: 'Món quà 8/3 với hiệu ứng bông hoa nở, màn hình khóa bằng mật khẩu đặc biệt và thư tình lãng mạn. Tùy chỉnh ảnh, nhạc và lời chúc.',
     price: '79,000đ',
-    discountPrice: '49,000đ',
-    discountPercent: '-38%',
-    discountLabel: 'Dành cho phái đẹp!',
+    discountPrice: '29,000đ',
+    discountPercent: '-63%',
+    discountLabel: 'Đồng giá 10 ngày!',
     image: '/images/love-box-01.jpeg',
     videoUrl: null,
     baseCount: 8,
@@ -44,27 +61,29 @@ export const dummyTemplates = [
     id: 'love-gift-3d',
     name: 'Trái Tim 3D Tình Yêu',
     description: 'Trái tim 3D lãng mạn bay bổng, hiển thị ảnh kỉ niệm và lời chúc. Tùy chỉnh ảnh, nhạc và thông điệp dài.',
-    price: '99,000đ',
-    discountPrice: '59,000đ',
-    discountPercent: '-40%',
-    discountLabel: 'Mới nhất!',
+    price: '69,000đ',
+    discountPrice: '29,000đ',
+    discountPercent: '-57%',
+    discountLabel: 'Đồng giá 10 ngày!',
     image: '/images/love-box-01.jpeg',
     videoUrl: null,
     baseCount: 5,
     lastUpdated: '03/08/2026 12:00'
   },
+  */
   {
     id: 'lucky-chance',
     name: 'Cỏ 4 Lá May Mắn',
     description: 'Trang trí cỏ 4 lá may mắn với lời chúc động viên bay lượn và nhạc nền nhẹ nhàng.',
-    price: '59,000đ',
-    discountPrice: '39,000đ',
-    discountPercent: '-33%',
-    discountLabel: 'Gửi may mắn!',
-    image: '/images/love-box-01.jpeg',
+    price: '49,000đ',
+    discountPrice: '29,000đ',
+    discountPercent: '-40%',
+    discountLabel: 'Đồng giá 10 ngày!',
+    image: '/images/thumb_2.jpg',
     videoUrl: null,
     baseCount: 7,
   },
+  /* Tạm ẩn để BCT dễ test
   {
     id: 'merry-christmas',
     name: 'Thư Giáng Sinh',
@@ -77,6 +96,7 @@ export const dummyTemplates = [
     videoUrl: null,
     baseCount: 15,
   },
+  */
   {
     id: 'christmas',
     name: 'Thiệp Giáng Sinh Động',
@@ -85,7 +105,7 @@ export const dummyTemplates = [
     discountPrice: null,
     discountPercent: null,
     discountLabel: 'Tặng bạn!',
-    image: '/images/christmas.jpg',
+    image: '/images/thumb_3.jpg',
     videoUrl: null,
     baseCount: 10,
   }
@@ -95,6 +115,7 @@ export const dummyTemplates = [
 export default function Templates() {
   const navigate = useNavigate();
   const [activeVideo, setActiveVideo] = useState(null);
+  const [activePreview, setActivePreview] = useState(null);
   const [stats, setStats] = useState({});
 
   useEffect(() => {
@@ -119,27 +140,11 @@ export default function Templates() {
   };
 
   const handlePreview = (templateId) => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-    window.open(`${apiUrl}/demo/${templateId}`, '_blank');
+    setActivePreview(templateId);
   };
 
-  const handleSelect = (templateId) => {
-    if (templateId === 'x-mas-tree') {
-      navigate(`/create/x-mas-tree`);
-    } else if (templateId === 'merry-christmas') {
-      navigate(`/create/merry-christmas`);
-    } else if (templateId === 'christmas') {
-      navigate(`/create/christmas`);
-    } else if (templateId === 'gift-surprise-v2') {
-      navigate(`/create/gift-surprise-v2`);
-    } else if (templateId === 'love-gift-3d') {
-      navigate(`/create/love-gift-3d`);
-    } else if (templateId === 'lucky-chance') {
-      navigate(`/create/lucky-chance`);
-    } else {
-      navigate(`/create?template=${templateId}`);
-    }
-  };
+  // Dùng getCreateRoute từ utils/templateRoutes.js — KHÔNG viết if/else thủ công ở đây
+  const handleSelect = (templateId) => navigate(getCreateRoute(templateId));
 
   return (
     <div className="container" style={{ padding: '60px 24px', position: 'relative' }}>
@@ -278,6 +283,48 @@ export default function Templates() {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowFullScreen
               ></iframe>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Preview Modal */}
+      {activePreview && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+          onClick={() => setActivePreview(null)}
+        >
+          <div 
+            style={{ width: '100%', maxWidth: '1000px', position: 'relative' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setActivePreview(null)}
+              style={{
+                position: 'absolute',
+                top: '-40px',
+                right: '0',
+                background: 'transparent',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={32} />
+            </button>
+            <div style={{ maxHeight: '90vh', overflowY: 'auto', borderRadius: '16px' }}>
+              <SecurePreview templateId={activePreview} autoLoad={true} />
             </div>
           </div>
         </div>
