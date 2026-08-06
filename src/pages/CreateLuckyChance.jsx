@@ -34,6 +34,7 @@ export default function CreateLuckyChance() {
 
   const [images, setImages] = useState([]);
   const [musicFile, setMusicFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const imageInputRef = useRef(null);
   const musicInputRef = useRef(null);

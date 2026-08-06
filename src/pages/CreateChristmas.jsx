@@ -21,6 +21,7 @@ export default function CreateChristmas() {
   });
 
   const [musicFile, setMusicFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const musicInputRef = useRef(null);
 
   const handleChange = (e) => {
