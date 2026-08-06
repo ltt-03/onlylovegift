@@ -6,7 +6,7 @@ export default function SEO({ title, description, keywords, image, url }) {
   const siteDescription = description || 'Nền tảng tạo website quà tặng tình yêu, mã code trái tim tỏ tình 3D độc quyền và miễn phí. Tự động lên mạng tức thì!';
   const siteKeywords = keywords || 'tạo website quà tặng, tỏ tình, mã code trái tim, quà tặng sinh nhật, web tỏ tình, code trái tim đập tiktok';
   const siteUrl = url || 'https://onlygift.online';
-  const siteImage = image || '/logo.png'; // Assume a default logo or OG image
+  const siteImage = image || '/anhweb.jpg'; // Assume a default logo or OG image
 
   return (
     <Helmet>

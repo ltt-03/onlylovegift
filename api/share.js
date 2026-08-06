@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
     let title = 'Món Quà Bí Mật - OnlyLoveGift';
     let description = 'Bạn nhận được một món quà bí mật từ ai đó. Hãy mở ra để xem nhé!';
-    let imageUrl = 'https://onlygift.online/logo.png'; // Ảnh mặc định
+    let imageUrl = 'https://onlygift.online/anhweb.jpg'; // Ảnh mặc định
 
     if (data && data.success && data.order) {
       const order = data.order;
