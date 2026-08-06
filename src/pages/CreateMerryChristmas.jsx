@@ -99,7 +99,12 @@ export default function CreateMerryChristmas() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
-      <SEO title="Tạo Thiệp Merry Christmas" description="Tạo thiệp chúc mừng Giáng Sinh đẹp mắt." />
+      <SEO
+        title="Tạo Thiệp Merry Christmas Online Miễn Phí - Thiệp Giáng Sinh Đẹp"
+        description="Tạo thiệp chúc mừng Giáng Sinh Merry Christmas online đẹp mắt, cá nhân hóa tên và lời chúc. Gửi thiệp Noel online qua Zalo, Messenger cho bạn bè và người thân miễn phí!"
+        keywords="thiệp merry christmas, thiệp giáng sinh online, tạo thiệp noel, quà giáng sinh, thiệp online, web tỏ tình, only gift, onlylovegift"
+        url="https://www.onlygift.online/tao-thiep-merry-christmas"
+      />
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

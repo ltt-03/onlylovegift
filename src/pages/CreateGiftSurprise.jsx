@@ -133,7 +133,17 @@ export default function CreateGiftSurprise() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
-      <SEO title="Tạo Quà Bất Ngờ" description="Tạo hộp quà bất ngờ độc đáo tặng người thương." />
+      <SEO
+        title="Tạo Hộp Quà Sinh Nhật Bất Ngờ 3D Online - Quà Tặng Bạn Gái"
+        description="Tạo hộp quà sinh nhật bất ngờ 3D với hiệu ứng mở hộp cực đẹp, bóng bay và thiệp chúc mừng online. Quà tặng bạn gái, quà valentine cá nhân hóa ảnh và lời chúc - tự động lên mạng ngay!"
+        keywords="quà tặng sinh nhật, quà tặng bạn gái, hộp quà bất ngờ, hộp quà sinh nhật 3D, thiệp online, quà valentine, web tỏ tình, tạo website quà tặng, only gift, onlylovegift"
+        url="https://www.onlygift.online/tao-hop-qua-bat-ngo"
+        softwareSchema={{
+          name: "Tạo Hộp Quà Sinh Nhật Bất Ngờ 3D",
+          description: "Tạo hộp quà sinh nhật bất ngờ 3D cá nhân hóa ảnh và lời chúc",
+          price: "0"
+        }}
+      />
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

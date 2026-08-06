@@ -2,59 +2,70 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Core Pages -->
   <url>
-    <loc>https://onlygift.online/</loc>
+    <loc>https://www.onlygift.online/</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://onlygift.online/templates</loc>
+    <loc>https://www.onlygift.online/templates</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://onlygift.online/free-projects</loc>
+    <loc>https://www.onlygift.online/free-projects</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://onlygift.online/it-services</loc>
+    <loc>https://www.onlygift.online/it-services</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
   <!-- Create Template Pages (High SEO Priority) -->
   <url>
-    <loc>https://onlygift.online/tao-ma-code-trai-tim-to-tinh</loc>
+    <loc>https://www.onlygift.online/tao-ma-code-trai-tim-to-tinh</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://onlygift.online/tao-hop-qua-bat-ngo</loc>
+    <loc>https://www.onlygift.online/tao-hop-qua-bat-ngo</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.onlygift.online/tao-vong-quay-may-man</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://onlygift.online/tao-cay-thong-noel-3d</loc>
+    <loc>https://www.onlygift.online/tao-qua-tang-tinh-yeu-3d</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://onlygift.online/tao-qua-tang-tinh-yeu-3d</loc>
+    <loc>https://www.onlygift.online/tao-qua-giang-sinh-3d</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://onlygift.online/tao-vong-quay-may-man</loc>
+    <loc>https://www.onlygift.online/tao-thiep-merry-christmas</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://onlygift.online/tao-thiep-merry-christmas</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://onlygift.online/tao-qua-giang-sinh-3d</loc>
+    <loc>https://www.onlygift.online/tao-cay-thong-noel-3d</loc>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

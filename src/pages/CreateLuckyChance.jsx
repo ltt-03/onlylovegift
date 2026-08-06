@@ -136,7 +136,12 @@ export default function CreateLuckyChance() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
-      <SEO title="Tạo Vòng Quay May Mắn" description="Tạo vòng quay may mắn tình yêu thú vị." />
+      <SEO
+        title="Tạo Vòng Quay May Mắn Tặng Người Yêu Online Miễn Phí"
+        description="Tạo vòng quay may mắn tình yêu online với nhạc nền nhẹ nhàng, gửi lời chúc may mắn đến bạn bè và người thân. Quà tặng ý nghĩa, thiệp online độc đáo chỉ 5 phút!"
+        keywords="vòng quay may mắn, tạo vòng quay may mắn, thiệp online, quà tặng bạn bè, web tỏ tình, quà tặng ý nghĩa, only gift, onlylovegift, tạo website quà tặng"
+        url="https://www.onlygift.online/tao-vong-quay-may-man"
+      />
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

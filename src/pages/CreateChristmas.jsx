@@ -99,7 +99,12 @@ export default function CreateChristmas() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
-      <SEO title="Tạo Quà Giáng Sinh 3D" description="Tạo thiệp Giáng Sinh 3D cực kỳ ý nghĩa và lãng mạn." />
+      <SEO
+        title="Tạo Thiệp Giáng Sinh 3D Lung Linh Online Miễn Phí"
+        description="Tạo thiệp Giáng Sinh 3D lung linh với cây thông và hiệu ứng tuyết rơi đẹp mê hồn. Quà Giáng Sinh 3D cá nhân hóa gửi tặng người thân qua Zalo, Messenger hoàn toàn miễn phí!"
+        keywords="thiệp giáng sinh 3D, quà giáng sinh online, tạo thiệp noel 3D, thiệp online, quà tặng giáng sinh, web tỏ tình, only gift, onlylovegift"
+        url="https://www.onlygift.online/tao-qua-giang-sinh-3d"
+      />
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

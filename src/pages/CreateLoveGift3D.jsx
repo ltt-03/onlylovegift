@@ -131,7 +131,12 @@ export default function CreateLoveGift3D() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
-      <SEO title="Tạo Quà Tình Yêu 3D" description="Thiết kế món quà tình yêu 3D đầy lãng mạn và ngọt ngào." />
+      <SEO
+        title="Tạo Quà Tình Yêu 3D Lãng Mạn Online - Quà Tặng Bạn Gái"
+        description="Tạo quà tình yêu 3D đầy lãng mạn và ngọt ngào để tặng người yêu. Thiệp online 3D cá nhân hóa ảnh kỷ niệm, quà tặng bạn gái ý nghĩa nhất gửi qua Zalo, Messenger!"
+        keywords="quà tình yêu 3D, quà tặng bạn gái, thiệp online, tặng người yêu, web tỏ tình, quà valentine, tạo website quà tặng, only gift, onlylovegift"
+        url="https://www.onlygift.online/tao-qua-tang-tinh-yeu-3d"
+      />
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

@@ -128,7 +128,12 @@ export default function CreateXMasTree() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
-      <SEO title="Tạo Cây Thông Noel 3D" description="Tạo cây thông Noel 3D lung linh gửi tặng bạn bè." />
+      <SEO
+        title="Tạo Cây Thông Noel 3D Lung Linh Online - Thiệp Giáng Sinh Đẹp"
+        description="Tạo cây thông Noel 3D lung linh lấp lánh gửi tặng bạn bè và người thân dịp Giáng Sinh. Thiệp online 3D đẹp cá nhân hóa lời chúc, gửi qua Zalo, Messenger miễn phí!"
+        keywords="cây thông noel 3D, thiệp giáng sinh, quà giáng sinh online, tạo thiệp noel, thiệp online, quà tặng bạn bè, only gift, onlylovegift"
+        url="https://www.onlygift.online/tao-cay-thong-noel-3d"
+      />
       <div className="card" style={{ padding: '40px' }}>
 
         {/* Back button */}

@@ -13,4 +13,4 @@ Disallow: /qua-tang/
 Disallow: /gift/view/
 
 # Khai báo đường dẫn sitemap
-Sitemap: https://onlygift.online/sitemap.xml
+Sitemap: https://www.onlygift.online/sitemap.xml

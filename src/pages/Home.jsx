@@ -101,9 +101,28 @@ export default function Home() {
 
   return (
     <div className="home-page">
-      <SEO 
-        title="Tạo Website Quà Tặng Tình Yêu & Tỏ Tình Siêu Trend"
-        description="Nền tảng tạo website quà tặng sinh nhật, web tỏ tình, mã code trái tim đập cực hot trên TikTok hoàn toàn tự động chỉ trong 5 phút."
+      <SEO
+        title="Tạo Mã Code Trái Tim Tỏ Tình & Web Quà Tặng Trend TikTok"
+        description="OnlyLoveGift - Nền tảng tạo mã code trái tim tỏ tình 3D cực trend TikTok, thiệp online, quà tặng sinh nhật bạn gái, quà valentine cá nhân hóa. Tự động lên mạng chỉ 5 phút, miễn phí!"
+        keywords="only gift, only gift online, onlylovegift, love gift IT, mã code trái tim, code trái tim tỏ tình, code trái tim đập, code trái tim tiktok, web tỏ tình, tạo website quà tặng, quà tặng sinh nhật, quà tặng bạn gái, quà valentine, thiệp online, trend tiktok, gift only, dear gift"
+        url="https://www.onlygift.online/"
+        softwareSchema={{
+          name: "OnlyLoveGift",
+          description: "Nền tảng tạo website quà tặng tình yêu online: mã code trái tim tỏ tình 3D trend TikTok, hộp quà sinh nhật bất ngờ, thiệp valentine online. Miễn phí & tự động lên mạng ngay!",
+          price: "0",
+          rating: "4.9",
+          ratingCount: "850"
+        }}
+        faqSchema={[
+          { q: "OnlyLoveGift là gì?", a: "OnlyLoveGift (onlygift.online) là nền tảng tạo website quà tặng tình yêu online miễn phí tại Việt Nam. Bạn có thể tạo mã code trái tim tỏ tình 3D trend TikTok, hộp quà sinh nhật bất ngờ, thiệp Valentine và nhiều mẫu quà tặng độc đáo khác chỉ trong 5 phút." },
+          { q: "Mã code trái tim TikTok là gì và cách tạo?", a: "Mã code trái tim TikTok (code trái tim đập) là hiệu ứng trái tim lãng mạn tạo từ ký tự code lập trình, đang viral trên TikTok. Tại OnlyLoveGift, bạn tạo được mã code trái tim tỏ tình cá nhân hóa với tên người yêu và lời chúc trong vài phút." },
+          { q: "Cách tạo web tỏ tình tặng người yêu?", a: "Tạo web tỏ tình tại OnlyLoveGift: 1) Chọn mẫu (code trái tim, hộp quà, thiệp...), 2) Nhập tên và lời nhắn, 3) Tải ảnh kỷ niệm lên, 4) Thanh toán và nhận link website ngay. Link tồn tại vĩnh viễn để gửi qua Zalo, Messenger." },
+          { q: "Tạo quà tặng sinh nhật online có những mẫu nào?", a: "OnlyLoveGift có nhiều mẫu quà tặng sinh nhật online: Hộp quà bất ngờ 3D hiệu ứng mở hộp và bóng bay, code trái tim tỏ tình lãng mạn, vòng quay may mắn, thiệp Giáng Sinh 3D. Tất cả đều cá nhân hóa được." },
+          { q: "Tạo quà tặng bạn gái online ở đâu đẹp?", a: "OnlyLoveGift là lựa chọn hàng đầu tạo quà tặng bạn gái online. Các mẫu 3D độc đáo như code trái tim tỏ tình, hộp quà bất ngờ, thiệp Valentine cá nhân hóa với link riêng gửi qua Zalo, Messenger." },
+          { q: "Quà Valentine online có tạo được không?", a: "Có! OnlyLoveGift có nhiều mẫu quà Valentine online: thiệp Valentine 3D lãng mạn, hộp quà bất ngờ ngày Valentine, code trái tim tỏ tình. Chỉ cần nhập tên và lời chúc, hệ thống tạo website riêng đẹp mắt gửi tặng người ấy." },
+          { q: "Chi phí tạo website quà tặng tại OnlyLoveGift?", a: "OnlyLoveGift có gói miễn phí và trả phí. Gói cơ bản miễn phí với các mẫu thiệp cơ bản. Các mẫu 3D cao cấp như hộp quà bất ngờ, code trái tim đặc biệt có phí rất thấp, phù hợp mọi ngân sách." },
+          { q: "Website quà tặng tồn tại bao lâu?", a: "Website quà tặng tạo tại OnlyLoveGift tồn tại vĩnh viễn sau khi thanh toán. Bạn nhận link riêng gửi qua Zalo, Messenger hoặc bất kỳ nền tảng nào, xem lại được bất cứ lúc nào." }
+        ]}
       />
       {/* Hero Section */}
       <section style={{ position: 'relative', minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: 'transparent' }}>

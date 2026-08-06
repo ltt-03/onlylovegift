@@ -127,9 +127,16 @@ export default function CreateHeartCode() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '1200px' }}>
-      <SEO 
-        title="Tạo Mã Code Trái Tim Đập Có Chèn Ảnh Cực Hot TikTok"
-        description="Tự động tạo mã code trái tim đập tỏ tình chèn ảnh người yêu bên trong cực kỳ lãng mạn. Trào lưu thủ khoa lý hot nhất TikTok."
+      <SEO
+        title="Tạo Mã Code Trái Tim Tỏ Tình IT - Trend TikTok Viral"
+        description="Tạo mã code trái tim tỏ tình 3D cực trend TikTok miễn phí - code trái tim đập với ký tự lập trình lãng mạn, cá nhân hóa tên và lời chúc. Web tỏ tình độc đáo tặng người yêu làm IT!"
+        keywords="mã code trái tim, code trái tim tỏ tình, code trái tim đập, code trái tim tiktok, web tỏ tình, tạo mã code trái tim, love gift IT, trend tiktok, code trái tim lập trình, tỏ tình bằng code, only gift"
+        url="https://www.onlygift.online/tao-ma-code-trai-tim-to-tinh"
+        softwareSchema={{
+          name: "Tạo Mã Code Trái Tim Tỏ Tình",
+          description: "Tạo mã code trái tim tỏ tình 3D trend TikTok, cá nhân hóa tên và lời chúc",
+          price: "0"
+        }}
       />
       <div className="create-page-grid">
         {/* Form bên trái */}
