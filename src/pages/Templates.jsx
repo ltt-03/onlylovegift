@@ -167,7 +167,10 @@ export default function Templates() {
                 style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
               />
               <button
-                onClick={() => setInstructionModal({ isOpen: true, templateName: template.name })}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setInstructionModal({ isOpen: true, templateName: template.name });
+                }}
                 style={{
                   position: 'absolute',
                   bottom: '10px',
@@ -176,18 +179,19 @@ export default function Templates() {
                   color: 'var(--color-primary)',
                   border: 'none',
                   borderRadius: 'var(--radius-full)',
-                  padding: '6px 12px',
+                  padding: '8px 16px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  fontWeight: '700',
                   boxShadow: 'var(--shadow-sm)',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  zIndex: 999
                 }}
               >
-                <span style={{ fontSize: '1.2rem' }}>📖</span>
-                Các bước tạo
+                <span style={{ fontSize: '1.1rem' }}>📚</span>
+                Hướng dẫn
               </button>
             </div>
             

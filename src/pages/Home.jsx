@@ -208,7 +208,10 @@ export default function Home() {
                     style={{ width: '100%', height: '220px', objectFit: 'cover' }} 
                   />
                   <button
-                    onClick={() => setInstructionModal({ isOpen: true, templateName: template.name })}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setInstructionModal({ isOpen: true, templateName: template.name });
+                    }}
                     style={{
                       position: 'absolute',
                       bottom: '10px',
@@ -217,21 +220,22 @@ export default function Home() {
                       color: 'var(--color-primary)',
                       border: 'none',
                       borderRadius: 'var(--radius-full)',
-                      padding: '6px 12px',
+                      padding: '8px 16px',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '6px',
-                      fontSize: '0.85rem',
-                      fontWeight: '600',
+                      fontSize: '0.9rem',
+                      fontWeight: '700',
                       boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                       cursor: 'pointer',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      zIndex: 999
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    <span style={{ fontSize: '1.2rem' }}>📖</span>
-                    Các bước tạo
+                    <span style={{ fontSize: '1.1rem' }}>📚</span>
+                    Hướng dẫn
                   </button>
                 </div>
                 
@@ -546,6 +550,13 @@ export default function Home() {
           `}</style>
         </div>
       )}
+
+      {/* Instruction Modal */}
+      <InstructionModal
+        isOpen={instructionModal.isOpen}
+        onClose={() => setInstructionModal({ isOpen: false, templateName: '' })}
+        templateName={instructionModal.templateName}
+      />
     </div>
   );
 }

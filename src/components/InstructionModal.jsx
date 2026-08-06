@@ -25,13 +25,13 @@ export default function InstructionModal({ isOpen, onClose, templateName }) {
     >
       <div
         style={{
-          background: 'var(--color-bg)',
-          borderRadius: 'var(--radius-lg)',
+          background: 'var(--color-surface, #ffffff)',
+          borderRadius: 'var(--radius-lg, 12px)',
           width: '100%',
           maxWidth: '500px',
           maxHeight: '90vh',
           overflowY: 'auto',
-          boxShadow: 'var(--shadow-lg)',
+          boxShadow: 'var(--shadow-lg, 0 10px 25px rgba(0,0,0,0.1))',
           position: 'relative',
           animation: 'modalSlideUp 0.3s ease forwards',
         }}
@@ -39,16 +39,16 @@ export default function InstructionModal({ isOpen, onClose, templateName }) {
       >
         <div style={{
           padding: '20px',
-          borderBottom: '1px solid var(--color-border)',
+          borderBottom: '1px solid var(--color-border, #eee)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           position: 'sticky',
           top: 0,
-          background: 'var(--color-bg)',
+          background: 'var(--color-surface, #ffffff)',
           zIndex: 10,
-          borderTopLeftRadius: 'var(--radius-lg)',
-          borderTopRightRadius: 'var(--radius-lg)',
+          borderTopLeftRadius: 'var(--radius-lg, 12px)',
+          borderTopRightRadius: 'var(--radius-lg, 12px)',
         }}>
           <h2 style={{ fontSize: '1.25rem', margin: 0, color: 'var(--color-text)' }}>
             Hướng Dẫn: {templateName}
