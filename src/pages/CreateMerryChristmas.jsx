@@ -98,9 +98,8 @@ export default function CreateMerryChristmas() {
   };
 
   return (
-    <div
+    <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <SEO title="Tạo Thiệp Merry Christmas" description="Tạo thiệp chúc mừng Giáng Sinh đẹp mắt." />
- className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

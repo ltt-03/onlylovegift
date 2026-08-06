@@ -30,9 +30,8 @@ export default function ITServices() {
   ];
 
   return (
-    <div
+    <div className="home-page" style={{ paddingBottom: '60px' }}>
       <SEO title="Dịch Vụ IT & Thiết Kế" description="Cung cấp các dịch vụ IT, thiết kế web và lập trình theo yêu cầu." />
- className="home-page" style={{ paddingBottom: '60px' }}>
       {/* Hero Section */}
       <section style={{ 
         padding: '80px 0 60px', 

@@ -132,9 +132,8 @@ export default function CreateGiftSurprise() {
   };
 
   return (
-    <div
+    <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <SEO title="Tạo Quà Bất Ngờ" description="Tạo hộp quà bất ngờ độc đáo tặng người thương." />
- className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

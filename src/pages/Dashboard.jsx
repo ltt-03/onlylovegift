@@ -1,8 +1,8 @@
+import SEO from '../components/SEO';
 import React, { useState, useEffect, useContext } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import {
-import SEO from '../components/SEO';
   Gift, CreditCard, ExternalLink, Clock, CheckCircle, XCircle,
   ArrowUpRight, ArrowDownLeft, AlertTriangle, X, Send, Copy, Check
 } from 'lucide-react';
@@ -199,9 +199,7 @@ function OrderCard({ order, getStatusBadge }) {
   };
 
   return (
-    <div
-      <SEO title="Quản Lý Quà Tặng" description="Quản lý danh sách quà tặng và lịch sử giao dịch của bạn." />
- style={{
+    <div style={{
       background: 'var(--color-surface)',
       backdropFilter: 'blur(20px)',
       borderRadius: '20px',
@@ -210,6 +208,7 @@ function OrderCard({ order, getStatusBadge }) {
       boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
       transition: 'transform 0.2s',
     }}>
+      <SEO title="Quản Lý Quà Tặng" description="Quản lý danh sách quà tặng và lịch sử giao dịch của bạn." />
       {/* Top row: Order code + Status */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
         <div>

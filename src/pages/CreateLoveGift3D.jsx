@@ -130,9 +130,8 @@ export default function CreateLoveGift3D() {
   };
 
   return (
-    <div
+    <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <SEO title="Tạo Quà Tình Yêu 3D" description="Thiết kế món quà tình yêu 3D đầy lãng mạn và ngọt ngào." />
- className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <div className="card" style={{ padding: '40px' }}>
 
         <button 
