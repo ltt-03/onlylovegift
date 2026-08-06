@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Chặn các trang dành cho người dùng cá nhân hoặc quản trị
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /checkout
+Disallow: /success
+Disallow: /wallet
+Disallow: /login
+Disallow: /register
+Disallow: /qua-tang/
+Disallow: /gift/view/
+
+# Khai báo đường dẫn sitemap
+Sitemap: https://onlygift.online/sitemap.xml
