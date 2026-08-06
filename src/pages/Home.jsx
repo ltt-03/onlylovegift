@@ -5,6 +5,7 @@ import { dummyTemplates } from './Templates';
 import SecurePreview from '../components/SecurePreview';
 import { getCreateRoute } from '../utils/templateRoutes';
 import SEO from '../components/SEO';
+import InstructionModal from '../components/InstructionModal';
 
 const FallingHearts = () => {
   const [hearts, setHearts] = useState([]);
@@ -52,7 +53,7 @@ const FallingHearts = () => {
 
 export default function Home() {
   const navigate = useNavigate();
-  const [activeVideo, setActiveVideo] = useState(null);
+  const [instructionModal, setInstructionModal] = useState({ isOpen: false, templateName: '' });
   const [activePreview, setActivePreview] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
@@ -207,7 +208,7 @@ export default function Home() {
                     style={{ width: '100%', height: '220px', objectFit: 'cover' }} 
                   />
                   <button
-                    onClick={() => setActiveVideo(template.videoUrl)}
+                    onClick={() => setInstructionModal({ isOpen: true, templateName: template.name })}
                     style={{
                       position: 'absolute',
                       bottom: '10px',
@@ -229,8 +230,8 @@ export default function Home() {
                     onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    <PlayCircle size={16} />
-                    Hướng dẫn
+                    <span style={{ fontSize: '1.2rem' }}>📖</span>
+                    Các bước tạo
                   </button>
                 </div>
                 
@@ -296,117 +297,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* VIP Leaderboard Section (Tạm ẩn để duyệt BCT)
-      <section id="vip-leaderboard" style={{ padding: '80px 0', backgroundColor: 'transparent' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #ffd700, #ffa500)', color: 'white', marginBottom: '16px', boxShadow: '0 10px 25px rgba(255, 165, 0, 0.4)' }}>
-              <Trophy size={28} />
-            </div>
-            <h2 style={{ fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 850, color: 'var(--color-text)', marginBottom: '12px' }}>Bảng Xếp Hạng VIP</h2>
-            <p style={{ fontSize: '15px', color: 'var(--color-text-light)', maxWidth: '600px', margin: '0 auto' }}>Vinh danh những khách hàng thân thiết đã tạo ra nhiều món quà ý nghĩa nhất.</p>
-          </div>
-
-          <div style={{ maxWidth: '600px', margin: '0 auto 24px auto', padding: '16px 20px', background: 'var(--color-surface)', borderRadius: '12px', borderLeft: '4px solid var(--color-primary)', boxShadow: '0 2px 10px rgba(0,0,0,0.03)', border: '1px solid var(--color-border)' }}>
-            <h4 style={{ margin: '0 0 10px 0', fontSize: '1.05rem', color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Gift size={20} color="var(--color-primary)" />
-              Cơ cấu phần thưởng Tri ân Top 3 tháng này
-            </h4>
-            <ul style={{ margin: 0, paddingLeft: '24px', fontSize: '0.9rem', color: 'var(--color-text)', lineHeight: 1.6 }}>
-              <li><strong>Top 1:</strong> Tặng Voucher giảm <strong>50%</strong> (Áp dụng cho mọi mẫu trong 1 tháng)</li>
-              <li><strong>Top 2:</strong> Tặng Voucher giảm <strong>30%</strong> (Áp dụng cho mọi mẫu trong 1 tháng)</li>
-              <li><strong>Top 3:</strong> Tặng Voucher giảm <strong>20%</strong> (Áp dụng cho mọi mẫu trong 1 tháng)</li>
-            </ul>
-            <p style={{ margin: '10px 0 0 0', fontSize: '0.85rem', color: 'var(--color-text-light)', fontStyle: 'italic' }}>* Hướng dẫn: Bảng xếp hạng sẽ chốt sổ vào ngày cuối cùng của tháng. Hệ thống tự động gửi mã Voucher qua email cho Top 3. Hãy nạp thêm để leo top nhé!</p>
-          </div>
-
-          <div style={{ maxWidth: '600px', margin: '0 auto', background: 'var(--color-surface)', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-            {leaderboard.length > 0 ? (
-              leaderboard.map((user, index) => (
-                <div key={index} style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  padding: '16px 20px', 
-                  borderBottom: index < leaderboard.length - 1 ? '1px solid var(--color-border)' : 'none',
-                  backgroundColor: index === 0 ? 'rgba(255, 215, 0, 0.1)' : (index === 1 ? 'rgba(192, 192, 192, 0.1)' : 'transparent'),
-                  transition: 'background-color 0.2s'
-                }}>
-                  <div style={{ width: '40px', fontWeight: 'bold', fontSize: '1.2rem', color: index === 0 ? '#fbbf24' : (index === 1 ? '#9ca3af' : (index === 2 ? '#b45309' : '#d1d5db')) }}>
-                    {index === 0 ? <Trophy size={24} /> : (index === 1 ? <Star size={24} /> : (index === 2 ? <Star size={24} /> : \`#\${index + 1}\`))}
-                  </div>
-                  
-                  {user.avatar ? (
-                    <img 
-                      src={user.avatar} 
-                      alt={user.name}
-                      style={{
-                        width: '48px', 
-                        height: '48px', 
-                        borderRadius: '50%',
-                        objectFit: 'cover',
-                        marginRight: '16px',
-                        border: '2px solid white',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                      }}
-                    />
-                  ) : (
-                    <div style={{ 
-                      width: '48px', 
-                      height: '48px', 
-                      borderRadius: '50%', 
-                      background: 'linear-gradient(135deg, var(--color-primary), #ff8da1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: '1.2rem',
-                      marginRight: '16px'
-                    }}>
-                      {(user.name || '?').charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  
-                  <div style={{ flex: 1 }}>
-                    <h4 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--color-text)', fontWeight: 600 }}>{user.name}</h4>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <CheckCircle size={12} color="#10b981" />
-                      Đã xác minh
-                    </span>
-                  </div>
-                  
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                      {user.totalDeposited.toLocaleString()}đ
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-light)', marginBottom: index <= 2 ? '4px' : '0' }}>Tổng nạp</div>
-                    {index <= 2 && (
-                      <div>
-                        <span style={{ 
-                          fontSize: '0.75rem', 
-                          fontWeight: 'bold', 
-                          color: '#fff', 
-                          background: index === 0 ? 'linear-gradient(135deg, #f87171, #ef4444)' : (index === 1 ? 'linear-gradient(135deg, #fb923c, #f97316)' : 'linear-gradient(135deg, #facc15, #eab308)'), 
-                          padding: '3px 8px', 
-                          borderRadius: '12px',
-                          display: 'inline-block',
-                          boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-                        }}>
-                          🎁 Giảm {index === 0 ? '50%' : (index === 1 ? '30%' : '20%')}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-text-light)' }}>Đang tải bảng xếp hạng...</div>
-            )}
-          </div>
-        </div>
-      </section>
-      */}
-
       {/* Ecosystem & Services Section */}
       <section style={{ padding: '80px 0', backgroundColor: 'var(--color-bg-alt)', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)' }}>
         <div className="container">
@@ -447,53 +337,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Video Modal */}
-      {activeVideo && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.85)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backdropFilter: 'blur(5px)'
-          }}
-          onClick={() => setActiveVideo(null)}
-        >
-          <div 
-            style={{ position: 'relative', width: '90%', maxWidth: '800px', aspectRatio: '16/9' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <button 
-              onClick={() => setActiveVideo(null)}
-              style={{
-                position: 'absolute',
-                top: '-40px',
-                right: '0',
-                background: 'none',
-                border: 'none',
-                color: 'white',
-                cursor: 'pointer',
-                padding: '5px'
-              }}
-            >
-              <X size={32} />
-            </button>
-            <iframe 
-              src={activeVideo} 
-              title="Video Demo"
-              style={{ width: '100%', height: '100%', border: 'none', borderRadius: '12px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowFullScreen
-            ></iframe>
-          </div>
-        </div>
-      )}
+
 
       {/* Customer Feedbacks Section (Tạm ẩn để duyệt BCT)
       <section style={{ padding: '80px 0', backgroundColor: 'transparent' }}>

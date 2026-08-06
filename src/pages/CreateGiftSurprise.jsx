@@ -9,7 +9,7 @@ const MAX_IMAGES = 20;
 export default function CreateGiftSurprise() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api, openAuthModal } = useContext(AuthContext);
+  const { user, api, openAuthModal, startProgress, updateProgress, finishProgress, closeProgress } = useContext(AuthContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
@@ -84,7 +84,7 @@ export default function CreateGiftSurprise() {
     }
     if (!formData.receiverName.trim()) { alert('Vui lòng nhập tên người nhận quà.'); return; }
 
-    setIsSubmitting(true);
+    startProgress('Đang tạo hộp quà bất ngờ...');
     try {
       sessionStorage.removeItem('pendingOrderData');
       sessionStorage.removeItem('pendingOrderTemplate');
@@ -100,23 +100,33 @@ export default function CreateGiftSurprise() {
       if (passImage) submitData.append('passImage', passImage);
       if (musicFile) submitData.append('musicFile', musicFile);
 
-      const response = await api.post('/orders', submitData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const response = await api.post('/orders', submitData, { 
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          updateProgress(percentCompleted, percentCompleted === 100 ? 'Đang xử lý dữ liệu...' : `Đang tải lên... ${percentCompleted}%`);
+        }
+      });
       const data = response.data;
       if (data.success) {
-        navigate('/checkout?orderCode=' + data.order.orderCode);
+        finishProgress('Tuyệt vời! Đang chuyển hướng sang thanh toán...');
+        setTimeout(() => {
+          closeProgress();
+          navigate('/checkout?orderCode=' + data.order.orderCode);
+        }, 1000);
       } else {
+        closeProgress();
         alert('Có lỗi xảy ra khi tạo đơn hàng.');
       }
     } catch (error) {
       console.error(error);
+      closeProgress();
       if (error.response?.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         openAuthModal('login');
       } else {
         alert('Không thể kết nối đến máy chủ.');
       }
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

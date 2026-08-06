@@ -7,9 +7,8 @@ import SecurePreview from '../components/SecurePreview';
 export default function CreateMerryChristmas() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api, openAuthModal } = useContext(AuthContext);
+  const { user, api, openAuthModal, startProgress, updateProgress, finishProgress, closeProgress } = useContext(AuthContext);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
     const saved = sessionStorage.getItem('pendingOrderData');
     if (saved) return JSON.parse(saved);
@@ -53,7 +52,7 @@ export default function CreateMerryChristmas() {
     }
     if (!formData.receiverName.trim()) { alert('Vui lòng nhập tên người nhận quà.'); return; }
 
-    setIsSubmitting(true);
+    startProgress('Đang tạo thiệp Giáng Sinh...');
     try {
       sessionStorage.removeItem('pendingOrderData');
       sessionStorage.removeItem('pendingOrderTemplate');
@@ -66,20 +65,30 @@ export default function CreateMerryChristmas() {
       
       if (musicFile) submitData.append('musicFile', musicFile);
 
-      const res = await api.post('/api/orders', submitData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const res = await api.post('/orders', submitData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          updateProgress(percentCompleted, percentCompleted === 100 ? 'Đang xử lý dữ liệu...' : `Đang tải lên... ${percentCompleted}%`);
+        }
       });
       if (res.data.success) {
-        if (res.data.order.amount === 0) {
-            navigate(`/success?orderCode=${res.data.order.orderCode}`);
-        } else {
-            navigate(`/checkout?orderCode=${res.data.order.orderCode}`);
-        }
+        finishProgress('Tuyệt vời! Đang chuyển hướng...');
+        setTimeout(() => {
+          closeProgress();
+          if (res.data.order.amount === 0) {
+              navigate(`/success?orderCode=${res.data.order.orderCode}`);
+          } else {
+              navigate(`/checkout?orderCode=${res.data.order.orderCode}`);
+          }
+        }, 1000);
       } else {
+        closeProgress();
         alert(res.data.message || 'Có lỗi xảy ra');
       }
     } catch (err) {
       console.error(err);
+      closeProgress();
       alert('Lỗi khi gửi yêu cầu tạo quà.');
     } finally {
       setIsSubmitting(false);

@@ -9,7 +9,7 @@ const MAX_IMAGES = 30;
 export default function CreateXMasTree() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api, openAuthModal } = useContext(AuthContext);
+  const { user, api, openAuthModal, startProgress, updateProgress, finishProgress, closeProgress } = useContext(AuthContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
@@ -84,32 +84,36 @@ export default function CreateXMasTree() {
     }
     if (!formData.receiverName.trim()) { alert('Vui lòng nhập tên người nhận quà.'); return; }
 
-    setIsSubmitting(true);
+    startProgress('Đang tạo cây thông Noel 3D...');
     try {
       sessionStorage.removeItem('pendingOrderData');
       sessionStorage.removeItem('pendingOrderTemplate');
       const submitData = new FormData();
-      submitData.append('templateId', 'x-mas-tree');
+      submitData.append('templateId', 'xmas-tree');
       submitData.append('senderName', formData.senderName);
       submitData.append('receiverName', formData.receiverName);
-      submitData.append('message', formData.message);
+      submitData.append('message', formData.message); 
       submitData.append('musicUrl', formData.musicUrl);
       images.forEach(img => submitData.append('images', img));
       if (musicFile) submitData.append('musicFile', musicFile);
 
-      const response = await api.post('/orders', submitData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      const data = response.data;
-      if (data.success) {
-        if (data.order.amount === 0) {
-            navigate(`/success?orderCode=${data.order.orderCode}`);
-        } else {
-            navigate('/checkout?orderCode=' + data.order.orderCode);
+      const response = await api.post('/orders', submitData, { 
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          updateProgress(percentCompleted, percentCompleted === 100 ? 'Đang xử lý dữ liệu...' : `Đang tải lên... ${percentCompleted}%`);
         }
-      } else {
-        alert('Có lỗi xảy ra khi tạo đơn hàng.');
+      });
+      if (response.data.success) {
+        finishProgress('Tuyệt vời! Đang chuyển hướng sang thanh toán...');
+        setTimeout(() => {
+          closeProgress();
+          navigate('/checkout?orderCode=' + response.data.order.orderCode);
+        }, 1000);
       }
     } catch (error) {
       console.error(error);
+      closeProgress();
       if (error.response?.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         openAuthModal('login');
@@ -117,7 +121,7 @@ export default function CreateXMasTree() {
         alert('Không thể kết nối đến máy chủ. (Bạn đã chạy backend chưa?)');
       }
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // fallback
     }
   };
 

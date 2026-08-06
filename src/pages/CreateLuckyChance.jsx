@@ -9,9 +9,8 @@ const MAX_IMAGES = 6;
 export default function CreateLuckyChance() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api, openAuthModal } = useContext(AuthContext);
+  const { user, api, openAuthModal, startProgress, updateProgress, finishProgress, closeProgress } = useContext(AuthContext);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
     const saved = sessionStorage.getItem('pendingOrderData');
     if (saved) return JSON.parse(saved);
@@ -93,7 +92,7 @@ export default function CreateLuckyChance() {
     }
     if (!formData.receiverName.trim()) { alert('Vui lòng nhập tên người nhận quà.'); return; }
 
-    setIsSubmitting(true);
+    startProgress('Đang tạo vòng quay may mắn...');
     try {
       sessionStorage.removeItem('pendingOrderData');
       sessionStorage.removeItem('pendingOrderTemplate');
@@ -108,15 +107,25 @@ export default function CreateLuckyChance() {
       if (musicFile) submitData.append('musicFile', musicFile);
 
       const res = await api.post('/orders', submitData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          updateProgress(percentCompleted, percentCompleted === 100 ? 'Đang xử lý dữ liệu...' : `Đang tải lên... ${percentCompleted}%`);
+        }
       });
       if (res.data.success) {
-        navigate(`/checkout?orderCode=${res.data.order.orderCode}`);
+        finishProgress('Tuyệt vời! Đang chuyển hướng sang thanh toán...');
+        setTimeout(() => {
+          closeProgress();
+          navigate(`/checkout?orderCode=${res.data.order.orderCode}`);
+        }, 1000);
       } else {
+        closeProgress();
         alert(res.data.message || 'Có lỗi xảy ra');
       }
     } catch (err) {
       console.error(err);
+      closeProgress();
       alert('Lỗi khi gửi yêu cầu tạo quà.');
     } finally {
       setIsSubmitting(false);

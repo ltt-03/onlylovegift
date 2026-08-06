@@ -144,13 +144,24 @@ function setWatermarkText(text){
 function applySiteConfig(next){
   Object.assign(siteConfig,next||{});
   setWatermarkText(siteConfig.copyright);
-  if(frameImg&&siteConfig.image){
-    const sep=siteConfig.image.includes('?')?'&':'?';
-    frameImg.src=siteConfig.updatedAt?siteConfig.image+sep+'v='+encodeURIComponent(siteConfig.updatedAt):siteConfig.image;
+  
+  let imgUrl = siteConfig.image;
+  if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('/') && !imgUrl.startsWith('data:')) {
+     imgUrl = (window.ASSET_BASE_PATH || '') + imgUrl.replace(/^\.\//, '');
   }
-  if(siteConfig.music && bgm.getAttribute('src') !== siteConfig.music){
-    const sep=siteConfig.music.includes('?')?'&':'?';
-    bgm.src=siteConfig.updatedAt?siteConfig.music+sep+'v='+encodeURIComponent(siteConfig.updatedAt):siteConfig.music;
+  
+  let musicUrl = siteConfig.music;
+  if (musicUrl && !musicUrl.startsWith('http') && !musicUrl.startsWith('/') && !musicUrl.startsWith('data:')) {
+     musicUrl = (window.ASSET_BASE_PATH || '') + musicUrl.replace(/^\.\//, '');
+  }
+
+  if(frameImg&&imgUrl){
+    const sep=imgUrl.includes('?')?'&':'?';
+    frameImg.src=siteConfig.updatedAt?imgUrl+sep+'v='+encodeURIComponent(siteConfig.updatedAt):imgUrl;
+  }
+  if(musicUrl && bgm.getAttribute('src') !== musicUrl){
+    const sep=musicUrl.includes('?')?'&':'?';
+    bgm.src=siteConfig.updatedAt?musicUrl+sep+'v='+encodeURIComponent(siteConfig.updatedAt):musicUrl;
     if(musicOn) bgm.play().catch(()=>{});
   }
 }

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, Eye, Share2, Download, Copy, Check, Users } from 'lucide-react';
+import { PlayCircle, Eye, Share2, Download, Copy, Check, Users, X } from 'lucide-react';
 import SecurePreview from '../components/SecurePreview';
 import { getCreateRoute } from '../utils/templateRoutes';
 import SEO from '../components/SEO';
+import InstructionModal from '../components/InstructionModal';
 
 export const dummyTemplates = [
   {
@@ -115,7 +116,7 @@ export const dummyTemplates = [
 
 export default function Templates() {
   const navigate = useNavigate();
-  const [activeVideo, setActiveVideo] = useState(null);
+  const [instructionModal, setInstructionModal] = useState({ isOpen: false, templateName: '' });
   const [activePreview, setActivePreview] = useState(null);
   const [stats, setStats] = useState({});
 
@@ -166,7 +167,7 @@ export default function Templates() {
                 style={{ width: '100%', height: '200px', objectFit: 'cover' }} 
               />
               <button
-                onClick={() => setActiveVideo(template.videoUrl)}
+                onClick={() => setInstructionModal({ isOpen: true, templateName: template.name })}
                 style={{
                   position: 'absolute',
                   bottom: '10px',
@@ -185,8 +186,8 @@ export default function Templates() {
                   cursor: 'pointer'
                 }}
               >
-                <PlayCircle size={16} />
-                Hướng dẫn
+                <span style={{ fontSize: '1.2rem' }}>📖</span>
+                Các bước tạo
               </button>
             </div>
             
@@ -245,53 +246,13 @@ export default function Templates() {
         ))}
       </div>
 
-      {/* Video Modal */}
-      {activeVideo && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          onClick={() => setActiveVideo(null)}
-        >
-          <div 
-            style={{ width: '80%', maxWidth: '800px', position: 'relative' }}
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on video container
-          >
-            <button 
-              onClick={() => setActiveVideo(null)}
-              style={{
-                position: 'absolute',
-                top: '-40px',
-                right: '0',
-                background: 'transparent',
-                border: 'none',
-                color: 'white',
-                cursor: 'pointer'
-              }}
-            >
-              <X size={32} />
-            </button>
-            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px' }}>
-              <iframe 
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-                src={activeVideo} 
-                title="Video Hướng Dẫn"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Instruction Modal */}
+      <InstructionModal
+        isOpen={instructionModal.isOpen}
+        onClose={() => setInstructionModal({ isOpen: false, templateName: '' })}
+        templateName={instructionModal.templateName}
+      />
+
       {/* Preview Modal */}
       {activePreview && (
         <div 

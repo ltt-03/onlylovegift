@@ -55,6 +55,8 @@ export const AuthProvider = ({ children }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('login'); // 'login' or 'register'
 
+  const [uploadProgress, setUploadProgress] = useState({ isOpen: false, percent: 0, text: '' });
+
   const openAuthModal = (mode = 'login') => {
     setAuthModalMode(mode);
     setIsAuthModalOpen(true);
@@ -63,6 +65,11 @@ export const AuthProvider = ({ children }) => {
   const closeAuthModal = () => {
     setIsAuthModalOpen(false);
   };
+
+  const startProgress = (text) => setUploadProgress({ isOpen: true, percent: 0, text: text || 'Đang tải dữ liệu...' });
+  const updateProgress = (percent, text) => setUploadProgress(prev => ({ ...prev, percent, text: text || prev.text }));
+  const finishProgress = (text) => setUploadProgress({ isOpen: true, percent: 100, text: text || 'Hoàn tất!' });
+  const closeProgress = () => setUploadProgress({ isOpen: false, percent: 0, text: '' });
 
   return (
     <AuthContext.Provider value={{ 
@@ -75,7 +82,12 @@ export const AuthProvider = ({ children }) => {
       authModalMode,
       openAuthModal,
       closeAuthModal,
-      setAuthModalMode
+      setAuthModalMode,
+      uploadProgress,
+      startProgress,
+      updateProgress,
+      finishProgress,
+      closeProgress
     }}>
       {children}
     </AuthContext.Provider>

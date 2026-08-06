@@ -10,7 +10,7 @@ const MAX_IMAGES = 1;
 export default function CreateHeartCode() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api, openAuthModal } = useContext(AuthContext);
+  const { user, api, openAuthModal, startProgress, updateProgress, finishProgress, closeProgress } = useContext(AuthContext);
   const [showPreview, setShowPreview] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,7 +84,7 @@ export default function CreateHeartCode() {
       return;
     }
 
-    setIsSubmitting(true);
+    startProgress('Đang tạo mã code trái tim...');
     try {
       sessionStorage.removeItem('pendingOrderData');
       sessionStorage.removeItem('pendingOrderTemplate');
@@ -97,12 +97,23 @@ export default function CreateHeartCode() {
       images.forEach(img => submitData.append('images', img));
       if (musicFile) submitData.append('musicFile', musicFile);
 
-      const response = await api.post('/orders', submitData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const response = await api.post('/orders', submitData, { 
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          updateProgress(percentCompleted, percentCompleted === 100 ? 'Đang xử lý dữ liệu...' : `Đang tải lên... ${percentCompleted}%`);
+        }
+      });
       if (response.data.success) {
-        navigate('/checkout?orderCode=' + response.data.order.orderCode);
+        finishProgress('Tuyệt vời! Đang chuyển hướng sang thanh toán...');
+        setTimeout(() => {
+          closeProgress();
+          navigate('/checkout?orderCode=' + response.data.order.orderCode);
+        }, 1000);
       }
     } catch (error) {
       console.error(error);
+      closeProgress();
       if (error.response?.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         openAuthModal('login');
@@ -110,7 +121,7 @@ export default function CreateHeartCode() {
         alert('Không thể kết nối đến máy chủ. (Bạn đã chạy backend chưa?)');
       }
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // fallback
     }
   };
 

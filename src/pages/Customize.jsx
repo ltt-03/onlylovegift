@@ -28,7 +28,7 @@ export default function Customize() {
   const [currentImageToCrop, setCurrentImageToCrop] = useState(null);
   const fileInputRef = useRef(null);
 
-  const { user, openAuthModal, api } = useContext(AuthContext);
+  const { user, api, openAuthModal, startProgress, updateProgress, finishProgress, closeProgress } = useContext(AuthContext);
   const isAutoFill = searchParams.get('autoFill') === 'true';
 
   const handleChange = (e) => {
@@ -103,7 +103,7 @@ export default function Customize() {
       return;
     }
 
-    setIsSubmitting(true);
+    startProgress('Đang tải ảnh và thông tin của bạn lên máy chủ...');
     
     try {
       sessionStorage.removeItem('pendingOrderData');
@@ -116,17 +116,27 @@ export default function Customize() {
       images.forEach(image => submitData.append('images', image));
 
       const response = await api.post('/orders', submitData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          updateProgress(percentCompleted, percentCompleted === 100 ? 'Đang xử lý dữ liệu...' : `Đang tải lên... ${percentCompleted}%`);
+        }
       });
       
       const data = response.data;
       if (data.success) {
-        navigate(`/checkout?orderCode=${data.order.orderCode}`);
+        finishProgress('Tuyệt vời! Đang chuyển hướng sang thanh toán...');
+        setTimeout(() => {
+          closeProgress();
+          navigate(`/checkout?orderCode=${data.order.orderCode}`);
+        }, 1000);
       } else {
+        closeProgress();
         alert('Có lỗi xảy ra khi tạo đơn hàng.');
       }
     } catch (error) {
       console.error(error);
+      closeProgress();
       if (error.response && error.response.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         openAuthModal('login');
@@ -134,7 +144,7 @@ export default function Customize() {
         alert('Không thể kết nối đến máy chủ. (Bạn đã chạy backend chưa?)');
       }
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // fallback
     }
   };
 

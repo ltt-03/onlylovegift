@@ -11,6 +11,7 @@ import Success from './pages/Success';
 import Legal from './pages/Legal';
 import AuthContainer from './pages/auth/AuthContainer';
 import AuthModal from './pages/auth/AuthModal';
+import UploadProgressModal from './components/UploadProgressModal';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import WalletPage from './pages/Wallet';
 import Dashboard from './pages/Dashboard';
@@ -90,24 +91,6 @@ const Layout = ({ children }) => {
                   >
                     Sản phẩm nổi bật
                   </a>
-                  {/* Tạm ẩn link BCT
-                  <a 
-                    href="/#vip-leaderboard" 
-                    className="nav-dropdown-item"
-                    onClick={(e) => {
-                      setIsHomeMenuOpen(false);
-                      if (location.pathname === '/') {
-                        e.preventDefault();
-                        document.getElementById('vip-leaderboard')?.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }}
-                  >
-                    Top VIP
-                  </a>
-                  <Link to="/feedback" className="nav-dropdown-item" onClick={() => setIsHomeMenuOpen(false)}>
-                    Khách Hàng
-                  </Link>
-                  */}
                 </div>
               )}
             </div>
@@ -221,6 +204,7 @@ const Layout = ({ children }) => {
 
         {/* <AIChat /> */}
         <AuthModal />
+        <UploadProgressModal />
       </div>
     </div>
   );

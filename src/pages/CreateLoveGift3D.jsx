@@ -9,7 +9,7 @@ const MAX_IMAGES = 10;
 export default function CreateLoveGift3D() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api, openAuthModal } = useContext(AuthContext);
+  const { user, api, openAuthModal, startProgress, updateProgress, finishProgress, closeProgress } = useContext(AuthContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
@@ -78,7 +78,7 @@ export default function CreateLoveGift3D() {
     }
     if (!formData.receiverName.trim()) { alert('Vui lòng nhập tên người nhận quà.'); return; }
 
-    setIsSubmitting(true);
+    startProgress('Đang tạo hộp quà 3D...');
     try {
       sessionStorage.removeItem('pendingOrderData');
       sessionStorage.removeItem('pendingOrderTemplate');
@@ -97,15 +97,26 @@ export default function CreateLoveGift3D() {
       images.forEach(img => submitData.append('images', img));
       if (musicFile) submitData.append('musicFile', musicFile);
 
-      const response = await api.post('/orders', submitData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      const data = response.data;
-      if (data.success) {
-        navigate('/checkout?orderCode=' + data.order.orderCode);
+      const response = await api.post('/orders', submitData, { 
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          updateProgress(percentCompleted, percentCompleted === 100 ? 'Đang xử lý dữ liệu...' : `Đang tải lên... ${percentCompleted}%`);
+        }
+      });
+      if (response.data.success) {
+        finishProgress('Tuyệt vời! Đang chuyển hướng sang thanh toán...');
+        setTimeout(() => {
+          closeProgress();
+          navigate('/checkout?orderCode=' + response.data.order.orderCode);
+        }, 1000);
       } else {
+        closeProgress();
         alert('Có lỗi xảy ra khi tạo đơn hàng.');
       }
     } catch (error) {
       console.error(error);
+      closeProgress();
       if (error.response?.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         openAuthModal('login');
