@@ -9,13 +9,13 @@
 
 /** Map templateId -> đường dẫn trang tạo riêng của nó */
 export const TEMPLATE_ROUTES = {
-  'heart-code':       '/create/heart-code',
-  'love-gift-3d':     '/create/love-gift-3d',
-  'lucky-chance':     '/create/lucky-chance',
-  'x-mas-tree':       '/create/x-mas-tree',
-  'gift-surprise-v2': '/create/gift-surprise-v2',
-  'merry-christmas':  '/create/merry-christmas',
-  'christmas':        '/create/christmas',
+  'heart-code':       '/tao-ma-code-trai-tim-to-tinh',
+  'love-gift-3d':     '/tao-qua-tang-tinh-yeu-3d',
+  'lucky-chance':     '/tao-vong-quay-may-man',
+  'x-mas-tree':       '/tao-cay-thong-noel-3d',
+  'gift-surprise-v2': '/tao-hop-qua-bat-ngo',
+  'merry-christmas':  '/tao-thiep-merry-christmas',
+  'christmas':        '/tao-qua-giang-sinh-3d',
   // ↑ Thêm template mới vào đây — KHÔNG sửa file nào khác
 };
 

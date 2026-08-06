@@ -219,13 +219,13 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/create" element={<Customize />} />
-          <Route path="/create/x-mas-tree" element={<CreateXMasTree />} />
-          <Route path="/create/gift-surprise-v2" element={<CreateGiftSurprise />} />
-          <Route path="/create/heart-code" element={<CreateHeartCode />} />
-          <Route path="/create/love-gift-3d" element={<CreateLoveGift3D />} />
-          <Route path="/create/lucky-chance" element={<CreateLuckyChance />} />
-          <Route path="/create/merry-christmas" element={<CreateMerryChristmas />} />
-          <Route path="/create/christmas" element={<CreateChristmas />} />
+          <Route path="/tao-cay-thong-noel-3d" element={<CreateXMasTree />} />
+          <Route path="/tao-hop-qua-bat-ngo" element={<CreateGiftSurprise />} />
+          <Route path="/tao-ma-code-trai-tim-to-tinh" element={<CreateHeartCode />} />
+          <Route path="/tao-qua-tang-tinh-yeu-3d" element={<CreateLoveGift3D />} />
+          <Route path="/tao-vong-quay-may-man" element={<CreateLuckyChance />} />
+          <Route path="/tao-thiep-merry-christmas" element={<CreateMerryChristmas />} />
+          <Route path="/tao-qua-giang-sinh-3d" element={<CreateChristmas />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<Success />} />
           <Route path="/feedback" element={<Feedback />} />
@@ -233,6 +233,7 @@ function App() {
           <Route path="/it-services" element={<ITServices />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/gift/view/:orderCode" element={<GiftView />} />
+          <Route path="/qua-tang/:slug" element={<GiftView />} />
           <Route path="/legal/:pageId" element={<Legal />} />
           <Route path="/login" element={<AuthContainer />} />
           <Route path="/register" element={<AuthContainer />} />

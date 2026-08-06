@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, Music, TreePine, ImagePlus, CheckCircle2 } from 'lucide-react';
 import SecurePreview from '../components/SecurePreview';
+import SEO from '../components/SEO';
 
 const MAX_IMAGES = 30;
 
@@ -126,7 +127,9 @@ export default function CreateXMasTree() {
   };
 
   return (
-    <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
+    <div
+      <SEO title="Tạo Cây Thông Noel 3D" description="Tạo cây thông Noel 3D lung linh gửi tặng bạn bè." />
+ className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <div className="card" style={{ padding: '40px' }}>
 
         {/* Back button */}

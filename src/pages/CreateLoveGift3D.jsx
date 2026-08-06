@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, Music, Heart, ImagePlus, CheckCircle2 } from 'lucide-react';
 import SecurePreview from '../components/SecurePreview';
+import SEO from '../components/SEO';
 
 const MAX_IMAGES = 10;
 
@@ -129,7 +130,9 @@ export default function CreateLoveGift3D() {
   };
 
   return (
-    <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
+    <div
+      <SEO title="Tạo Quà Tình Yêu 3D" description="Thiết kế món quà tình yêu 3D đầy lãng mạn và ngọt ngào." />
+ className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

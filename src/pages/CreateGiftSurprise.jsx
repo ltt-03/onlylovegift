@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, Music, Flower2, ImagePlus, CheckCircle2, Lock } from 'lucide-react';
 import SecurePreview from '../components/SecurePreview';
+import SEO from '../components/SEO';
 
 const MAX_IMAGES = 20;
 
@@ -131,7 +132,9 @@ export default function CreateGiftSurprise() {
   };
 
   return (
-    <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
+    <div
+      <SEO title="Tạo Quà Bất Ngờ" description="Tạo hộp quà bất ngờ độc đáo tặng người thương." />
+ className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

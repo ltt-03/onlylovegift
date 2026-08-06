@@ -1,6 +1,28 @@
 {
   "rewrites": [
     {
+      "source": "/qua-tang/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview).*"
+        }
+      ],
+      "destination": "/api/share?slug=:slug"
+    },
+    {
+      "source": "/gift/view/:code",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview).*"
+        }
+      ],
+      "destination": "/api/share?code=:code"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Wallet, ArrowUpCircle, ArrowDownCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const WalletPage = () => {
   const { user, api, openAuthModal } = useContext(AuthContext);
@@ -41,7 +42,9 @@ const WalletPage = () => {
   if (loading) return <div className="loading-screen">Đang tải dữ liệu ví...</div>;
 
   return (
-    <div className="container" style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto' }}>
+    <div
+      <SEO title="Ví Của Tôi" description="Quản lý số dư và nạp tiền vào hệ thống OnlyLoveGift." />
+ className="container" style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <h1 style={{ color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
           <Wallet size={36} /> Ví Điện Tử

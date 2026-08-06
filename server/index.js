@@ -509,6 +509,24 @@ const generateOrderCode = () => {
   return `GL-${Math.floor(1000 + Math.random() * 9000)}`;
 };
 
+// Helper to create friendly slug
+const createFriendlySlug = (name, code) => {
+  if (!name) return `qua-tang-${code}`;
+  const slug = name.toLowerCase()
+    .replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, 'a')
+    .replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, 'e')
+    .replace(/í|ì|ỉ|ĩ|ị/g, 'i')
+    .replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, 'o')
+    .replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, 'u')
+    .replace(/ý|ỳ|ỷ|ỹ|ỵ/g, 'y')
+    .replace(/đ/g, 'd')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return `gui-tang-${slug}-${code}`;
+};
+
 // Middleware to verify JWT token
 function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -615,7 +633,7 @@ app.post('/api/orders', authenticate, upload.any(), async (req, res) => {
         amount: finalAmount,
         status: isFree ? 'SUCCESS' : 'PENDING',
         userId: req.user.id,
-        deployUrl: isFree ? `${process.env.FRONTEND_URL || 'http://localhost:5173'}/gift/view/${orderCode}` : null,
+        deployUrl: isFree ? `${process.env.FRONTEND_URL && process.env.FRONTEND_URL !== 'https://onlylovegift.vercel.app' ? process.env.FRONTEND_URL : 'https://onlygift.online'}/qua-tang/${createFriendlySlug(receiverName, orderCode)}` : null,
         images: (Array.isArray(imagesData) && imagesData.length > 0) || (!Array.isArray(imagesData)) ? JSON.stringify(imagesData) : null
       }
     });
@@ -736,7 +754,7 @@ app.post('/api/webhooks/payment', async (req, res) => {
           where: { orderCode },
           data: { 
             status: 'SUCCESS',
-            deployUrl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/gift/view/${orderCode}`
+            deployUrl: `${process.env.FRONTEND_URL && process.env.FRONTEND_URL !== 'https://onlylovegift.vercel.app' ? process.env.FRONTEND_URL : 'https://onlygift.online'}/qua-tang/${createFriendlySlug(order.receiverName, orderCode)}`
           }
         });
 
@@ -803,7 +821,7 @@ app.post('/api/orders/:code/pay-with-wallet', authMiddleware, async (req, res) =
       where: { orderCode: code },
       data: { 
         status: 'SUCCESS',
-        deployUrl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/gift/view/${code}`
+        deployUrl: `${process.env.FRONTEND_URL && process.env.FRONTEND_URL !== 'https://onlylovegift.vercel.app' ? process.env.FRONTEND_URL : 'https://onlygift.online'}/qua-tang/${createFriendlySlug(order.receiverName, code)}`
       }
     });
 
@@ -827,7 +845,7 @@ app.post('/api/orders/:code/mock-pay', authenticate, requireAdmin, async (req, r
       where: { orderCode: code },
       data: { 
         status: 'SUCCESS',
-        deployUrl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/gift/view/${code}`
+        deployUrl: `${process.env.FRONTEND_URL && process.env.FRONTEND_URL !== 'https://onlylovegift.vercel.app' ? process.env.FRONTEND_URL : 'https://onlygift.online'}/qua-tang/${createFriendlySlug(order.receiverName, code)}`
       }
     });
 

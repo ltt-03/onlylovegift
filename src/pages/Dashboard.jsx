@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import {
+import SEO from '../components/SEO';
   Gift, CreditCard, ExternalLink, Clock, CheckCircle, XCircle,
   ArrowUpRight, ArrowDownLeft, AlertTriangle, X, Send, Copy, Check
 } from 'lucide-react';
@@ -198,7 +199,9 @@ function OrderCard({ order, getStatusBadge }) {
   };
 
   return (
-    <div style={{
+    <div
+      <SEO title="Quản Lý Quà Tặng" description="Quản lý danh sách quà tặng và lịch sử giao dịch của bạn." />
+ style={{
       background: 'var(--color-surface)',
       backdropFilter: 'blur(20px)',
       borderRadius: '20px',

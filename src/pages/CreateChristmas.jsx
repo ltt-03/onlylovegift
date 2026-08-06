@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, X, ImagePlus, CheckCircle2 } from 'lucide-react';
 import SecurePreview from '../components/SecurePreview';
+import SEO from '../components/SEO';
 
 export default function CreateChristmas() {
   const navigate = useNavigate();
@@ -97,7 +98,9 @@ export default function CreateChristmas() {
   };
 
   return (
-    <div className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
+    <div
+      <SEO title="Tạo Quà Giáng Sinh 3D" description="Tạo thiệp Giáng Sinh 3D cực kỳ ý nghĩa và lãng mạn." />
+ className="container" style={{ padding: '60px 24px', maxWidth: '860px' }}>
       <div className="card" style={{ padding: '40px' }}>
 
         <button 

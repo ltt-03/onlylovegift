@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Code, Server, Smartphone, GraduationCap, ArrowRight, ShieldCheck, Zap, MessageCircle, Users, Copy, Check } from 'lucide-react';
+import SEO from '../components/SEO';
 
 export default function ITServices() {
   const [copied, setCopied] = useState(false);
@@ -29,7 +30,9 @@ export default function ITServices() {
   ];
 
   return (
-    <div className="home-page" style={{ paddingBottom: '60px' }}>
+    <div
+      <SEO title="Dịch Vụ IT & Thiết Kế" description="Cung cấp các dịch vụ IT, thiết kế web và lập trình theo yêu cầu." />
+ className="home-page" style={{ paddingBottom: '60px' }}>
       {/* Hero Section */}
       <section style={{ 
         padding: '80px 0 60px', 
