@@ -102,8 +102,8 @@ export default function Home() {
   return (
     <div className="home-page">
       <SEO
-        title="Tạo Mã Code Trái Tim Tỏ Tình & Web Quà Tặng Trend TikTok"
-        description="OnlyLoveGift - Nền tảng tạo mã code trái tim tỏ tình 3D cực trend TikTok, thiệp online, quà tặng sinh nhật bạn gái, quà valentine cá nhân hóa. Tự động lên mạng chỉ 5 phút, miễn phí!"
+        title="Tạo Code Trái Tim Viral TikTok & Web Tỏ Tình 💝 — Miễn Phí"
+        description="💝 Code trái tim tỏ tình 3D đang viral TikTok, hộp quà sinh nhật bất ngờ, thiệp valentine online siêu lãng mạn. Cá nhân hóa tên & lời chúc — tự lên mạng ngay chỉ 5 phút!"
         keywords="only gift, only gift online, onlylovegift, love gift IT, mã code trái tim, code trái tim tỏ tình, code trái tim đập, code trái tim tiktok, web tỏ tình, tạo website quà tặng, quà tặng sinh nhật, quà tặng bạn gái, quà valentine, thiệp online, trend tiktok, gift only, dear gift"
         url="https://www.onlygift.online/"
         softwareSchema={{

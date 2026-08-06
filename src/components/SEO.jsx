@@ -11,8 +11,8 @@ function toAbsoluteUrl(imagePath) {
 }
 
 export default function SEO({ title, description, keywords, image, url, faqSchema, softwareSchema }) {
-  const siteTitle = title ? `${title} | OnlyLoveGift` : 'OnlyLoveGift - Nền Tảng Tạo Website Tỏ Tình & Quà Tặng';
-  const siteDescription = description || 'Only Gift Online - Nền tảng tạo website quà tặng tình yêu, mã code trái tim tỏ tình 3D độc quyền và miễn phí. Tự động lên mạng tức thì!';
+  const siteTitle = title ? `${title} | OnlyLoveGift` : 'OnlyLoveGift | Tạo Code Trái Tim & Web Tỏ Tình Viral TikTok 💝';
+  const siteDescription = description || '💝 Tạo mã code trái tim tỏ tình 3D đang viral TikTok, hộp quà sinh nhật bất ngờ, thiệp valentine online cực lãng mạn. Cá nhân hóa tên & lời chúc — tự lên mạng ngay, miễn phí!';
   const siteKeywords = keywords || 'only gift, gift only, only gift online, onlylovegift, dear gift, love gift, gift love, love gift online, love gift IT, tạo website quà tặng, tỏ tình, mã code trái tim, code trái tim, quà tặng sinh nhật, web tỏ tình, code trái tim đập, code trái tim tiktok, trend tiktok, thiệp online, quà tặng bạn gái, quà valentine';
   const siteUrl = url || SITE_DOMAIN;
   const siteImage = toAbsoluteUrl(image);
