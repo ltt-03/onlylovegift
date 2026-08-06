@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { HelmetProvider } from 'react-helmet-async';
 import './index.css'
 import App from './App.jsx'
 import { ErrorBoundary } from './ErrorBoundary.jsx'
@@ -12,13 +13,15 @@ const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={clientId}>
-      <ThemeProvider>
-        <AuthProvider>
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
-        </AuthProvider>
-      </ThemeProvider>
+      <HelmetProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
+          </AuthProvider>
+        </ThemeProvider>
+      </HelmetProvider>
     </GoogleOAuthProvider>
   </StrictMode>,
 )

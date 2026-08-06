@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, X } from 'lucide-react';
+import { PlayCircle, Eye, Share2, Download, Copy, Check, Users } from 'lucide-react';
 import SecurePreview from '../components/SecurePreview';
 import { getCreateRoute } from '../utils/templateRoutes';
+import SEO from '../components/SEO';
 
 export const dummyTemplates = [
   {
@@ -148,8 +149,12 @@ export default function Templates() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', position: 'relative' }}>
-      <h1 className="text-center" style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Kho Giao Diện Quà Tặng</h1>
-      <p className="text-center text-light" style={{ marginBottom: '50px' }}>Chọn một mẫu để bắt đầu tạo món quà bất ngờ cho người ấy.</p>
+      <SEO 
+        title="Mẫu Website Tỏ Tình & Quà Tặng 3D"
+        description="Tổng hợp các mẫu website tỏ tình, mã code trái tim đập cực trend trên TikTok. Tạo quà tặng độc đáo cho người yêu chỉ với 5 phút."
+      />
+      <h1 className="text-center" style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Kho Mẫu Website Tỏ Tình & Quà Tặng 3D</h1>
+      <p className="text-center text-light" style={{ marginBottom: '50px' }}>Chọn một mẫu để bắt đầu tạo mã code tỏ tình hoặc trang web bất ngờ cho người ấy.</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
         {dummyTemplates.map(template => (

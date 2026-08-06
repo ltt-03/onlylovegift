@@ -10,6 +10,7 @@ import Checkout from './pages/Checkout';
 import Success from './pages/Success';
 import Legal from './pages/Legal';
 import AuthContainer from './pages/auth/AuthContainer';
+import AuthModal from './pages/auth/AuthModal';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import WalletPage from './pages/Wallet';
 import Dashboard from './pages/Dashboard';
@@ -38,7 +39,7 @@ const ScrollToTop = () => {
 
 // Layout Component
 const Layout = ({ children }) => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, openAuthModal } = useContext(AuthContext);
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -132,10 +133,10 @@ const Layout = ({ children }) => {
                 <span style={{ fontSize: '14px', fontWeight: '600' }} className="hide-on-mobile">Đăng xuất</span>
               </button>
             ) : (
-              <Link to="/login" className="theme-toggle-btn" style={{ color: 'var(--color-primary)', borderRadius: '20px', padding: '6px 14px', gap: '6px', textDecoration: 'none', background: 'var(--color-surface)' }} title="Đăng Nhập">
+              <button onClick={() => openAuthModal('login')} className="theme-toggle-btn" style={{ color: 'var(--color-primary)', borderRadius: '20px', padding: '6px 14px', gap: '6px', textDecoration: 'none', background: 'var(--color-surface)', border: 'none', cursor: 'pointer' }} title="Đăng Nhập">
                 <LogIn size={18} />
                 <span style={{ fontSize: '14px', fontWeight: '600' }}>Đăng Nhập</span>
-              </Link>
+              </button>
             )}
           </div>
         </header>
@@ -219,6 +220,7 @@ const Layout = ({ children }) => {
         </nav>
 
         {/* <AIChat /> */}
+        <AuthModal />
       </div>
     </div>
   );

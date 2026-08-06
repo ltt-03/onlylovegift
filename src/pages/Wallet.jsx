@@ -4,7 +4,7 @@ import { Wallet, ArrowUpCircle, ArrowDownCircle, Clock, CheckCircle, XCircle } f
 import { useNavigate } from 'react-router-dom';
 
 const WalletPage = () => {
-  const { user, api } = useContext(AuthContext);
+  const { user, api, openAuthModal } = useContext(AuthContext);
   const navigate = useNavigate();
   
   const [balance, setBalance] = useState(0);
@@ -17,7 +17,7 @@ const WalletPage = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/login');
+      openAuthModal('login');
       return;
     }
     fetchWalletData();

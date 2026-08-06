@@ -1,0 +1,33 @@
+import React from 'react';
+import { Helmet } from 'react-helmet-async';
+
+export default function SEO({ title, description, keywords, image, url }) {
+  const siteTitle = title ? `${title} | OnlyLoveGift` : 'OnlyLoveGift - Nền Tảng Tạo Website Tỏ Tình & Quà Tặng';
+  const siteDescription = description || 'Nền tảng tạo website quà tặng tình yêu, mã code trái tim tỏ tình 3D độc quyền và miễn phí. Tự động lên mạng tức thì!';
+  const siteKeywords = keywords || 'tạo website quà tặng, tỏ tình, mã code trái tim, quà tặng sinh nhật, web tỏ tình, code trái tim đập tiktok';
+  const siteUrl = url || 'https://onlylovegift.com';
+  const siteImage = image || '/logo.png'; // Assume a default logo or OG image
+
+  return (
+    <Helmet>
+      {/* Cơ bản */}
+      <title>{siteTitle}</title>
+      <meta name="description" content={siteDescription} />
+      <meta name="keywords" content={siteKeywords} />
+
+      {/* Open Graph / Facebook / Zalo */}
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={siteUrl} />
+      <meta property="og:title" content={siteTitle} />
+      <meta property="og:description" content={siteDescription} />
+      <meta property="og:image" content={siteImage} />
+
+      {/* Twitter */}
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta property="twitter:url" content={siteUrl} />
+      <meta property="twitter:title" content={siteTitle} />
+      <meta property="twitter:description" content={siteDescription} />
+      <meta property="twitter:image" content={siteImage} />
+    </Helmet>
+  );
+}

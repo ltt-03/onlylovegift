@@ -7,7 +7,7 @@ import SecurePreview from '../components/SecurePreview';
 export default function CreateMerryChristmas() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api } = useContext(AuthContext);
+  const { user, api, openAuthModal } = useContext(AuthContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
@@ -48,7 +48,7 @@ export default function CreateMerryChristmas() {
       sessionStorage.setItem('pendingOrderData', JSON.stringify(formData));
       sessionStorage.setItem('pendingOrderTemplate', 'merry-christmas');
       alert('Bạn cần đăng nhập để tiếp tục. Thông tin đã được lưu tạm!');
-      navigate('/login?returnUrl=/create/merry-christmas');
+      openAuthModal('login');
       return;
     }
     if (!formData.receiverName.trim()) { alert('Vui lòng nhập tên người nhận quà.'); return; }

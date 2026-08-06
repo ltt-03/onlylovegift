@@ -4,8 +4,8 @@ import { GoogleLogin } from '@react-oauth/google';
 import { AuthContext } from '../../context/AuthContext';
 import { Gift, Mail, Lock, User, Heart } from 'lucide-react';
 
-const Register = () => {
-  const { api, login } = useContext(AuthContext);
+const Register = ({ isModal = false }) => {
+  const { api, login, setAuthModalMode, closeAuthModal } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -28,7 +28,11 @@ const Register = () => {
       const res = await api.post('/auth/register', { name, email, password });
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        navigate(returnUrl || '/');
+        if (isModal) {
+          closeAuthModal();
+        } else {
+          navigate(returnUrl || '/');
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Có lỗi xảy ra khi đăng ký');
@@ -44,7 +48,11 @@ const Register = () => {
       });
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        navigate(returnUrl || '/');
+        if (isModal) {
+          closeAuthModal();
+        } else {
+          navigate(returnUrl || '/');
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Đăng nhập Google thất bại');
@@ -138,7 +146,11 @@ const Register = () => {
         </div>
 
         <p style={{ position: 'relative', zIndex: 2, textAlign: 'center', color: 'var(--color-text-light)', fontFamily: "'Quicksand', sans-serif" }}>
-          Đã có tài khoản? <Link to="/login" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>Đăng nhập</Link>
+          Đã có tài khoản? {isModal ? (
+            <span onClick={() => setAuthModalMode('login')} style={{ color: 'var(--color-primary)', fontWeight: 'bold', cursor: 'pointer' }}>Đăng nhập</span>
+          ) : (
+            <Link to="/login" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>Đăng nhập</Link>
+          )}
         </p>
       </div>
     </>

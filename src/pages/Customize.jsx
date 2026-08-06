@@ -28,7 +28,7 @@ export default function Customize() {
   const [currentImageToCrop, setCurrentImageToCrop] = useState(null);
   const fileInputRef = useRef(null);
 
-  const { user, api } = useContext(AuthContext);
+  const { user, openAuthModal, api } = useContext(AuthContext);
   const isAutoFill = searchParams.get('autoFill') === 'true';
 
   const handleChange = (e) => {
@@ -94,7 +94,7 @@ export default function Customize() {
       sessionStorage.setItem('pendingOrderData', JSON.stringify(formData));
       sessionStorage.setItem('pendingOrderTemplate', templateId);
       alert('Bạn cần đăng nhập để tiếp tục tạo và thanh toán đơn hàng. Chúng tôi đã lưu tạm thông tin văn bản của bạn!');
-      navigate('/login?returnUrl=/create');
+      openAuthModal('login');
       return;
     }
 
@@ -129,7 +129,7 @@ export default function Customize() {
       console.error(error);
       if (error.response && error.response.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        navigate('/login?returnUrl=/create');
+        openAuthModal('login');
       } else {
         alert('Không thể kết nối đến máy chủ. (Bạn đã chạy backend chưa?)');
       }

@@ -419,7 +419,7 @@ setInterval(() => {
 app.post('/api/demo/token', (req, res) => {
   // 1. Check Origin/Referer (Anti-CURL / Anti-Postman)
   const origin = req.headers.origin || req.headers.referer || '';
-  if (process.env.NODE_ENV === 'production' && !origin.includes('onlylovegift.vercel.app')) {
+  if (process.env.NODE_ENV === 'production' && !origin.includes('onlylovegift.vercel.app') && !origin.includes('onlygift.online')) {
     return res.status(403).json({ success: false, message: 'Forbidden: Invalid Origin' });
   }
 

@@ -9,7 +9,7 @@ const MAX_IMAGES = 20;
 export default function CreateGiftSurprise() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api } = useContext(AuthContext);
+  const { user, api, openAuthModal } = useContext(AuthContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
@@ -79,7 +79,7 @@ export default function CreateGiftSurprise() {
       sessionStorage.setItem('pendingOrderData', JSON.stringify(formData));
       sessionStorage.setItem('pendingOrderTemplate', 'gift-surprise-v2');
       alert('Bạn cần đăng nhập để tiếp tục. Thông tin đã được lưu tạm!');
-      navigate('/login?returnUrl=/create/gift-surprise-v2');
+      openAuthModal('login');
       return;
     }
     if (!formData.receiverName.trim()) { alert('Vui lòng nhập tên người nhận quà.'); return; }
@@ -111,7 +111,7 @@ export default function CreateGiftSurprise() {
       console.error(error);
       if (error.response?.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        navigate('/login?returnUrl=/create/gift-surprise-v2');
+        openAuthModal('login');
       } else {
         alert('Không thể kết nối đến máy chủ.');
       }

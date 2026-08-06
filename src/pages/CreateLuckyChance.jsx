@@ -9,7 +9,7 @@ const MAX_IMAGES = 6;
 export default function CreateLuckyChance() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api } = useContext(AuthContext);
+  const { user, api, openAuthModal } = useContext(AuthContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => {
@@ -88,7 +88,7 @@ export default function CreateLuckyChance() {
       }));
       sessionStorage.setItem('pendingOrderTemplate', 'lucky-chance');
       alert('Bạn cần đăng nhập để tiếp tục. Thông tin đã được lưu tạm!');
-      navigate('/login?returnUrl=/create/lucky-chance');
+      openAuthModal('login');
       return;
     }
     if (!formData.receiverName.trim()) { alert('Vui lòng nhập tên người nhận quà.'); return; }

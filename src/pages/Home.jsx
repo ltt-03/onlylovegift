@@ -4,6 +4,7 @@ import { Heart, Wand2, CreditCard, Rocket, CheckCircle, PlayCircle, ShieldCheck,
 import { dummyTemplates } from './Templates';
 import SecurePreview from '../components/SecurePreview';
 import { getCreateRoute } from '../utils/templateRoutes';
+import SEO from '../components/SEO';
 
 const FallingHearts = () => {
   const [hearts, setHearts] = useState([]);
@@ -99,6 +100,10 @@ export default function Home() {
 
   return (
     <div className="home-page">
+      <SEO 
+        title="Tạo Website Quà Tặng Tình Yêu & Tỏ Tình Siêu Trend"
+        description="Nền tảng tạo website quà tặng sinh nhật, web tỏ tình, mã code trái tim đập cực hot trên TikTok hoàn toàn tự động chỉ trong 5 phút."
+      />
       {/* Hero Section */}
       <section style={{ position: 'relative', minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: 'transparent' }}>
         
@@ -113,13 +118,13 @@ export default function Home() {
               🌟 Nền Tảng Tạo Website Quà Tặng Số 1 Việt Nam
             </div>
           <h1 className="hero-title-cute" style={{ fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', lineHeight: 1.2 }}>
-            Tạo Bất Ngờ Cho Người Ấy <br />
-            <span style={{ color: 'var(--color-primary)' }}>Chỉ Trong 5 Phút 💝</span>
+            Tạo Website Tỏ Tình & Quà Tặng <br />
+            <span style={{ color: 'var(--color-primary)' }}>Siêu Trend TikTok 💝</span>
           </h1>
           
           {/* Subtitle */}
           <p className="hero-subtitle-cute" style={{ color: 'var(--color-text-light)', fontSize: '1.1rem', maxWidth: '500px' }}>
-            Nền tảng giúp bạn tạo ra những trang web tình yêu độc quyền làm quà tặng sinh nhật, kỷ niệm đầy ý nghĩa.
+            Nền tảng giúp bạn tạo ra những trang web tỏ tình, code trái tim đập độc quyền làm quà tặng sinh nhật, kỷ niệm đầy ý nghĩa.
           </p>
           
           {/* CTA */}

@@ -4,8 +4,8 @@ import { GoogleLogin } from '@react-oauth/google';
 import { AuthContext } from '../../context/AuthContext';
 import { Gift, Mail, Lock, Heart } from 'lucide-react';
 
-const Login = () => {
-  const { login, api } = useContext(AuthContext);
+const Login = ({ isModal = false }) => {
+  const { login, api, setAuthModalMode, closeAuthModal } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -25,7 +25,9 @@ const Login = () => {
       const res = await api.post('/auth/login', { email, password });
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        if (res.data.user.role === 'ADMIN') {
+        if (isModal) {
+          closeAuthModal();
+        } else if (res.data.user.role === 'ADMIN') {
           navigate('/admin');
         } else {
           navigate(returnUrl || '/');
@@ -45,7 +47,9 @@ const Login = () => {
       });
       if (res.data.success) {
         login(res.data.token, res.data.user);
-        if (res.data.user.role === 'ADMIN') {
+        if (isModal) {
+          closeAuthModal();
+        } else if (res.data.user.role === 'ADMIN') {
           navigate('/admin');
         } else {
           navigate(returnUrl || '/');
@@ -128,7 +132,11 @@ const Login = () => {
         </div>
 
         <p style={{ position: 'relative', zIndex: 2, textAlign: 'center', color: 'var(--color-text-light)', fontFamily: "'Quicksand', sans-serif" }}>
-          Chưa có tài khoản? <Link to="/register" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>Đăng ký ngay</Link>
+          Chưa có tài khoản? {isModal ? (
+            <span onClick={() => setAuthModalMode('register')} style={{ color: 'var(--color-primary)', fontWeight: 'bold', cursor: 'pointer' }}>Đăng ký ngay</span>
+          ) : (
+            <Link to="/register" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>Đăng ký ngay</Link>
+          )}
         </p>
       </div>
     </>

@@ -2,6 +2,7 @@ import { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { X, Music, ImagePlus, CheckCircle2, Eye } from 'lucide-react';
+import SEO from '../components/SEO';
 
 
 const MAX_IMAGES = 1;
@@ -9,7 +10,7 @@ const MAX_IMAGES = 1;
 export default function CreateHeartCode() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, api } = useContext(AuthContext);
+  const { user, api, openAuthModal } = useContext(AuthContext);
   const [showPreview, setShowPreview] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -79,7 +80,7 @@ export default function CreateHeartCode() {
       sessionStorage.setItem('pendingOrderData', JSON.stringify(formData));
       sessionStorage.setItem('pendingOrderTemplate', 'heart-code');
       alert('Bạn cần đăng nhập để tiếp tục. Thông tin đã được lưu tạm!');
-      navigate('/login?returnUrl=/create/heart-code');
+      openAuthModal('login');
       return;
     }
 
@@ -104,7 +105,7 @@ export default function CreateHeartCode() {
       console.error(error);
       if (error.response?.status === 401) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        navigate('/login?returnUrl=/create/heart-code');
+        openAuthModal('login');
       } else {
         alert('Không thể kết nối đến máy chủ. (Bạn đã chạy backend chưa?)');
       }
@@ -115,6 +116,10 @@ export default function CreateHeartCode() {
 
   return (
     <div className="container" style={{ padding: '60px 24px', maxWidth: '1200px' }}>
+      <SEO 
+        title="Tạo Mã Code Trái Tim Đập Có Chèn Ảnh Cực Hot TikTok"
+        description="Tự động tạo mã code trái tim đập tỏ tình chèn ảnh người yêu bên trong cực kỳ lãng mạn. Trào lưu thủ khoa lý hot nhất TikTok."
+      />
       <div className="create-page-grid">
         {/* Form bên trái */}
         <div className="card">
@@ -127,7 +132,7 @@ export default function CreateHeartCode() {
 
           <h1 style={{ fontSize: '1.8rem', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontSize: '2rem' }}>❤️</span>
-            Tạo Trái Tim Mã Nguồn
+            Tạo Mã Code Trái Tim Đập Chèn Ảnh
           </h1>
           
           <div style={{ background: 'rgba(156,66,94,0.1)', border: '1px solid rgba(156,66,94,0.3)', borderRadius: '12px', padding: '16px 20px', marginBottom: '28px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>

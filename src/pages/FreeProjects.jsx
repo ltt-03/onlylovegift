@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExternalLink, Sparkles, BookOpen, Music, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 export default function FreeProjects() {
   const projects = [
@@ -20,11 +21,15 @@ export default function FreeProjects() {
 
   return (
     <div className="container" style={{ padding: '60px 0', minHeight: '80vh' }}>
+      <SEO 
+        title="Chia Sẻ Source Code Web Tỏ Tình & Tiện Ích Miễn Phí"
+        description="Tổng hợp kho source code website tỏ tình, mã code trái tim đập cực hot hoàn toàn miễn phí. Hỗ trợ chạy trực tiếp không cần biết code."
+      />
       <div style={{ textAlign: 'center', marginBottom: '50px', animation: 'fadeInDown 0.6s ease' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '15px' }}>
           <Sparkles className="text-primary" size={32} />
           <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, margin: 0, color: 'var(--color-text)' }}>
-            Dự Án Miễn Phí
+            Kho Code & Dự Án Miễn Phí
           </h1>
         </div>
         <p style={{ fontSize: '1.1rem', color: 'var(--color-text-light)', maxWidth: '600px', margin: '0 auto' }}>
