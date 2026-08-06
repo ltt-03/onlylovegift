@@ -6,7 +6,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview).*"
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview|Slackbot|LinkedInBot|TelegramBot|Discordbot|baiduspider|googlebot|bingbot).*"
         }
       ],
       "destination": "/api/share?slug=:slug"
@@ -17,10 +17,65 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview).*"
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview|Slackbot|LinkedInBot|TelegramBot|Discordbot|baiduspider|googlebot|bingbot).*"
         }
       ],
       "destination": "/api/share?code=:code"
+    },
+    {
+      "source": "/templates",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview|Slackbot|LinkedInBot|TelegramBot|Discordbot).*"
+        }
+      ],
+      "destination": "/api/page-meta?page=templates"
+    },
+    {
+      "source": "/tao-ma-code-trai-tim-to-tinh",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview|Slackbot|LinkedInBot|TelegramBot|Discordbot).*"
+        }
+      ],
+      "destination": "/api/page-meta?page=heart-code"
+    },
+    {
+      "source": "/tao-hop-qua-bat-ngo",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview|Slackbot|LinkedInBot|TelegramBot|Discordbot).*"
+        }
+      ],
+      "destination": "/api/page-meta?page=love-box"
+    },
+    {
+      "source": "/tao-vong-quay-may-man",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview|Slackbot|LinkedInBot|TelegramBot|Discordbot).*"
+        }
+      ],
+      "destination": "/api/page-meta?page=lucky-chance"
+    },
+    {
+      "source": "/tao-qua-giang-sinh-3d",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|whatsapp|zalo|viber|twitterbot|skypeuripreview|Slackbot|LinkedInBot|TelegramBot|Discordbot).*"
+        }
+      ],
+      "destination": "/api/page-meta?page=christmas"
     },
     {
       "source": "/(.*)",

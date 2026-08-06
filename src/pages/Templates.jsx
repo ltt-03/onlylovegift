@@ -153,6 +153,8 @@ export default function Templates() {
       <SEO 
         title="Mẫu Website Tỏ Tình & Quà Tặng 3D"
         description="Tổng hợp các mẫu website tỏ tình, mã code trái tim đập cực trend trên TikTok. Tạo quà tặng độc đáo cho người yêu chỉ với 5 phút."
+        image="https://onlygift.online/images/heart-code.jpg"
+        url="https://onlygift.online/templates"
       />
       <h1 className="text-center" style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Kho Mẫu Website Tỏ Tình & Quà Tặng 3D</h1>
       <p className="text-center text-light" style={{ marginBottom: '50px' }}>Chọn một mẫu để bắt đầu tạo mã code tỏ tình hoặc trang web bất ngờ cho người ấy.</p>
