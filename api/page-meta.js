@@ -6,40 +6,40 @@ export default async function handler(req, res) {
     'templates': {
       title: 'Mẫu Website Tỏ Tình & Quà Tặng 3D | OnlyLoveGift',
       description: 'Kho mẫu website tỏ tình độc đáo: trái tim mã nguồn IT, hộp quà sinh nhật 3D, cỏ 4 lá may mắn... Tạo quà tặng ý nghĩa cho người yêu chỉ 5 phút!',
-      image: 'https://onlygift.online/images/heart-code.jpg',
-      url: 'https://onlygift.online/templates',
+      image: 'https://www.onlygift.online/og-banner.jpg',
+      url: 'https://www.onlygift.online/templates',
     },
     'heart-code': {
       title: 'Tạo Trái Tim Mã Nguồn Tỏ Tình IT | OnlyLoveGift',
       description: 'Tạo website trái tim mã nguồn rơi cực trend TikTok - Quà tặng độc đáo cho người yêu làm trong ngành IT. Cá nhân hóa tên & lời chúc miễn phí!',
-      image: 'https://onlygift.online/images/heart-code.jpg',
-      url: 'https://onlygift.online/tao-ma-code-trai-tim-to-tinh',
+      image: 'https://www.onlygift.online/og-banner.jpg',
+      url: 'https://www.onlygift.online/tao-ma-code-trai-tim-to-tinh',
     },
     'love-box': {
       title: 'Tạo Hộp Quà Sinh Nhật 3D Bất Ngờ | OnlyLoveGift',
       description: 'Hộp quà sinh nhật 3D với hiệu ứng mở hộp bất ngờ, bóng bay và thiệp chúc mừng. Tùy chỉnh ảnh, tên và lời chúc theo ý bạn!',
-      image: 'https://onlygift.online/images/thumb_1.jpg',
-      url: 'https://onlygift.online/tao-hop-qua-bat-ngo',
+      image: 'https://www.onlygift.online/og-banner.jpg',
+      url: 'https://www.onlygift.online/tao-hop-qua-bat-ngo',
     },
     'lucky-chance': {
       title: 'Tạo Cỏ 4 Lá May Mắn Online | OnlyLoveGift',
       description: 'Gửi lời chúc may mắn qua trang cỏ 4 lá động với nhạc nền nhẹ nhàng. Quà tặng ý nghĩa cho bạn bè và người thân!',
-      image: 'https://onlygift.online/images/thumb_2.jpg',
-      url: 'https://onlygift.online/tao-vong-quay-may-man',
+      image: 'https://www.onlygift.online/og-banner.jpg',
+      url: 'https://www.onlygift.online/tao-vong-quay-may-man',
     },
     'christmas': {
       title: 'Tạo Thiệp Giáng Sinh 3D Miễn Phí | OnlyLoveGift',
       description: 'Thiệp Giáng Sinh 3D lung linh với cây thông và hiệu ứng tuyết rơi. Gửi lời chúc Noel đặc biệt đến người thân miễn phí!',
-      image: 'https://onlygift.online/images/thumb_3.jpg',
-      url: 'https://onlygift.online/tao-qua-giang-sinh-3d',
+      image: 'https://www.onlygift.online/og-banner.jpg',
+      url: 'https://www.onlygift.online/tao-qua-giang-sinh-3d',
     },
   };
 
   const meta = pagesMeta[page] || {
     title: 'OnlyLoveGift - Nền Tảng Tạo Website Tỏ Tình & Quà Tặng',
-    description: 'Tạo website quà tặng tình yêu độc đáo, mã code trái tim tỏ tình 3D, thiệp online bắt mắt. Miễn phí & tự động lên mạng ngay!',
-    image: 'https://onlygift.online/anhweb.jpg',
-    url: 'https://onlygift.online',
+    description: 'Tạo website quà tặng tình yêu độc đáo, mã code trái tim tỏ tình 3D, thiếp online bắt mắt. Miễn phí & tự động lên mạng ngay!',
+    image: 'https://www.onlygift.online/og-banner.jpg',
+    url: 'https://www.onlygift.online',
   };
 
   const html = `<!DOCTYPE html>
