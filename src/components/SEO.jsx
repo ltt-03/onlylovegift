@@ -3,8 +3,8 @@ import { Helmet } from 'react-helmet-async';
 
 export default function SEO({ title, description, keywords, image, url }) {
   const siteTitle = title ? `${title} | OnlyLoveGift` : 'OnlyLoveGift - Nền Tảng Tạo Website Tỏ Tình & Quà Tặng';
-  const siteDescription = description || 'Nền tảng tạo website quà tặng tình yêu, mã code trái tim tỏ tình 3D độc quyền và miễn phí. Tự động lên mạng tức thì!';
-  const siteKeywords = keywords || 'tạo website quà tặng, tỏ tình, mã code trái tim, quà tặng sinh nhật, web tỏ tình, code trái tim đập tiktok';
+  const siteDescription = description || 'Only Gift Online - Nền tảng tạo website quà tặng tình yêu, mã code trái tim tỏ tình 3D độc quyền và miễn phí. Tự động lên mạng tức thì!';
+  const siteKeywords = keywords || 'only gift, gift only, only gift online, onlylovegift, tạo website quà tặng, tỏ tình, mã code trái tim, quà tặng sinh nhật, web tỏ tình, code trái tim đập tiktok';
   const siteUrl = url || 'https://onlygift.online';
   const siteImage = image || '/anhweb.jpg'; // Assume a default logo or OG image
 
